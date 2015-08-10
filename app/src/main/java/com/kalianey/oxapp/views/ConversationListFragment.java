@@ -14,6 +14,7 @@ import com.kalianey.oxapp.R;
 public class ConversationListFragment extends Fragment {
 
     public ConversationListFragment() {
+
     }
 
     @Override
