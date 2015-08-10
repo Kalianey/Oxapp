@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        >
+
+        <ImageView
+            android:id="@+id/userStatus"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="#4cff46"
+            android:paddingRight="10dp"
+            />
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/avatarImageView"
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/default_avatar_female" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:textStyle="bold"
+                android:textColor="#ff212121"
+                android:textSize="16sp"
+
+                />
+            <TextView
+                android:id="@+id/previewText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PreviewText"
+                android:textStyle="normal"
+                android:textColor="#ff212121"
+                android:textSize="13sp"
+
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
