@@ -15,6 +15,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.kalianey.oxapp.AppController;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.SessionManager;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.views.adapters.ConversationListAdapter;
@@ -41,6 +42,7 @@ public class ConversationListFragment extends Fragment {
 
     private String url = "http://bonnieandclit.com/owapi/messenger/conversationList";
     private QueryAPI query = new QueryAPI();
+    private SessionManager session;
     private ListView listView;
     private ConversationListAdapter adapter;
     private List<ModelConversation> conversations = new ArrayList<>();
@@ -56,26 +58,33 @@ public class ConversationListFragment extends Fragment {
 
         listView = (ListView) view.findViewById(R.id.conversation_list);
 
+        //session = new SessionManager(getActivity().getApplicationContext());
 
         query.login("kalianey", "Fxvcoar123@Sal", new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
             @Override
-            public void onCompletion(QueryAPI.ApiResult result) {
-                Log.v("Login Triggered", result.toString());
+            public void onCompletion(QueryAPI.ApiResult res) {
 
-                query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
-                    @Override
-                    public void onCompletion(List<ModelConversation> result) {
-                        if (!result.isEmpty() && result != null) {
-                            conversations = result;
-                            adapter = new ConversationListAdapter(getActivity(), R.layout.conversation_list_row, conversations);
-                            listView.setAdapter(adapter);
-                            //adapter.notifyDataSetChanged();
-                            Log.v("Data Set Changed: ", conversations.toString());
+                if (res.success) {
+                    Log.v("Login Successful", res.success.toString());
+
+                    query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
+                        @Override
+                        public void onCompletion(List<ModelConversation> result) {
+                            Log.v("ConvListCompletion", result.toString());
+                            if (!result.isEmpty() && result != null) {
+                                conversations = result;
+                                adapter = new ConversationListAdapter(getActivity(), R.layout.conversation_list_row, conversations);
+                                listView.setAdapter(adapter);
+                                //adapter.notifyDataSetChanged();
+                                Log.v("Data Set Changed: ", conversations.toString());
+                            }
                         }
-                    }
 
-                });
+                    });
+
+                }
             }
+
         });
 
 

@@ -11,6 +11,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kalianey.oxapp.AppController;
+import com.kalianey.oxapp.SessionManager;
 import com.kalianey.oxapp.models.ModelConversation;
 
 import org.json.JSONArray;
@@ -34,6 +35,8 @@ import java.util.Objects;
 public class QueryAPI {
 
     private String hostname = "http://bonnieandclit.com/";
+
+    private SessionManager session;
 
     public class ApiResult
     {
@@ -108,7 +111,7 @@ public class QueryAPI {
                         }
                     }
                 }
-                Log.v("ConvList Completion", res.data.toString());
+                //Log.v("ConvList Completion", res.data.toString());
                 completion.onCompletion(conversations);
             }
         });
@@ -134,13 +137,17 @@ public class QueryAPI {
                         Log.d("Login Response", response);
                         try {
                             JSONObject jObj = new JSONObject(response);
+                            res.success = jObj.getBoolean("result");
+                            res.message = jObj.getString("message");
 
+                            if (res.success) {
+                                //session.setLogin(true);
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        //TODO: parse json and put right thing where it belongs
-                        res.success = true;
+
                         completion.onCompletion(res);
 
                     }
