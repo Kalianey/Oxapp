@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".views.ConversationList"
+            android:name=".views.People"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,8 +25,8 @@
             android:label="@string/title_activity_message" >
         </activity>
         <activity
-            android:name=".views.People"
-            android:label="@string/title_activity_people" >
+            android:name=".views.ConversationList"
+            android:label="@string/title_activity_conversation_list" >
         </activity>
     </application>
 

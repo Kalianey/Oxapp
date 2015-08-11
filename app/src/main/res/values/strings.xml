@@ -14,4 +14,5 @@
     <string name="btn_logout">LOGOUT</string>
     <string name="name">Username</string>
     <string name="title_activity_people">People</string>
+    <string name="title_activity_conversation_list">People</string>
 </resources>

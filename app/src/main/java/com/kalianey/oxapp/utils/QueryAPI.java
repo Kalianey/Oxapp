@@ -106,6 +106,7 @@ public class QueryAPI {
                             JSONObject jsonObject = res.data.getJSONObject(i);
                             ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
                             users.add(user);
+                            Log.v("User", user.toString());
 
                         } catch (JSONException e) {
                             e.printStackTrace();
