@@ -83,6 +83,19 @@ public class QueryAPI {
     }
 
 
+    public void getData(String url, final ApiResponse<ApiResult> completion)
+    {
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                if (res.success) {
+
+                }
+            }
+        });
+
+    }
 
     public void getConversations(final ApiResponse<List<ModelConversation>> completion)
     {
@@ -105,8 +118,7 @@ public class QueryAPI {
                             conversation.setAvatarUrl(jsonObject.getString("avatarUrl"));
                             conversation.setId(jsonObject.getString("conversationId"));
                             conversation.setName(jsonObject.getString("displayName"));
-                            conversation.setPreviewText("previewText");
-
+                            conversation.setPreviewText(jsonObject.getString("previewText"));
                             conversations.add(conversation);
 
                             //TODO: implements with GSON for automatic object creation

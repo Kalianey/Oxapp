@@ -16,6 +16,7 @@ import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kalianey on 10/08/2015.
@@ -23,14 +24,14 @@ import java.util.ArrayList;
 public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
 
     private LayoutInflater inflater;
-    private ArrayList<ModelConversation> conversations; //data
+    private List<ModelConversation> conversations; //data
     private Activity listContext;
     private int listRowLayoutId;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
 
 
-    public ConversationListAdapter(Activity context, int resource, ArrayList<ModelConversation> objs) {
+    public ConversationListAdapter(Activity context, int resource, List<ModelConversation> objs) {
         super(context, resource, objs);
         conversations = objs;
         listContext = context;
@@ -87,6 +88,7 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
         viewHolder.conversation = conversations.get(position);
 
         //We can now display the data
+        //viewHolder.avatarImageView = null;
         viewHolder.avatarImageView.setImageUrl(viewHolder.conversation.getAvatarUrl(), imageLoader);
         viewHolder.username.setText(viewHolder.conversation.getName());
         viewHolder.previewText.setText(viewHolder.conversation.getPreviewText());

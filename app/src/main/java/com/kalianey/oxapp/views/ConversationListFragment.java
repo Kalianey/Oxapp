@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -16,6 +17,7 @@ import com.kalianey.oxapp.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.views.adapters.ConversationListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,8 +40,10 @@ import java.util.Objects;
 public class ConversationListFragment extends Fragment {
 
     private String url = "http://bonnieandclit.com/owapi/messenger/conversationList";
-    private List<ModelConversation> conversations = new ArrayList<>();
     private QueryAPI query = new QueryAPI();
+    private ListView listView;
+    private ConversationListAdapter adapter;
+    private List<ModelConversation> conversations = new ArrayList<>();
 
     public ConversationListFragment() {
     }
@@ -50,13 +54,18 @@ public class ConversationListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_conversation_list, container, false); //creates the view
 
+        listView = (ListView) view.findViewById(R.id.conversation_list);
+
+
         query.getConversations(new QueryAPI.ApiResponse<List<ModelConversation>>() {
             @Override
             public void onCompletion(List<ModelConversation> result) {
-                Log.v("OnCompletion: ", result.toString());
                 if (!result.isEmpty() && result != null) {
                     conversations = result;
-                    Log.v("ResultAssignToConv: ", conversations.toString());
+                    adapter = new ConversationListAdapter(getActivity(), R.layout.conversation_list_row, conversations );
+                    listView.setAdapter(adapter);
+                    //adapter.notifyDataSetChanged();
+                    Log.v("Data Set Changed: ", conversations.toString());
                 }
             }
 
@@ -66,39 +75,4 @@ public class ConversationListFragment extends Fragment {
     }
 
 
-    public void getConversations(){
-
-        //Clear data first
-        conversations.clear();
-
-        JsonObjectRequest conversationRequest = new JsonObjectRequest(Request.Method.GET, url, (JSONObject) null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-
-                Log.v("Data: ", response.toString());
-                try {
-                    Boolean success = response.getBoolean("success");
-                    //Log.v("Success: ", success.toString());
-                    JSONArray data = response.getJSONArray("data");
-                    //Log.v("DataArray: ", data.toString());
-
-
-                    //JSONObject conversations = data.getJSONObject()
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }
-        );
-
-        AppController.getInstance().addToRequestQueue(conversationRequest);
-
-    }
 }
