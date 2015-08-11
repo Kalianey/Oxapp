@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import com.kalianey.oxapp.AppController;
 import com.kalianey.oxapp.SessionManager;
 import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.models.ModelUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,11 +90,41 @@ public class QueryAPI {
     }
 
 
+    public void allUsers(final ApiResponse<List<ModelUser>> completion)
+    {
+
+        String url = "owapi/user/all";
+        final List<ModelUser> users = new ArrayList<ModelUser>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+                if (res.success) {
+                    for (int i = 0; i < res.data.length(); i++) {
+
+                        try {
+                            JSONObject jsonObject = res.data.getJSONObject(i);
+                            ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
+                            users.add(user);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                Log.v("UserList Completion", res.data.toString());
+                completion.onCompletion(users);
+            }
+        });
+
+
+    }
 
     public void conversationList(final ApiResponse<List<ModelConversation>> completion)
     {
         String url = "owapi/messenger/conversationList";
         final List<ModelConversation> conversations = new ArrayList<ModelConversation>();
+
         this.RequestApi(url, new ApiResponse<ApiResult>() {
             @Override
             public void onCompletion(ApiResult res) {

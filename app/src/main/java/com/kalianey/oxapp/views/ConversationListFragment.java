@@ -40,7 +40,6 @@ import java.util.Objects;
 
 public class ConversationListFragment extends Fragment {
 
-    private String url = "http://bonnieandclit.com/owapi/messenger/conversationList";
     private QueryAPI query = new QueryAPI();
     private SessionManager session;
     private ListView listView;

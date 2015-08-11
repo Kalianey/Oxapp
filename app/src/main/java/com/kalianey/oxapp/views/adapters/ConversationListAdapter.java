@@ -30,7 +30,6 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
 
-
     public ConversationListAdapter(Activity context, int resource, List<ModelConversation> objs) {
         super(context, resource, objs);
         conversations = objs;
