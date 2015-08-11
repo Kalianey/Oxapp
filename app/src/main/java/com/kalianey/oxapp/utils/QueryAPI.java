@@ -97,7 +97,7 @@ public class QueryAPI {
 
     }
 
-    public void getConversations(final ApiResponse<List<ModelConversation>> completion)
+    public void conversationList(final ApiResponse<List<ModelConversation>> completion)
     {
         String url = "owapi/messenger/conversationList";
         final List<ModelConversation> conversations = new ArrayList<ModelConversation>();
@@ -106,30 +106,17 @@ public class QueryAPI {
             public void onCompletion(ApiResult res) {
 
                 if (res.success) {
-
-                    //Log.v("JSONArray: ", res.data.toString());
-
                     for (int i = 0; i < res.data.length(); i++) {
 
                         try {
                             JSONObject jsonObject = res.data.getJSONObject(i);
-
-                            ModelConversation conversation = new ModelConversation();
-                            conversation.setAvatarUrl(jsonObject.getString("avatarUrl"));
-                            conversation.setId(jsonObject.getString("conversationId"));
-                            conversation.setName(jsonObject.getString("displayName"));
-                            conversation.setPreviewText(jsonObject.getString("previewText"));
+                            ModelConversation conversation = new Gson().fromJson(jsonObject.toString(), ModelConversation.class);
                             conversations.add(conversation);
-
-                            //TODO: implements with GSON for automatic object creation
-                            //conversation = new Gson().fromJson(jsonObject.toString(), ModelConversation.class);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
-
                 }
                 completion.onCompletion(conversations);
             }

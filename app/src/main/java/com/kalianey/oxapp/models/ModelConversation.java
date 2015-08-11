@@ -17,6 +17,7 @@ public class ModelConversation implements Serializable {
     @SerializedName("conversationId")
     private String id;
     private String opponentId;
+    @SerializedName("displayName")
     private String name;
     private String avatarUrl;
     private String previewText;

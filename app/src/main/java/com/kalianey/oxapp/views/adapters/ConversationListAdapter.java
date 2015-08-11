@@ -88,12 +88,10 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
         viewHolder.conversation = conversations.get(position);
 
         //We can now display the data
-        //viewHolder.avatarImageView = null;
         viewHolder.avatarImageView.setImageUrl(viewHolder.conversation.getAvatarUrl(), imageLoader);
         viewHolder.username.setText(viewHolder.conversation.getName());
         viewHolder.previewText.setText(viewHolder.conversation.getPreviewText());
         //viewHolder.userStatusImageView : here change colour of image of  here according to bool
-
 
         return row;
     }

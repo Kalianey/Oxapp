@@ -57,7 +57,7 @@ public class ConversationListFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.conversation_list);
 
 
-        query.getConversations(new QueryAPI.ApiResponse<List<ModelConversation>>() {
+        query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
             @Override
             public void onCompletion(List<ModelConversation> result) {
                 if (!result.isEmpty() && result != null) {
