@@ -24,9 +24,9 @@ public class ModelConversation implements Serializable {
     private String timeLabel;
     private String conversationViewed;
     private String conversationRead;
+    @SerializedName("reply")
     private String conversationReplied;
     private String onlineStatusBool;
-    private String onlineStatusString;
     private String newMessageCount;
 
     //private List<ModelConversation> conv ; //initialized with a null
@@ -99,13 +99,6 @@ public class ModelConversation implements Serializable {
     }
     public void setonlineStatusBool(String onlineStatusBool){
         this.onlineStatusBool = onlineStatusBool;
-    }
-
-    public String getonlineStatusString() {
-        return onlineStatusString;
-    }
-    public void setonlineStatusString(String onlineStatusString){
-        this.onlineStatusString = onlineStatusString;
     }
 
     public String getnewMessageCount() {

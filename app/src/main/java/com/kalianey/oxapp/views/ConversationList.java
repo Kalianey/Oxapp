@@ -2,10 +2,12 @@ package com.kalianey.oxapp.views;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.utils.QueryAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,9 @@ public class ConversationList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation_list);
+
+
+
 
 //        conversation.conv =  new ArrayList<ModelConversation>();
 //        for(String a : test) {

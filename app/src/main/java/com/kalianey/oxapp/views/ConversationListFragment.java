@@ -57,19 +57,30 @@ public class ConversationListFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.conversation_list);
 
 
-        query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
+        query.login("kalianey", "Fxvcoar123@Sal", new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
             @Override
-            public void onCompletion(List<ModelConversation> result) {
-                if (!result.isEmpty() && result != null) {
-                    conversations = result;
-                    adapter = new ConversationListAdapter(getActivity(), R.layout.conversation_list_row, conversations );
-                    listView.setAdapter(adapter);
-                    //adapter.notifyDataSetChanged();
-                    Log.v("Data Set Changed: ", conversations.toString());
-                }
-            }
+            public void onCompletion(QueryAPI.ApiResult result) {
+                Log.v("Login Triggered", result.toString());
 
+                query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
+                    @Override
+                    public void onCompletion(List<ModelConversation> result) {
+                        if (!result.isEmpty() && result != null) {
+                            conversations = result;
+                            adapter = new ConversationListAdapter(getActivity(), R.layout.conversation_list_row, conversations);
+                            listView.setAdapter(adapter);
+                            //adapter.notifyDataSetChanged();
+                            Log.v("Data Set Changed: ", conversations.toString());
+                        }
+                    }
+
+                });
+            }
         });
+
+
+
+
 
         return view;
     }
