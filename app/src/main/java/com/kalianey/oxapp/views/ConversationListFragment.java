@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A placeholder fragment containing a simple view.

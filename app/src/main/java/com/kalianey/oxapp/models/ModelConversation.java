@@ -3,6 +3,11 @@ package com.kalianey.oxapp.models;
 /**
  * Created by kalianey on 10/08/2015.
  */
+
+//ModelConversation m = ;
+//m.setFoo().setBla();
+//m.setBla()
+
 public class ModelConversation {
 
     private String id;
@@ -17,6 +22,7 @@ public class ModelConversation {
     private String onlineStatusBool;
     private String onlineStatusString;
     private String newMessageCount;
+    //private List<ModelConversation> conv ; //initialized with a null
 
     public String getId() {
         return id;
