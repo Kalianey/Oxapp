@@ -15,6 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.kalianey.oxapp.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.utils.QueryAPI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,7 +38,8 @@ import java.util.Objects;
 public class ConversationListFragment extends Fragment {
 
     private String url = "http://bonnieandclit.com/owapi/messenger/conversationList";
-    private ArrayList<ModelConversation> conversations = new ArrayList<>();
+    private List<ModelConversation> conversations = new ArrayList<>();
+    private QueryAPI query = new QueryAPI();
 
     public ConversationListFragment() {
     }
@@ -47,6 +50,27 @@ public class ConversationListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_conversation_list, container, false); //creates the view
 
+        query.getConversations(new QueryAPI.ApiResponse<List<ModelConversation>>() {
+            @Override
+            public void onCompletion(List<ModelConversation> result) {
+                Log.v("OnCompletion: ", result.toString());
+                if (!result.isEmpty() && result != null) {
+                    conversations = result;
+                    Log.v("ResultAssignToConv: ", conversations.toString());
+                }
+            }
+
+        });
+
+        return view;
+    }
+
+
+    public void getConversations(){
+
+        //Clear data first
+        conversations.clear();
+
         JsonObjectRequest conversationRequest = new JsonObjectRequest(Request.Method.GET, url, (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -54,9 +78,11 @@ public class ConversationListFragment extends Fragment {
                 Log.v("Data: ", response.toString());
                 try {
                     Boolean success = response.getBoolean("success");
-                    Log.v("Success: ", success.toString());
+                    //Log.v("Success: ", success.toString());
                     JSONArray data = response.getJSONArray("data");
-                    Log.v("DataArray: ", data.toString());
+                    //Log.v("DataArray: ", data.toString());
+
+
                     //JSONObject conversations = data.getJSONObject()
 
                 } catch (JSONException e) {
@@ -72,10 +98,7 @@ public class ConversationListFragment extends Fragment {
         }
         );
 
-
-
         AppController.getInstance().addToRequestQueue(conversationRequest);
 
-        return view;
     }
 }

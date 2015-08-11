@@ -1,5 +1,9 @@
 package com.kalianey.oxapp.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
 /**
  * Created by kalianey on 10/08/2015.
  */
@@ -8,8 +12,9 @@ package com.kalianey.oxapp.models;
 //m.setFoo().setBla();
 //m.setBla()
 
-public class ModelConversation {
+public class ModelConversation implements Serializable {
 
+    @SerializedName("conversationId")
     private String id;
     private String opponentId;
     private String name;
@@ -22,6 +27,7 @@ public class ModelConversation {
     private String onlineStatusBool;
     private String onlineStatusString;
     private String newMessageCount;
+
     //private List<ModelConversation> conv ; //initialized with a null
 
     public String getId() {
