@@ -24,6 +24,10 @@
             android:name=".views.Message"
             android:label="@string/title_activity_message" >
         </activity>
+        <activity
+            android:name=".views.People"
+            android:label="@string/title_activity_people" >
+        </activity>
     </application>
 
 </manifest>
