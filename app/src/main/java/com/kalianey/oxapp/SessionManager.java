@@ -23,15 +23,19 @@ public class SessionManager {
 
     // Shared preferences file name
     private static final String PREF_NAME = "OxappLogin";
-
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
 
+
+
+
+    //Initialization
     public SessionManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
     }
 
+    //Storing data
     public void setLogin(boolean isLoggedIn) {
 
         editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
@@ -42,6 +46,7 @@ public class SessionManager {
         Log.d(TAG, "User login session modified!");
     }
 
+    //Check user login status
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }

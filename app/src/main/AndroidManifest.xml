@@ -28,6 +28,10 @@
             android:name=".views.ConversationList"
             android:label="@string/title_activity_conversation_list" >
         </activity>
+        <activity
+            android:name=".views.SignIn"
+            android:label="@string/title_activity_sign_in" >
+        </activity>
     </application>
 
 </manifest>

@@ -15,4 +15,9 @@
     <string name="name">Username</string>
     <string name="title_activity_people">People</string>
     <string name="title_activity_conversation_list">People</string>
+    <string name="title_activity_sign_in">SignIn</string>
+    <string name="Sign_in_label">Sign In</string>
+    <string name="Sign_in_forgot_password_label">Forgot password?</string>
+    <string name="sign_in_btn">Login</string>
+    <string name="sign_in_register_label">Don\'t have an account? Sign up</string>
 </resources>

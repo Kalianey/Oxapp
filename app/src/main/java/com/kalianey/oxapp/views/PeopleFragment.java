@@ -39,22 +39,36 @@ public class PeopleFragment extends Fragment {
         gridView = (GridView) view.findViewById(R.id.people_gridView);
 
 
-        query.allUsers(new QueryAPI.ApiResponse<List<ModelUser>>() {
-            @Override
-            public void onCompletion(List<ModelUser> result) {
-                Log.v("UserListCompletion", result.toString());
-                if (!result.isEmpty() && result != null) {
-                    users = result;
-                    adapter = new PeopleGridViewAdapter(getActivity(), R.layout.people_gridview_item, users);
-                    gridView.setAdapter(adapter);
-                    //adapter.notifyDataSetChanged();
-                    Log.v("Data Set Changed: ", users.toString());
+        query.login("kalianey", "Fxvcoar123@Sal", new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
+                    @Override
+                    public void onCompletion(QueryAPI.ApiResult res) {
+
+                        if (res.success) {
+                            Log.v("Login Successful", res.success.toString());
+
+                        }
+
+
+                        query.allUsers(new QueryAPI.ApiResponse<List<ModelUser>>() {
+                            @Override
+                            public void onCompletion(List<ModelUser> result) {
+                                Log.v("UserListCompletion", result.toString());
+                                if (!result.isEmpty() && result != null) {
+                                    users = result;
+                                    adapter = new PeopleGridViewAdapter(getActivity(), R.layout.people_gridview_item, users);
+                                    gridView.setAdapter(adapter);
+                                    //adapter.notifyDataSetChanged();
+                                    Log.v("Data Set Changed: ", users.toString());
+                                }
+                            }
+
+                        });
+                    }
+                }
+        );
+
+
+
+                    return view;
                 }
             }
-
-        });
-
-
-        return view;
-    }
-}

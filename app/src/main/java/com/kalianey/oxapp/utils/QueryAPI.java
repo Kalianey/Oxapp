@@ -43,6 +43,7 @@ public class QueryAPI {
         public Boolean success;
         public String message;
         public JSONArray data;
+        public JSONObject dataObj;
     }
 
     public interface ApiResponse<T>
@@ -53,19 +54,23 @@ public class QueryAPI {
 
     public void RequestApi( String url, final ApiResponse<ApiResult> completion  )
     {
-
+        Log.v("Performing request: ", url);
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, hostname+url, (JSONObject) null,
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response)
                 {
-                    Log.v("user id", response.toString());
+                    Log.v("RequestApi Response", response.toString());
                     //Log.v("Data: ", response.toString());
                     try {
+                        ApiResult res = new ApiResult();
                         Boolean success = response.getBoolean("success");
                         //Log.v("Success: ", success.toString());
                         JSONArray data = response.getJSONArray("data");
-                        ApiResult res = new ApiResult();
+                        if (data == null){
+                            JSONObject dataObj = response.getJSONObject("data");
+                            res.dataObj = dataObj;
+                        }
                         res.success = success;
                         res.data = data;
                         completion.onCompletion(res);
@@ -89,6 +94,37 @@ public class QueryAPI {
     }
 
 
+//    func currentUser(completion: (ModelUser?) -> ()) {
+//
+//        self.requestAPI("owapi/user/profile", params: "") { (res: ApiResponse) -> () in
+//
+//            var item: ModelUser? //TODO error checking
+//
+//            if(res.success)
+//            {
+//                var data = res.data as! NSDictionary
+//                item = ModelUser(data: data)
+//            }
+//            completion(item) //TODO: check if it should be put inside if or outside
+//        }
+//
+//    }
+
+    public void currentUser(final ApiResponse<ModelUser> completion) {
+
+        String url = "owapi/user/profile";
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+//                JSONObject jsonObject = res.data.getJSONObject(res.data);
+//                completion.onCompletion(res);
+            }
+        });
+
+    }
+
+
     public void allUsers(final ApiResponse<List<ModelUser>> completion)
     {
 
@@ -98,6 +134,7 @@ public class QueryAPI {
         this.RequestApi(url, new ApiResponse<ApiResult>() {
             @Override
             public void onCompletion(ApiResult res) {
+
                 if (res.success) {
                     for (int i = 0; i < res.data.length(); i++) {
 
@@ -105,14 +142,13 @@ public class QueryAPI {
                             JSONObject jsonObject = res.data.getJSONObject(i);
                             ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
                             users.add(user);
-                            Log.v("User", user.toString());
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-                Log.v("UserList Completion", res.data.toString());
+//                Log.v("UserList Completion", res.data.toString());
                 completion.onCompletion(users);
             }
         });
@@ -154,6 +190,8 @@ public class QueryAPI {
 
     public void login(final String username, final String password, final ApiResponse<ApiResult> completion) {
 
+        session = new SessionManager(AppController.getContext());
+
         // Url of Oxwall website
         String url = hostname+"base/user/ajax-sign-in";
 
@@ -172,11 +210,23 @@ public class QueryAPI {
                             res.message = jObj.getString("message");
 
                             if (res.success) {
-                                //session.setLogin(true);
+                                session.setLogin(true);
+                                Boolean isUserLoggedIn = session.isLoggedIn();
+                                Log.v("SessionSetUserLoggedIn", isUserLoggedIn.toString());
+                                //Here request user and save it in a local var (or in sqlite), then in completion save email and password in sqlite
+                                currentUser(new ApiResponse<ModelUser>() {
+                                    @Override
+                                    public void onCompletion(ModelUser result) {
+
+                                    }
+                                });
+
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            res.success = false;
+                            res.message = "Error during login";
                         }
 
                         completion.onCompletion(res);
@@ -192,16 +242,7 @@ public class QueryAPI {
                     }
                 }
         ) {
-            //Here put session cookie getter
-            //http://stackoverflow.com/questions/22137374/how-to-return-response-header-field-to-main-method-using-google-volley-for-http
-            @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse networkResponse) {
-                String sessionId = networkResponse.headers.get("Set-Cookie");
-                com.android.volley.Response<String> result = com.android.volley.Response.success(sessionId,
-                        HttpHeaderParser.parseCacheHeaders(networkResponse));
-                return result;
-            }
-            ///////////
+
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
