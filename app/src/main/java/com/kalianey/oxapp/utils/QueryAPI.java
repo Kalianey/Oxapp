@@ -120,8 +120,8 @@ public class QueryAPI {
                 }
             }
         );
-
         AppController.getInstance().addToRequestQueue(jsonRequest);
+
     }
 
 
