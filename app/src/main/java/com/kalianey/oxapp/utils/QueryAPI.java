@@ -3,11 +3,9 @@ package com.kalianey.oxapp.utils;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
@@ -24,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by kalianey on 11/08/2015.
@@ -42,8 +39,40 @@ public class QueryAPI {
     {
         public Boolean success;
         public String message;
-        public JSONArray data;
-        public JSONObject dataObj;
+        public Object data;
+
+        public boolean dataIsArray()
+        {
+            return (data != null && data instanceof JSONArray);
+        }
+
+        public boolean dataIsObject()
+        {
+            return (data != null && data instanceof JSONObject);
+        }
+
+        public JSONArray getDataAsArray()
+        {
+            if ( this.dataIsArray()) {
+                return (JSONArray) this.data;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public JSONObject getDataAsObject()
+        {
+            if ( this.dataIsObject()) {
+                return (JSONObject) this.data;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 
     public interface ApiResponse<T>
@@ -65,22 +94,16 @@ public class QueryAPI {
                     try {
                         ApiResult res = new ApiResult();
                         Boolean success = response.getBoolean("success");
-                        JSONArray data = null;
                         try {
-                            data = response.getJSONArray("data");
+                            res.data = response.getJSONArray("data");
                         }
                         catch (JSONException e)
                         {
                             Log.v("exception catch", e.getMessage());
-                            JSONObject dataObj = response.getJSONObject("data");
-                            res.dataObj = dataObj;
+                            res.data = response.getJSONObject("data");
                         }
 
-//                        if (data == null){
-//
-//                        }
                         res.success = success;
-                        res.data = data;
                         completion.onCompletion(res);
 
                     } catch (JSONException e) {
@@ -121,12 +144,21 @@ public class QueryAPI {
     public void currentUser(final ApiResponse<ModelUser> completion) {
 
         String url = "owapi/user/profile";
+        final ModelUser user = new ModelUser();
 
         this.RequestApi(url, new ApiResponse<ApiResult>() {
             @Override
             public void onCompletion(ApiResult res) {
-//                JSONObject jsonObject = res.data.getJSONObject(res.data);
-//                completion.onCompletion(res);
+
+                if (res.success && res.dataIsObject()) {
+                    JSONObject userObj = res.getDataAsObject();
+                    ModelUser user = new ModelUser();
+                    user = new Gson().fromJson(userObj.toString(), ModelUser.class);
+                    completion.onCompletion(user);
+                }
+                else {
+                    completion.onCompletion(user);
+                }
             }
         });
 
@@ -143,11 +175,12 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                if (res.success) {
-                    for (int i = 0; i < res.data.length(); i++) {
+                if (res.success && res.dataIsArray() ) {
+                    JSONArray usersList = res.getDataAsArray();
+                    for (int i = 0; i < usersList.length(); i++) {
 
                         try {
-                            JSONObject jsonObject = res.data.getJSONObject(i);
+                            JSONObject jsonObject = usersList.getJSONObject(i);
                             ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
                             users.add(user);
 
@@ -173,11 +206,12 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                if (res.success) {
-                    for (int i = 0; i < res.data.length(); i++) {
+                if (res.success && res.dataIsArray()) {
+                    JSONArray conversationList = res.getDataAsArray();
+                    for (int i = 0; i < conversationList.length(); i++) {
 
                         try {
-                            JSONObject jsonObject = res.data.getJSONObject(i);
+                            JSONObject jsonObject = conversationList.getJSONObject(i);
                             ModelConversation conversation = new Gson().fromJson(jsonObject.toString(), ModelConversation.class);
                             conversations.add(conversation);
 
@@ -224,8 +258,12 @@ public class QueryAPI {
                                 //Here request user and save it in a local var (or in sqlite), then in completion save email and password in sqlite
                                 currentUser(new ApiResponse<ModelUser>() {
                                     @Override
-                                    public void onCompletion(ModelUser result) {
-
+                                    public void onCompletion(ModelUser user) {
+                                        if(user != null){
+                                            AppController.getInstance().setLoggedInUser(user);
+                                            ModelUser currentUser = AppController.getInstance().getLoggedInUser();
+                                            Log.v("Global var created",currentUser.toString());
+                                        }
                                     }
                                 });
 

@@ -1,9 +1,11 @@
 package com.kalianey.oxapp.models;
 
+import java.io.Serializable;
+
 /**
  * Created by kalianey on 11/08/2015.
  */
-public class ModelUser {
+public class ModelUser implements Serializable {
 
     private String userId;
     private String name;
