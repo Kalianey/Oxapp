@@ -65,12 +65,20 @@ public class QueryAPI {
                     try {
                         ApiResult res = new ApiResult();
                         Boolean success = response.getBoolean("success");
-                        //Log.v("Success: ", success.toString());
-                        JSONArray data = response.getJSONArray("data");
-                        if (data == null){
+                        JSONArray data = null;
+                        try {
+                            data = response.getJSONArray("data");
+                        }
+                        catch (JSONException e)
+                        {
+                            Log.v("exception catch", e.getMessage());
                             JSONObject dataObj = response.getJSONObject("data");
                             res.dataObj = dataObj;
                         }
+
+//                        if (data == null){
+//
+//                        }
                         res.success = success;
                         res.data = data;
                         completion.onCompletion(res);
