@@ -1,18 +1,32 @@
 package com.kalianey.oxapp.views;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.SessionManager;
 
 public class People extends AppCompatActivity {
+
+    private SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people);
+
+        session = new SessionManager(getApplicationContext().getApplicationContext());
+        // Check if user is already logged in or not
+        if (!session.isLoggedIn()) {
+            // User is not already logged in. Take him to signin
+            Log.d("PeopleUserLoggedIn", "false");
+            Intent intent = new Intent(getApplicationContext(), SignIn.class);
+            startActivity(intent);
+        }
     }
 
 
