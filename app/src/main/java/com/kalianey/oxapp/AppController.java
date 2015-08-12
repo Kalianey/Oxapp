@@ -13,6 +13,8 @@ import com.kalianey.oxapp.models.ModelUser;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
+
 /**
  * Created by kalianey on 10/08/2015.
  */
@@ -61,7 +63,7 @@ public class AppController extends Application {
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
 
-            CookieManager manager = new CookieManager();
+            CookieManager manager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
             CookieHandler.setDefault(manager);
             mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         }

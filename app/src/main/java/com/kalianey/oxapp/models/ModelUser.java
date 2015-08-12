@@ -10,6 +10,7 @@ public class ModelUser implements Serializable {
     private String userId;
     private String name;
     private String avatar_url;
+    private String avatar_url_default;
     private String cover_url;
     private Boolean isLoggedInUser;
     private String address;
@@ -38,13 +39,13 @@ public class ModelUser implements Serializable {
         return avatar_url;
     }
 
-    public void setAvatar_url(String avatar_url) {
-        this.avatar_url = avatar_url;
-    }
+    public void setAvatar_url(String avatar_url) { this.avatar_url = avatar_url; }
 
-    public String getCover_url() {
-        return cover_url;
-    }
+    public String getAvatar_url_default() { return avatar_url_default; }
+
+    public void setAvatar_url_default(String avatar_url_default) { this.avatar_url_default = avatar_url_default; }
+
+    public String getCover_url() {return cover_url;}
 
     public void setCover_url(String cover_url) {
         this.cover_url = cover_url;

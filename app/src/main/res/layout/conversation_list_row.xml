@@ -15,7 +15,6 @@
             android:id="@+id/userStatus"
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:background="#4cff46"
             android:paddingRight="10dp"
             />
 

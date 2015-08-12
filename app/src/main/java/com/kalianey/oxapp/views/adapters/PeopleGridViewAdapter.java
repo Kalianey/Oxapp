@@ -79,7 +79,11 @@ public class PeopleGridViewAdapter extends ArrayAdapter {
         viewHolder.user = users.get(position);
 
         //We can now display the data
-        viewHolder.avatarImageView.setImageUrl(viewHolder.user.getAvatar_url(), imageLoader);
+        String avatar_url = viewHolder.user.getAvatar_url();
+        if (avatar_url == null){
+            avatar_url = viewHolder.user.getAvatar_url_default();
+        }
+        viewHolder.avatarImageView.setImageUrl(avatar_url, imageLoader);
         viewHolder.username.setText(viewHolder.user.getName());
         //viewHolder.userStatusImageView : here change colour of image of  here according to bool
 

@@ -49,14 +49,9 @@ public class ConversationListFragment extends Fragment {
 
         //session = new SessionManager(getActivity().getApplicationContext());
 
-        query.login("kalianey", "Fxvcoar123@Sal", new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
-            @Override
-            public void onCompletion(QueryAPI.ApiResult res) {
 
-                if (res.success) {
-                    Log.v("Login Successful", res.success.toString());
 
-                    query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
+                query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
                         @Override
                         public void onCompletion(List<ModelConversation> result) {
                             Log.v("ConvListCompletion", result.toString());
@@ -70,11 +65,6 @@ public class ConversationListFragment extends Fragment {
                         }
 
                     });
-
-                }
-            }
-
-        });
 
 
 
