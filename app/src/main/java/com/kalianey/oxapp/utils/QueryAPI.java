@@ -3,13 +3,14 @@ package com.kalianey.oxapp.utils;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.kalianey.oxapp.AppController;
 import com.kalianey.oxapp.SessionManager;
 import com.kalianey.oxapp.models.ModelConversation;
@@ -19,8 +20,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +59,7 @@ public class QueryAPI {
                 @Override
                 public void onResponse(JSONObject response)
                 {
-
+                    Log.v("user id", response.toString());
                     //Log.v("Data: ", response.toString());
                     try {
                         Boolean success = response.getBoolean("success");
@@ -193,6 +192,16 @@ public class QueryAPI {
                     }
                 }
         ) {
+            //Here put session cookie getter
+            //http://stackoverflow.com/questions/22137374/how-to-return-response-header-field-to-main-method-using-google-volley-for-http
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse networkResponse) {
+                String sessionId = networkResponse.headers.get("Set-Cookie");
+                com.android.volley.Response<String> result = com.android.volley.Response.success(sessionId,
+                        HttpHeaderParser.parseCacheHeaders(networkResponse));
+                return result;
+            }
+            ///////////
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
