@@ -1,6 +1,7 @@
 package com.kalianey.oxapp.views;
 
-import android.support.v4.app.Fragment;
+//import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,26 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.kalianey.oxapp.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.SessionManager;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.views.adapters.ConversationListAdapter;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONStringer;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 
 /**
  * A placeholder fragment containing a simple view.
