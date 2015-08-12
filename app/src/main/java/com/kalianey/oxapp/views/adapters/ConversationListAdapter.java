@@ -1,7 +1,6 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,10 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.kalianey.oxapp.AppController;
+import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

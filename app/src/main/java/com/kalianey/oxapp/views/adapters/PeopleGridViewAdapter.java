@@ -1,20 +1,21 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.kalianey.oxapp.AppController;
+import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.views.Profile;
 
 import java.util.List;
 
@@ -86,6 +87,22 @@ public class PeopleGridViewAdapter extends ArrayAdapter {
         viewHolder.avatarImageView.setImageUrl(avatar_url, imageLoader);
         viewHolder.username.setText(viewHolder.user.getName());
         //viewHolder.userStatusImageView : here change colour of image of  here according to bool
+
+        //Set onClick item
+        final ViewHolder finalViewHolder = viewHolder;
+        item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(gridContext, Profile.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("userObj", finalViewHolder.user);
+                i.putExtras(mBundle);
+                gridContext.startActivity(i);
+            }
+        });
+
+
 
         return item;
     }

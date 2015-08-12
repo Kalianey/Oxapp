@@ -23,4 +23,5 @@
     <string name="closeDrawer">1</string>
     <string name="openDrawer">0</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_profile">Profile</string>
 </resources>

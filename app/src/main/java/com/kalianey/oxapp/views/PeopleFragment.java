@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.SessionManager;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.views.adapters.PeopleGridViewAdapter;

@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.SessionManager;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
 
 import org.w3c.dom.Text;

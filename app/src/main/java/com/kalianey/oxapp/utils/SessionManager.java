@@ -1,4 +1,4 @@
-package com.kalianey.oxapp;
+package com.kalianey.oxapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

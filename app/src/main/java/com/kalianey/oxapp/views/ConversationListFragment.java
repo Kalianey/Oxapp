@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.SessionManager;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.views.adapters.ConversationListAdapter;

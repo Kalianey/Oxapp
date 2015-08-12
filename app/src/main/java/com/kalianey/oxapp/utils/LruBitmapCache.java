@@ -1,4 +1,4 @@
-package com.kalianey.oxapp;
+package com.kalianey.oxapp.utils;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;

@@ -1,4 +1,4 @@
-package com.kalianey.oxapp;
+package com.kalianey.oxapp.utils;
 
 import android.app.Application;
 import android.content.Context;

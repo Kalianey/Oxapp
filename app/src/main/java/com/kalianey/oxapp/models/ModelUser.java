@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public class ModelUser implements Serializable {
 
+    private static final long id = 1L;
     private String userId;
     private String name;
     private String avatar_url;

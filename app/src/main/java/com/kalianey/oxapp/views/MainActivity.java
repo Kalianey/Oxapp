@@ -17,7 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.SessionManager;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
 
 import java.util.ArrayList;
