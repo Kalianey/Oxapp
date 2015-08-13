@@ -10,6 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 
 import org.json.JSONArray;
@@ -195,6 +196,9 @@ public class QueryAPI {
 
     }
 
+
+    /* Conversation Functions */
+
     public void conversationList(final ApiResponse<List<ModelConversation>> completion)
     {
         String url = "owapi/messenger/conversationList";
@@ -218,12 +222,75 @@ public class QueryAPI {
                         }
                     }
                 }
-                //Log.v("ConvList Completion", res.data.toString());
+                //Log.d("ConvList Completion", res.data.toString());
                 completion.onCompletion(conversations);
             }
         });
 
     }
+
+
+    public void messageList(String convId, final ApiResponse<List<ModelMessage>> completion) {
+        String url = "owapi/messenger/conversation/"+convId;
+
+        final List<ModelMessage> messages = new ArrayList<ModelMessage>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                if (res.success && res.dataIsArray()) {
+                    JSONArray messageList = res.getDataAsArray();
+                    Log.d("MessageList",messageList.toString() );
+                    for (int i = 0; i < messageList.length(); i++) {
+
+                        try {
+                            JSONObject jsonObject = messageList.getJSONObject(i);
+                            ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
+                            messages.add(message);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                //Log.d("ConvList Completion", res.data.toString());
+                completion.onCompletion(messages);
+            }
+        });
+    };
+
+
+
+//    func messageList(convId:String, completion: ([ModelMessage]) -> ()) {
+//
+//        let url = "owapi/messenger/conversation/"+convId
+//        self.requestAPI(url, params: "") { (res: ApiResponse) -> () in
+//
+//            var items = [ModelMessage]() //TODO error checking
+//
+//            if(res.success)
+//            {
+//                var data = res.data as! NSDictionary
+//
+//                var messages = data["messages"] as! NSArray
+//
+//                for message in messages{
+//
+//                let msg = ModelMessage(data: message as! NSDictionary)
+//                items.append(msg)
+//
+//            }
+//
+//            }
+//
+//            completion(items)
+//        }
+//
+//    }
+
+
+
 
 
     /* LOGIN METHODS */
