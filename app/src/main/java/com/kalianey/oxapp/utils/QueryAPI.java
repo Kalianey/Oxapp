@@ -10,6 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 
 import org.json.JSONArray;
@@ -87,10 +88,11 @@ public class QueryAPI {
                 @Override
                 public void onResponse(JSONObject response)
                 {
+                    ApiResult res = new ApiResult();
                     Log.v("RequestApi Response", response.toString());
                     //Log.v("Data: ", response.toString());
                     try {
-                        ApiResult res = new ApiResult();
+
                         Boolean success = response.getBoolean("success");
                         try {
                             res.data = response.getJSONArray("data");
@@ -102,12 +104,11 @@ public class QueryAPI {
                         }
 
                         res.success = success;
-                        completion.onCompletion(res);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
+                    completion.onCompletion(res);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -162,6 +163,29 @@ public class QueryAPI {
 
     }
 
+    public void user(String userId, final ApiResponse<ModelUser> completion) {
+
+        String url = "owapi/user/profile/"+userId;
+        final ModelUser user = new ModelUser();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                if (res.success && res.dataIsObject()) {
+                    JSONObject userObj = res.getDataAsObject();
+                    ModelUser user = new ModelUser();
+                    user = new Gson().fromJson(userObj.toString(), ModelUser.class);
+                    completion.onCompletion(user);
+                }
+                else {
+                    completion.onCompletion(user);
+                }
+            }
+        });
+
+    }
+
 
     public void allUsers(final ApiResponse<List<ModelUser>> completion)
     {
@@ -195,6 +219,9 @@ public class QueryAPI {
 
     }
 
+
+    /* Conversation Functions */
+
     public void conversationList(final ApiResponse<List<ModelConversation>> completion)
     {
         String url = "owapi/messenger/conversationList";
@@ -218,12 +245,55 @@ public class QueryAPI {
                         }
                     }
                 }
-                //Log.v("ConvList Completion", res.data.toString());
+                //Log.d("ConvList Completion", res.data.toString());
                 completion.onCompletion(conversations);
             }
         });
 
     }
+
+
+    public void messageList(String convId, final ApiResponse<List<ModelMessage>> completion) {
+        String url = "owapi/messenger/conversation/"+convId;
+
+        final List<ModelMessage> messages = new ArrayList<ModelMessage>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+                Log.d("Success",res.toString() );
+
+                if (res.success && res.dataIsObject()) {
+                    JSONObject conversation = res.getDataAsObject();
+                    JSONArray messageList = null;
+                    try {
+                        messageList = conversation.getJSONArray("messages");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("MessageList",messageList.toString() );
+                    for (int i = 0; i < messageList.length(); i++) {
+
+                        try {
+                            JSONObject jsonObject = messageList.getJSONObject(i);
+                            ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
+                            messages.add(message);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                //Log.d("ConvList Completion", res.data.toString());
+                completion.onCompletion(messages);
+            }
+        });
+    };
+
+
+
+
+
 
 
     /* LOGIN METHODS */

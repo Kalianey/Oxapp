@@ -1,6 +1,8 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.views.Message;
 
 import java.util.List;
 
@@ -89,6 +92,20 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
         viewHolder.username.setText(viewHolder.conversation.getName());
         viewHolder.previewText.setText(viewHolder.conversation.getPreviewText());
         //viewHolder.userStatusImageView : here change colour of image of  here according to bool
+
+        //Set onClick item
+        final ViewHolder finalViewHolder = viewHolder;
+        row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(listContext, Message.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("convObj", finalViewHolder.conversation);
+                i.putExtras(mBundle);
+                listContext.startActivity(i);
+            }
+        });
 
         return row;
     }

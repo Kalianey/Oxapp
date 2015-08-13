@@ -49,22 +49,20 @@ public class ConversationListFragment extends Fragment {
 
         //session = new SessionManager(getActivity().getApplicationContext());
 
+        query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
+                @Override
+                public void onCompletion(List<ModelConversation> result) {
+                    Log.v("ConvListCompletion", result.toString());
+                    if (!result.isEmpty() && result != null) {
+                        conversations = result;
+                        adapter = new ConversationListAdapter(getActivity(), R.layout.conversation_list_row, conversations);
+                        listView.setAdapter(adapter);
+                        //adapter.notifyDataSetChanged();
+                        Log.v("Data Set Changed: ", conversations.toString());
+                    }
+                }
 
-
-                query.conversationList(new QueryAPI.ApiResponse<List<ModelConversation>>() {
-                        @Override
-                        public void onCompletion(List<ModelConversation> result) {
-                            Log.v("ConvListCompletion", result.toString());
-                            if (!result.isEmpty() && result != null) {
-                                conversations = result;
-                                adapter = new ConversationListAdapter(getActivity(), R.layout.conversation_list_row, conversations);
-                                listView.setAdapter(adapter);
-                                //adapter.notifyDataSetChanged();
-                                Log.v("Data Set Changed: ", conversations.toString());
-                            }
-                        }
-
-                    });
+            });
 
 
 

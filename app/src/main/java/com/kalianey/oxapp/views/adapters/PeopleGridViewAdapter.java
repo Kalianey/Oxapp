@@ -102,8 +102,6 @@ public class PeopleGridViewAdapter extends ArrayAdapter {
             }
         });
 
-
-
         return item;
     }
 
