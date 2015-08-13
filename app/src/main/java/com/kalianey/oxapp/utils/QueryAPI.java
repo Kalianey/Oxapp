@@ -163,6 +163,29 @@ public class QueryAPI {
 
     }
 
+    public void user(String userId, final ApiResponse<ModelUser> completion) {
+
+        String url = "owapi/user/profile/"+userId;
+        final ModelUser user = new ModelUser();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                if (res.success && res.dataIsObject()) {
+                    JSONObject userObj = res.getDataAsObject();
+                    ModelUser user = new ModelUser();
+                    user = new Gson().fromJson(userObj.toString(), ModelUser.class);
+                    completion.onCompletion(user);
+                }
+                else {
+                    completion.onCompletion(user);
+                }
+            }
+        });
+
+    }
+
 
     public void allUsers(final ApiResponse<List<ModelUser>> completion)
     {

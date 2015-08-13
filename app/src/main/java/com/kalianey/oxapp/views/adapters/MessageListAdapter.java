@@ -13,7 +13,9 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
+import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
+import com.kalianey.oxapp.utils.QueryAPI;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +31,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     private Activity listContext;
     private int listRowLayoutId;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    private ModelUser senderUser;
 
 
     public MessageListAdapter(Activity context, int resource, List<ModelMessage> objs) {
@@ -87,10 +90,8 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                 row = inflater.inflate(R.layout.chat_item_rcv, parent, false);
             }
 
-            //row = inflater.inflate(listRowLayoutId, parent, false) ; //resource, viewGroup, attachToGroup
-
             //Get references to our views
-            //viewHolder.avatarImageView = (NetworkImageView) row.findViewById(R.id.avatarImageView);
+            viewHolder.avatarImageView = (NetworkImageView) row.findViewById(R.id.avatarImageView);
             viewHolder.text = (TextView) row.findViewById(R.id.text);
             viewHolder.date = (TextView) row.findViewById(R.id.date);
 
@@ -104,7 +105,8 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         viewHolder.message = messages.get(position);
 
         //We can now display the data
-        //viewHolder.avatarImageView.setImageUrl(viewHolder.message.get(), imageLoader);
+        String avatarUrl = AppController.getInstance().getLoggedInUser().getAvatar_url();
+        viewHolder.avatarImageView.setImageUrl(avatarUrl, imageLoader);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String stringDate = sdf.format(new Date(viewHolder.message.getTimeStamp() * 1000));
         viewHolder.date.setText(stringDate);

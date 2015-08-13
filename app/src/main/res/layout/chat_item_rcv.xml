@@ -4,14 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_weight="1.0"
     >
 
     <LinearLayout
+        android:id="@+id/inner_wrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/avatarImageView"
+            android:layout_height="40dp"
+            android:layout_width="40dp" />
+
+
+        <LinearLayout
             android:id="@+id/v1"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".5"
             android:layout_marginRight="@dimen/pad_10dp"
             android:background="@drawable/chat_bubble_gray"
             android:gravity="center_vertical"
@@ -38,16 +48,19 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/delivered"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="text"
-            android:textColor="@color/main_color_gray"
-            android:textSize="@dimen/txt_14sp"
-            android:layout_alignRight="@+id/v1"
-            android:layout_below="@+id/v1"
-            android:layout_marginTop="@dimen/pad_5dp"
-            android:layout_marginLeft="@dimen/pad_20dp"
-            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/delivered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="delivered"
+        android:textColor="@color/main_color_gray"
+        android:textSize="@dimen/txt_14sp"
+        android:layout_alignRight="@+id/v1"
+        android:layout_below="@+id/v1"
+        android:layout_marginTop="@dimen/pad_5dp"
+        android:layout_marginLeft="@dimen/pad_20dp"
+        />
+
 </LinearLayout>
