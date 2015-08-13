@@ -49,9 +49,9 @@ public class MessageFragment extends Fragment {
             @Override
             public void onCompletion(List<ModelMessage> result) {
                 messages = result;
-                adapter = new MessageListAdapter(getActivity(), R.layout.chat_item_rcv, messages);
+                adapter = new MessageListAdapter(getActivity(), R.layout.chat_item_sent, messages);
                 listView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
                 Log.d("AdapterChanged mess: ", messages.toString());
             }
         });

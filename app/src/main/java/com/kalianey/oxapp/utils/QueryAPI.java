@@ -88,10 +88,11 @@ public class QueryAPI {
                 @Override
                 public void onResponse(JSONObject response)
                 {
+                    ApiResult res = new ApiResult();
                     Log.v("RequestApi Response", response.toString());
                     //Log.v("Data: ", response.toString());
                     try {
-                        ApiResult res = new ApiResult();
+
                         Boolean success = response.getBoolean("success");
                         try {
                             res.data = response.getJSONArray("data");
@@ -103,12 +104,11 @@ public class QueryAPI {
                         }
 
                         res.success = success;
-                        completion.onCompletion(res);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
+                    completion.onCompletion(res);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -238,9 +238,16 @@ public class QueryAPI {
         this.RequestApi(url, new ApiResponse<ApiResult>() {
             @Override
             public void onCompletion(ApiResult res) {
+                Log.d("Success",res.toString() );
 
-                if (res.success && res.dataIsArray()) {
-                    JSONArray messageList = res.getDataAsArray();
+                if (res.success && res.dataIsObject()) {
+                    JSONObject conversation = res.getDataAsObject();
+                    JSONArray messageList = null;
+                    try {
+                        messageList = conversation.getJSONArray("messages");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Log.d("MessageList",messageList.toString() );
                     for (int i = 0; i < messageList.length(); i++) {
 
@@ -261,33 +268,6 @@ public class QueryAPI {
     };
 
 
-
-//    func messageList(convId:String, completion: ([ModelMessage]) -> ()) {
-//
-//        let url = "owapi/messenger/conversation/"+convId
-//        self.requestAPI(url, params: "") { (res: ApiResponse) -> () in
-//
-//            var items = [ModelMessage]() //TODO error checking
-//
-//            if(res.success)
-//            {
-//                var data = res.data as! NSDictionary
-//
-//                var messages = data["messages"] as! NSArray
-//
-//                for message in messages{
-//
-//                let msg = ModelMessage(data: message as! NSDictionary)
-//                items.append(msg)
-//
-//            }
-//
-//            }
-//
-//            completion(items)
-//        }
-//
-//    }
 
 
 

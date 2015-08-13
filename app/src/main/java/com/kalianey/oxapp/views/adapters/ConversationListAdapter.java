@@ -16,7 +16,6 @@ import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.views.Message;
-import com.kalianey.oxapp.views.Profile;
 
 import java.util.List;
 

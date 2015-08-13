@@ -1,24 +1,17 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.utils.AppController;
-import com.kalianey.oxapp.views.Message;
 
 import java.util.List;
 
@@ -50,7 +43,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     @Override
     public ModelMessage getItem(int position)
     {
-        return messages.get(position);
+        return super.getItem(position);
     }
 
     @Override
@@ -61,7 +54,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     @Override
     public long getItemId(int position)
     {
-        return position;
+        return super.getItemId(position);
     }
 
 
@@ -72,16 +65,26 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         View row = convertView;
         ViewHolder viewHolder = null;
 
+        //Row holds our layout
         if (row == null) {
             inflater = LayoutInflater.from(listContext);
 
-            //Row holds our layout
+//            String senderId = viewHolder.message.getSenderId();
+//            String userId = AppController.getInstance().getLoggedInUser().getUserId();
+//
+//            if (senderId == userId) {
+//                row = inflater.inflate(listRowLayoutId, parent, false);
+//            }
+//            else {
+//                row = inflater.inflate(R.layout.chat_item_rcv, parent, false);
+//            }
+
             row = inflater.inflate(listRowLayoutId, parent, false) ; //resource, viewGroup, attachToGroup
 
             viewHolder = new ViewHolder();
 
             //Get references to our views
-            viewHolder.avatarImageView = (NetworkImageView) row.findViewById(R.id.avatarImageView);
+            //viewHolder.avatarImageView = (NetworkImageView) row.findViewById(R.id.avatarImageView);
             viewHolder.text = (TextView) row.findViewById(R.id.lbl1);
 
             row.setTag(viewHolder);
