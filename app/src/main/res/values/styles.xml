@@ -1,8 +1,9 @@
 <resources>
 
     <!-- Base application theme.-->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.Light.NoTitleBar">
         <!-- Customize your theme here. -->
+        <item name="android:colorPrimaryDark">@android:color/black</item>
     </style>
 
 
@@ -96,6 +97,14 @@
         <item name="android:button">@null</item>
         <item name="android:paddingLeft">5dp</item>
         <item name="android:paddingRight">5dp</item>
+    </style>
+
+    <!--style name="AppTheme" parent="android:Theme.Light.NoTitleBar">
+    </style=-->
+
+    <style name="AppThemeTrans" parent="@style/AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <!-- End clear -->
