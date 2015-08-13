@@ -32,7 +32,7 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
-import com.special.menu.ResideMenu;
+import com.kalianey.oxapp.menu.ResideMenu;
 
 public class UISwipableList extends ListView {
 

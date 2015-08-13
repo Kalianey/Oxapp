@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources> 
-	<style name="AppTheme" parent="@style/android:Theme.Light.NoTitleBar">
+	<style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
     	<item name="android:windowTranslucentStatus">true</item>
 	</style>
     
