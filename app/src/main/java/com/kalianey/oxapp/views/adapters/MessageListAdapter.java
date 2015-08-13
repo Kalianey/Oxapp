@@ -1,6 +1,7 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,12 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.utils.AppController;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,25 +71,28 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
 
         //Row holds our layout
         if (row == null) {
-            inflater = LayoutInflater.from(listContext);
-
-//            String senderId = viewHolder.message.getSenderId();
-//            String userId = AppController.getInstance().getLoggedInUser().getUserId();
-//
-//            if (senderId == userId) {
-//                row = inflater.inflate(listRowLayoutId, parent, false);
-//            }
-//            else {
-//                row = inflater.inflate(R.layout.chat_item_rcv, parent, false);
-//            }
-
-            row = inflater.inflate(listRowLayoutId, parent, false) ; //resource, viewGroup, attachToGroup
 
             viewHolder = new ViewHolder();
+            inflater = LayoutInflater.from(listContext);
+
+            viewHolder.message = messages.get(position);
+
+            String senderId = viewHolder.message.getSenderId();
+            String userId = AppController.getInstance().getLoggedInUser().getUserId();
+
+            if (senderId.equals(userId)) {
+                row = inflater.inflate(R.layout.chat_item_sent, parent, false);
+            }
+            else {
+                row = inflater.inflate(R.layout.chat_item_rcv, parent, false);
+            }
+
+            //row = inflater.inflate(listRowLayoutId, parent, false) ; //resource, viewGroup, attachToGroup
 
             //Get references to our views
             //viewHolder.avatarImageView = (NetworkImageView) row.findViewById(R.id.avatarImageView);
-            viewHolder.text = (TextView) row.findViewById(R.id.lbl1);
+            viewHolder.text = (TextView) row.findViewById(R.id.text);
+            viewHolder.date = (TextView) row.findViewById(R.id.date);
 
             row.setTag(viewHolder);
 
@@ -98,6 +105,9 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
 
         //We can now display the data
         //viewHolder.avatarImageView.setImageUrl(viewHolder.message.get(), imageLoader);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String stringDate = sdf.format(new Date(viewHolder.message.getTimeStamp() * 1000));
+        viewHolder.date.setText(stringDate);
         viewHolder.text.setText(viewHolder.message.getText());
 
         return  row;
@@ -109,6 +119,8 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         ModelMessage message;
         NetworkImageView avatarImageView;
         TextView text;
+        TextView date;
+        TextView delivered;
 
     }
 }

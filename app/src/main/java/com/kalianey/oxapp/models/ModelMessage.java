@@ -13,7 +13,7 @@ public class ModelMessage implements Serializable {
     /* Required */
     String senderId;
     String senderDisplayName;
-    String timeStamp;
+    Long timeStamp;
     Boolean isMediaMessage;
     Integer messageHash;
     String text;
@@ -56,11 +56,11 @@ public class ModelMessage implements Serializable {
         this.senderDisplayName = senderDisplayName;
     }
 
-    public String getTimeStamp() {
+    public Long getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(Long timeStamp) {
         this.timeStamp = timeStamp;
     }
 
