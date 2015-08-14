@@ -11,6 +11,7 @@ import android.widget.ListView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
+import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.adapters.MessageListAdapter;
@@ -49,7 +50,9 @@ public class MessageFragment extends Fragment {
             @Override
             public void onCompletion(List<ModelMessage> result) {
                 messages = result;
+                ModelUser opponent = new ModelUser();
                 adapter = new MessageListAdapter(getActivity(), R.layout.chat_item_sent, messages);
+                adapter.setSenderUser(opponent);
                 listView.setAdapter(adapter);
                 //adapter.notifyDataSetChanged();
                 Log.d("AdapterChanged mess: ", messages.toString());

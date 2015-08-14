@@ -30,13 +30,13 @@ public class ModelMessage implements Serializable {
     String fileExt;
     String fileName;
     String fileSize;
-    String attachment; // JSQMediaItem?
+    Object attachment; // JSQMediaItem?
 
-    public String getAttachment() {
+    public Object getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(String attachment) {
+    public void setAttachment(Object attachment) {
         this.attachment = attachment;
     }
 

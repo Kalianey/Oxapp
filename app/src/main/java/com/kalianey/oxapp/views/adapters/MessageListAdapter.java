@@ -25,14 +25,16 @@ import java.util.List;
  * Created by kalianey on 13/08/2015.
  */
 public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
+    private final int CELL_LEFT = 0;
+    private final int CELL_RIGHT = 1;
 
     private LayoutInflater inflater;
     private List<ModelMessage> messages; //data
     private Activity listContext;
     private int listRowLayoutId;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    private ModelUser loggedInUser = AppController.getInstance().getLoggedInUser();
     private ModelUser senderUser;
-
 
     public MessageListAdapter(Activity context, int resource, List<ModelMessage> objs) {
         super(context, resource, objs);
@@ -40,6 +42,15 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         listContext = context;
         listRowLayoutId = resource;
     }
+
+    public ModelUser getSenderUser() {
+        return senderUser;
+    }
+
+    public void setSenderUser(ModelUser senderUser) {
+        this.senderUser = senderUser;
+    }
+
 
     @Override
     public int getCount()
@@ -64,6 +75,23 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         return super.getItemId(position);
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        // Define a way to determine which layout to use, here it's just evens and odds.
+
+        String senderId = messages.get(position).getSenderId();
+        String userId = loggedInUser.getUserId();
+
+        int type = senderId.equals(userId)?CELL_LEFT:CELL_RIGHT;
+
+        return type;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2; // Count of different layouts
+    }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
@@ -79,13 +107,11 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             inflater = LayoutInflater.from(listContext);
 
             viewHolder.message = messages.get(position);
-
-            String senderId = viewHolder.message.getSenderId();
-            String userId = AppController.getInstance().getLoggedInUser().getUserId();
-
-            if (senderId.equals(userId)) {
+            int cellType = this.getItemViewType(position);
+            if (cellType == CELL_LEFT) {
                 row = inflater.inflate(R.layout.chat_item_sent, parent, false);
             }
+            //else if (cellType == CELL_RIGHT) {
             else {
                 row = inflater.inflate(R.layout.chat_item_rcv, parent, false);
             }
@@ -105,7 +131,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         viewHolder.message = messages.get(position);
 
         //We can now display the data
-        String avatarUrl = AppController.getInstance().getLoggedInUser().getAvatar_url();
+        String avatarUrl = loggedInUser.getAvatar_url();
         viewHolder.avatarImageView.setImageUrl(avatarUrl, imageLoader);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String stringDate = sdf.format(new Date(viewHolder.message.getTimeStamp() * 1000));

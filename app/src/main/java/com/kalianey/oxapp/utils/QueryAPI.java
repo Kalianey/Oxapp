@@ -276,8 +276,13 @@ public class QueryAPI {
 
                         try {
                             JSONObject jsonObject = messageList.getJSONObject(i);
-                            ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
-                            messages.add(message);
+                            try {
+                                ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
+                                messages.add(message);
+                            }
+                           catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
