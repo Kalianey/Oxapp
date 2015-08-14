@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.activities;
 
 public class ListItem {
 	private int imageId;

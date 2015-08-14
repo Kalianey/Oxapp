@@ -16,7 +16,9 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
-import com.kalianey.oxapp.views.Message;
+import com.kalianey.oxapp.utils.UICircularImage;
+import com.kalianey.oxapp.views.activities.Message;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -74,7 +76,7 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
             viewHolder = new ViewHolder();
 
             //Get references to our views
-            viewHolder.avatarImageView = (NetworkImageView) row.findViewById(R.id.avatarImageView);
+            viewHolder.avatarImageView = (UICircularImage) row.findViewById(R.id.avatarImageView);
             viewHolder.userStatusImageView = (ImageView) row.findViewById(R.id.userStatus);
             viewHolder.username = (TextView) row.findViewById(R.id.username);
             viewHolder.previewText = (TextView) row.findViewById(R.id.previewText);
@@ -89,7 +91,11 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
         viewHolder.conversation = conversations.get(position);
 
         //We can now display the data
-        viewHolder.avatarImageView.setImageUrl(viewHolder.conversation.getAvatarUrl(), imageLoader);
+        // viewHolder.avatarImageView.setImageUrl(viewHolder.conversation.getAvatarUrl(), imageLoader); //TODO: placeholder
+        Picasso.with(listContext)
+                .load(viewHolder.conversation.getAvatarUrl())
+                .noFade()
+                .into(viewHolder.avatarImageView);
         viewHolder.username.setText(viewHolder.conversation.getName());
         viewHolder.previewText.setText(viewHolder.conversation.getPreviewText());
         //viewHolder.userStatusImageView : here change colour of image of  here according to bool
@@ -124,7 +130,7 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
     public class ViewHolder {
 
         ModelConversation conversation;
-        NetworkImageView avatarImageView;
+        UICircularImage avatarImageView;
         ImageView userStatusImageView;
         TextView username;
         TextView previewText;

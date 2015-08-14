@@ -2,14 +2,13 @@ package com.kalianey.oxapp.views.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.utils.UICircularImage;
-import com.kalianey.oxapp.views.ListItem;
+import com.kalianey.oxapp.views.activities.ListItem;
 
 public class DetailListAdapter {
  

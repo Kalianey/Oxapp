@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.views.activities.People;
 
 import org.w3c.dom.Text;
 

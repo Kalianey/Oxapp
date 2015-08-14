@@ -35,6 +35,13 @@ public class QueryAPI {
 
     private SessionManager session;
 
+    private static QueryAPI mInstance = new QueryAPI();
+
+    public static synchronized QueryAPI getInstance() {
+        return mInstance;
+
+    }
+
     public class ApiResult
     {
         public Boolean success;

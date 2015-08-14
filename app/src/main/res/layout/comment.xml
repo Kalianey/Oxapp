@@ -39,7 +39,7 @@
        				        android:layout_height="wrap_content"
        				        android:orientation="horizontal">
        				        
-       				        <com.special.utils.UICircularImage
+       				        <com.kalianey.oxapp.utils.UICircularImage
        			            android:id="@+id/profile"
        			            android:layout_width="50dp"
        			            android:layout_height="50dp"

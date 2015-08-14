@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.fragments;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -35,7 +35,7 @@ public class MessageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
 
@@ -51,11 +51,19 @@ public class MessageFragment extends Fragment {
             public void onCompletion(List<ModelMessage> result) {
                 messages = result;
                 ModelUser opponent = new ModelUser();
-                adapter = new MessageListAdapter(getActivity(), R.layout.message_item_sent, messages);
-                adapter.setSenderUser(opponent);
-                listView.setAdapter(adapter);
-                //adapter.notifyDataSetChanged();
-                Log.d("AdapterChanged mess: ", messages.toString());
+
+                QueryAPI.getInstance().user(conversation.getOpponentId(), new QueryAPI.ApiResponse<ModelUser>() {
+                    @Override
+                    public void onCompletion(ModelUser user) {
+                        adapter = new MessageListAdapter(getActivity(), R.layout.message_item_sent, messages);
+                        adapter.setSenderUser(user);
+                        listView.setAdapter(adapter);
+                        //adapter.notifyDataSetChanged();
+                        Log.d("AdapterChanged mess: ", messages.toString());
+                    }
+                });
+
+
             }
         });
 

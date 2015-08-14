@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.kalianey.oxapp.views.ListItem;
+import com.kalianey.oxapp.views.activities.ListItem;
 import com.kalianey.oxapp.R;
 
 import java.util.ArrayList;

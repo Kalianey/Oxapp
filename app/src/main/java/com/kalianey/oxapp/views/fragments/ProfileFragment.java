@@ -1,7 +1,6 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.LauncherActivity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,20 +14,19 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
+import com.kalianey.oxapp.views.activities.ListItem;
 import com.kalianey.oxapp.views.adapters.DetailListAdapter;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;

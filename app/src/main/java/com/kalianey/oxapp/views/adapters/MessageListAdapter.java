@@ -1,6 +1,7 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,11 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
+import com.kalianey.oxapp.utils.UICircularImage;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,8 +24,8 @@ import java.util.List;
  * Created by kalianey on 13/08/2015.
  */
 public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
-    private final int CELL_LEFT = 0;
-    private final int CELL_RIGHT = 1;
+    private final int CELL_RCV = 0;
+    private final int CELL_SENT = 1;
 
     private LayoutInflater inflater;
     private List<ModelMessage> messages; //data
@@ -79,7 +81,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         String senderId = messages.get(position).getSenderId();
         String userId = loggedInUser.getUserId();
 
-        int type = senderId.equals(userId)?CELL_LEFT:CELL_RIGHT;
+        int type = senderId.equals(userId)? CELL_RCV :CELL_SENT;
 
         return type;
     }
@@ -97,6 +99,9 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         View row = convertView;
         ViewHolder viewHolder = null;
 
+        int cellType = this.getItemViewType(position);
+        String avatarUrl = (cellType == CELL_SENT) ? loggedInUser.getAvatar_url() : senderUser.getAvatar_url();
+
         //Row holds our layout
         if (row == null) {
 
@@ -104,17 +109,16 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             inflater = LayoutInflater.from(listContext);
 
             viewHolder.message = messages.get(position);
-            int cellType = this.getItemViewType(position);
-            if (cellType == CELL_LEFT) {
+
+            if (cellType == CELL_SENT) {
                 row = inflater.inflate(R.layout.message_item_sent, parent, false);
             }
-            //else if (cellType == CELL_RIGHT) {
             else {
                 row = inflater.inflate(R.layout.message_item_rcv, parent, false);
             }
 
             //Get references to our views
-            viewHolder.avatarImageView = (NetworkImageView) row.findViewById(R.id.avatarImageView);
+            viewHolder.avatarImageView = (UICircularImage) row.findViewById(R.id.avatarImageView);
             viewHolder.text = (TextView) row.findViewById(R.id.text);
             viewHolder.date = (TextView) row.findViewById(R.id.date);
 
@@ -128,8 +132,12 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         viewHolder.message = messages.get(position);
 
         //We can now display the data
-        String avatarUrl = loggedInUser.getAvatar_url();
-        viewHolder.avatarImageView.setImageUrl(avatarUrl, imageLoader);
+        //viewHolder.avatarImageView.setImageUrl(avatarUrl, imageLoader); //TODO: Placeholder
+
+        Picasso.with(listContext)
+                .load(avatarUrl)
+                .noFade()
+                .into(viewHolder.avatarImageView);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String stringDate = sdf.format(new Date(viewHolder.message.getTimeStamp() * 1000));
         viewHolder.date.setText(stringDate);
@@ -142,7 +150,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     public class ViewHolder {
 
         ModelMessage message;
-        NetworkImageView avatarImageView;
+        UICircularImage avatarImageView;
         TextView text;
         TextView date;
         TextView delivered;

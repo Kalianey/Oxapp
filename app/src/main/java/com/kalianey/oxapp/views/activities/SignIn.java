@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,23 +7,19 @@ import android.view.MenuItem;
 
 import com.kalianey.oxapp.R;
 
-
-//https://www.youtube.com/watch?v=Zuo3n-DjF7w -> relisten around 50:40
-public class People extends AppCompatActivity {
-
+public class SignIn extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_people);
-
+        setContentView(R.layout.activity_sign_in);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_people, menu);
+        getMenuInflater().inflate(R.menu.menu_sign_in, menu);
         return true;
     }
 
@@ -38,8 +34,7 @@ public class People extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
-
-
 }

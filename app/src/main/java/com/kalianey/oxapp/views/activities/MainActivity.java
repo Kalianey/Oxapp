@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.activities;
 
 import android.annotation.SuppressLint;
 import android.app.FragmentManager;
@@ -29,6 +29,9 @@ import com.kalianey.oxapp.menu.ResideMenuItem;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.views.fragments.ConversationListFragment;
+import com.kalianey.oxapp.views.fragments.FriendsListFragment;
+import com.kalianey.oxapp.views.fragments.PeopleFragment;
 
 public class MainActivity  extends FragmentActivity implements View.OnClickListener {
 

@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.fragments;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;

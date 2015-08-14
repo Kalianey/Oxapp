@@ -7,7 +7,7 @@ android:layout_height="match_parent"
 android:id="@+id/bg_layout"
 android:fitsSystemWindows="false"
 android:background="@drawable/detail_background"
-tools:context="com.kalianey.oxapp.views.ProfileFragment">
+tools:context="com.kalianey.oxapp.views.fragments.ProfileFragment">
 
 
     <com.kalianey.oxapp.utils.UIParallaxScroll

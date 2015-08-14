@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

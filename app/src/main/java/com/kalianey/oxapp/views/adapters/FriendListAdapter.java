@@ -3,13 +3,12 @@ package com.kalianey.oxapp.views.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -19,8 +18,9 @@ import com.kalianey.oxapp.models.ModelFriend;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
-import com.kalianey.oxapp.views.Message;
-import com.kalianey.oxapp.views.Profile;
+import com.kalianey.oxapp.utils.UICircularImage;
+import com.kalianey.oxapp.views.activities.Profile;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -34,7 +34,6 @@ public class FriendListAdapter extends ArrayAdapter<ModelFriend> {
     private Activity listContext;
     private int listRowLayoutId;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-    private ViewHolder viewHolder;
 
     //Vars
     private String PACKAGE = "IDENTIFY";
@@ -71,6 +70,7 @@ public class FriendListAdapter extends ArrayAdapter<ModelFriend> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View row = convertView;
+        ViewHolder viewHolder = null;
 
         if(convertView==null){
 
@@ -84,7 +84,7 @@ public class FriendListAdapter extends ArrayAdapter<ModelFriend> {
             viewHolder.title = (TextView) row.findViewById(R.id.item_title);
             viewHolder.descr = (TextView) row.findViewById(R.id.item_description);
             viewHolder.coverImageView = (NetworkImageView) row.findViewById(R.id.item_cover_image);
-            viewHolder.avatarImageView = (NetworkImageView) row.findViewById(R.id.item_avatar_image);
+            viewHolder.avatarImageView = (UICircularImage) row.findViewById(R.id.item_avatar_image);
             viewHolder.number = (TextView) row.findViewById(R.id.item_number);
             viewHolder.sex = (TextView) row.findViewById(R.id.item_numbertext);
 
@@ -109,7 +109,11 @@ public class FriendListAdapter extends ArrayAdapter<ModelFriend> {
         }
 
         viewHolder.coverImageView.setImageUrl(coverImage, imageLoader);
-        viewHolder.avatarImageView.setImageUrl(avatarImage, imageLoader);
+        //viewHolder.avatarImageView.setImageUrl(avatarImage, imageLoader); //TODO: placeholder
+        Picasso.with(listContext)
+                .load(viewHolder.friend.getAvatarUrl())
+                .noFade()
+                .into(viewHolder.avatarImageView);
         viewHolder.title.setText(item);
         viewHolder.descr.setText(desc);
         viewHolder.number.setText(number);
@@ -117,26 +121,29 @@ public class FriendListAdapter extends ArrayAdapter<ModelFriend> {
 
         //Set onClick item
         final ViewHolder finalViewHolder = viewHolder;
+
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                Log.d("Friend clicked: ", finalViewHolder.friend.getDisplayName());
                 QueryAPI query = new QueryAPI();
-                query.user(viewHolder.friend.getOpponentId(), new QueryAPI.ApiResponse<ModelUser>() {
+                query.user(finalViewHolder.friend.getOpponentId(), new QueryAPI.ApiResponse<ModelUser>() {
                     @Override
-                    public void onCompletion(ModelUser result) {
+                    public void onCompletion(ModelUser user) {
 
                         Intent i = new Intent(listContext, Profile.class);
                         Bundle mBundle = new Bundle();
-                        mBundle.putSerializable("userObj", result);
+                        mBundle.putSerializable("userObj", user);
+                        Log.d("Friend clicked: ", user.getName());
 
                         int[] screen_location = new int[2];
-                        viewHolder.avatarImageView.getLocationOnScreen(screen_location);
+                        finalViewHolder.avatarImageView.getLocationOnScreen(screen_location);
 
                         mBundle.putInt(PACKAGE + ".left", screen_location[0]);
                         mBundle.putInt(PACKAGE + ".top", screen_location[1]);
-                        mBundle.putInt(PACKAGE + ".width", viewHolder.avatarImageView.getWidth());
-                        mBundle.putInt(PACKAGE + ".height", viewHolder.avatarImageView.getHeight());
+                        mBundle.putInt(PACKAGE + ".width", finalViewHolder.avatarImageView.getWidth());
+                        mBundle.putInt(PACKAGE + ".height", finalViewHolder.avatarImageView.getHeight());
 
                         i.putExtras(mBundle);
                         listContext.startActivity(i);
@@ -155,7 +162,7 @@ public class FriendListAdapter extends ArrayAdapter<ModelFriend> {
 
         ModelFriend friend;
         NetworkImageView coverImageView;
-        NetworkImageView avatarImageView;
+        UICircularImage avatarImageView;
         TextView title;
         TextView descr;
         TextView number;

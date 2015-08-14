@@ -12,11 +12,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.android.volley.toolbox.NetworkImageView
+        <com.kalianey.oxapp.utils.UICircularImage
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/avatarImageView"
+            android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_width="40dp" />
-
+            android:contentDescription="avatar"
+            android:paddingRight="10dp"
+            app:line_color="@android:color/white"
+            app:line_color_press="@color/theme_color"
+            app:line_width="1dp"
+            app:padding ="0dp"
+            android:layout_gravity="bottom" />
 
         <LinearLayout
             android:id="@+id/v1"

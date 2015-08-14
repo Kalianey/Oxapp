@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

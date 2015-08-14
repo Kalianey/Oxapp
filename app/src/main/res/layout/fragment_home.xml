@@ -5,7 +5,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:background="@android:color/white"
-                tools:context="com.special.MenuActivity$HomeFragment">
+                tools:context="com.kalianey.oxapp.MenuActivity$HomeFragment">
 
 
     <LinearLayout

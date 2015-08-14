@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:descendantFocusability="blocksDescendants"
-    android:layout_height="wrap_content" xmlns:app="http://schemas.android.com/apk/res/com.special">
+    android:layout_height="wrap_content" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/hidden_view"
@@ -23,7 +23,7 @@
         android:background="@android:color/white"
         android:layout_height="wrap_content" >
         
-         <com.special.utils.UICircularImage
+         <com.kalianey.oxapp.utils.UICircularImage
     		xmlns:app="http://schemas.android.com/apk/res-auto"
     		android:id="@+id/item_cover_image"
     		android:layout_margin="10dp"

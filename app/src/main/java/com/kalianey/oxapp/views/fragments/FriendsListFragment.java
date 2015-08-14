@@ -1,4 +1,4 @@
-package com.kalianey.oxapp.views;
+package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
 import android.graphics.Point;
