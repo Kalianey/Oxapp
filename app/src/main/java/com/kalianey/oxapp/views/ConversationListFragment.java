@@ -18,15 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * A placeholder fragment containing a simple view.
- */
-
-/** Todo : implement GSon
- * http://www.mkyong.com/java/how-do-convert-java-object-to-from-json-format-gson-api/
- * http://stackoverflow.com/questions/24401094/parse-android-volley-jsonarray-response
- * */
-
 public class ConversationListFragment extends Fragment {
 
     private QueryAPI query = new QueryAPI();
@@ -54,7 +45,7 @@ public class ConversationListFragment extends Fragment {
                     Log.v("ConvListCompletion", result.toString());
                     if (!result.isEmpty() && result != null) {
                         conversations = result;
-                        adapter = new ConversationListAdapter(getActivity(), R.layout.conversation_list_row, conversations);
+                        adapter = new ConversationListAdapter(getActivity(), R.layout.fragment_conversation_list_item, conversations);
                         listView.setAdapter(adapter);
                         //adapter.notifyDataSetChanged();
                         Log.v("Data Set Changed: ", conversations.toString());
@@ -62,10 +53,6 @@ public class ConversationListFragment extends Fragment {
                 }
 
             });
-
-
-
-
 
         return view;
     }

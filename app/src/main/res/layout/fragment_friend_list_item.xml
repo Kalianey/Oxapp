@@ -10,16 +10,16 @@
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content" >
 
-    	<ImageView
-        	android:id="@+id/item_image"
+		<com.android.volley.toolbox.NetworkImageView
+        	android:id="@+id/item_cover_image"
         	android:contentDescription="@string/image_description"
         	android:layout_width="fill_parent"
-        	android:layout_height="200dp"
+        	android:layout_height="150dp"
         	android:scaleType="centerCrop"
             android:adjustViewBounds="true" />
     	
     	<RelativeLayout
-    	    android:layout_alignBottom="@+id/item_image"
+    	    android:layout_alignBottom="@+id/item_cover_image"
     		android:orientation="horizontal"
     		android:layout_width="match_parent"
     		android:layout_height="wrap_content"
@@ -65,12 +65,26 @@
     		    android:layout_width="wrap_content"
     		    android:layout_height="wrap_content"
     		    android:fontFamily="sans-serif-light"
-    		    android:layout_margin="20dp"
-    		    android:padding="5dp"
+			   android:padding="5dp"
     		    android:text="@string/list_description_placeholder"
     		    android:textColor="@android:color/white"
     		    android:background="@color/gray_transparent"
-    		    android:textSize="@dimen/textsize_medium_small_static" />
+    		    android:textSize="@dimen/textsize_medium_small_static"
+			   android:layout_alignParentTop="true"
+			   android:layout_alignParentRight="true"
+			   android:layout_alignParentEnd="true"
+			   android:layout_marginTop="31dp" />
+
+		<com.android.volley.toolbox.NetworkImageView
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:background="@color/gray_transparent"
+			android:layout_marginLeft="10dp"
+			android:id="@+id/item_avatar_image"
+			android:layout_alignTop="@+id/item_description"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:contentDescription="avatar" />
 
 	</RelativeLayout>
 	<ImageView

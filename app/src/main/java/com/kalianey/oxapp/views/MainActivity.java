@@ -10,24 +10,17 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.kalianey.oxapp.menu.ResideMenu;
@@ -36,8 +29,6 @@ import com.kalianey.oxapp.menu.ResideMenuItem;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
-
-import java.util.ArrayList;
 
 public class MainActivity  extends FragmentActivity implements View.OnClickListener {
 
@@ -109,7 +100,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         resideMenu.setScaleValue(0.6f);
 
         itemHome     = new ResideMenuItem(this, R.drawable.ic_home,     "People");
-        itemConversations  = new ResideMenuItem(this, R.drawable.ic_elements_alternative,  "Conversations");
+        itemConversations  = new ResideMenuItem(this, R.drawable.ic_elements_alternative,  "Messages");
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
 
@@ -145,6 +136,10 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
             changeFragment(new PeopleFragment());
         }else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
+        }else if (view == itemProfile){
+            changeFragment(new ProfileFragment());
+        }else if (view == itemFriends){
+            changeFragment(new FriendsListFragment());
         }
 
         resideMenu.closeMenu();

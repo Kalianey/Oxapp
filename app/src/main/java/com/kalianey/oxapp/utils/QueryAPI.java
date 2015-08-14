@@ -10,6 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.models.ModelFriend;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 
@@ -219,6 +220,70 @@ public class QueryAPI {
 
     }
 
+    public void friendList(final ApiResponse<List<ModelFriend>> completion)
+    {
+
+        String url = "owapi/messenger/contactList";
+        final List<ModelFriend> friends = new ArrayList<ModelFriend>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.d("Friends", res.data.toString());
+                if (res.success && res.dataIsObject() ) {
+                    JSONObject data = res.getDataAsObject();
+                    JSONArray friendList = null;
+                    try {
+                        friendList = data.getJSONArray("list");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("FriendList",friendList.toString() );
+                    for (int i = 0; i < friendList.length(); i++) {
+                        try {
+                            JSONObject jsonObject = friendList.getJSONObject(i);
+                            ModelFriend friend = new Gson().fromJson(jsonObject.toString(), ModelFriend.class);
+                            friends.add(friend);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                completion.onCompletion(friends);
+            }
+        });
+
+
+    }
+
+    //    func contactList(completion: ([ModelFriend]) -> ()) {
+//
+//        self.requestAPI("owapi/messenger/contactList", params: "") { (res: ApiResponse) -> () in
+//            var items = [ModelFriend]() //TODO error checking
+//
+//            if(res.success)
+//            {
+//                //println(res.data)
+//                var data = res.data as! NSDictionary
+//                var list = data["list"] as! NSArray
+//
+//                for item in list{
+//
+//                let item = ModelFriend(data: item as! NSDictionary)
+//                items.append(item)
+//
+//            }
+//
+//            }
+//
+//            completion(items)
+//
+//        }
+//
+//    }
+
 
     /* Conversation Functions */
 
@@ -251,6 +316,7 @@ public class QueryAPI {
         });
 
     }
+
 
 
     public void messageList(String convId, final ApiResponse<List<ModelMessage>> completion) {

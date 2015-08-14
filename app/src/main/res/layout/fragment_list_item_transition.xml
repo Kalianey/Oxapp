@@ -25,7 +25,7 @@
         
          <com.special.utils.UICircularImage
     		xmlns:app="http://schemas.android.com/apk/res-auto"
-    		android:id="@+id/item_image"
+    		android:id="@+id/item_cover_image"
     		android:layout_margin="10dp"
     		android:layout_width="60dp"
     		android:layout_height="60dp"

@@ -51,7 +51,7 @@ public class MessageFragment extends Fragment {
             public void onCompletion(List<ModelMessage> result) {
                 messages = result;
                 ModelUser opponent = new ModelUser();
-                adapter = new MessageListAdapter(getActivity(), R.layout.chat_item_sent, messages);
+                adapter = new MessageListAdapter(getActivity(), R.layout.message_item_sent, messages);
                 adapter.setSenderUser(opponent);
                 listView.setAdapter(adapter);
                 //adapter.notifyDataSetChanged();

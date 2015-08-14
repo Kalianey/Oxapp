@@ -1,7 +1,6 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,9 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
-import com.kalianey.oxapp.utils.QueryAPI;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -109,11 +106,11 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             viewHolder.message = messages.get(position);
             int cellType = this.getItemViewType(position);
             if (cellType == CELL_LEFT) {
-                row = inflater.inflate(R.layout.chat_item_sent, parent, false);
+                row = inflater.inflate(R.layout.message_item_sent, parent, false);
             }
             //else if (cellType == CELL_RIGHT) {
             else {
-                row = inflater.inflate(R.layout.chat_item_rcv, parent, false);
+                row = inflater.inflate(R.layout.message_item_rcv, parent, false);
             }
 
             //Get references to our views
