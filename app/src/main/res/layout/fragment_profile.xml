@@ -10,6 +10,20 @@ android:background="@drawable/detail_background"
 tools:context="com.kalianey.oxapp.views.fragments.ProfileFragment">
 
 
+    <com.android.volley.toolbox.NetworkImageView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/item_cover_image"
+        android:layout_below="@+id/sumary"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:contentDescription="@string/coverImage"
+        android:layout_alignEnd="@id/statistics"
+        android:minHeight="220dp"
+        android:minWidth="300dp"
+        android:scaleType="fitXY" />
+
     <com.kalianey.oxapp.utils.UIParallaxScroll
     android:id="@+id/scroller"
     android:layout_width="match_parent"
@@ -228,7 +242,7 @@ tools:context="com.kalianey.oxapp.views.fragments.ProfileFragment">
 
     </FrameLayout>
 
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/layout_navigation_buttonholder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

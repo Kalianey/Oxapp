@@ -87,6 +87,7 @@
     <string name="followers_placeholder">503</string>
     <string name="followers">Followers</string>
     <string name="extra_info">delivered</string>
+    <string name="coverImage">coverImage</string>
 
     <!-- End Clear -->
 </resources>

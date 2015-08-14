@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
@@ -50,6 +51,7 @@ public class ProfileFragment extends Fragment {
     public static final String PACKAGE = "IDENTIFY";
 
     //UI Elements
+    private NetworkImageView cImageView;
     private UICircularImage mImageView;
     private TextView mTextView;
     private RelativeLayout mLayoutContainer;
@@ -100,6 +102,7 @@ public class ProfileFragment extends Fragment {
 
         ((UIParallaxScroll) view.findViewById(R.id.scroller)).setOnScrollChangedListener(mOnScrollChangedListener);
 
+        cImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
         mImageView = (UICircularImage) view.findViewById(R.id.image_view);
         mTextView = (TextView) view.findViewById(R.id.contact);
         mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
@@ -156,6 +159,7 @@ public class ProfileFragment extends Fragment {
             listView.addView(v);
         }
 
+        cImageView.setImageUrl(user.getCover_url(), imageLoader);
 
         mTitleView.setText(title);
         mSum.setText(sum);
