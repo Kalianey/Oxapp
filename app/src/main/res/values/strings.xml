@@ -86,6 +86,7 @@
     <string name="views">Views</string>
     <string name="followers_placeholder">503</string>
     <string name="followers">Followers</string>
+    <string name="extra_info">delivered</string>
 
     <!-- End Clear -->
 </resources>
