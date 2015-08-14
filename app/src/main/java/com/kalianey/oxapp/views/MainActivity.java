@@ -137,7 +137,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         }else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
         }else if (view == itemProfile){
-            changeFragment(new ProfileFragment());
+            //changeFragment(new ProfileFragment());
         }else if (view == itemFriends){
             changeFragment(new FriendsListFragment());
         }

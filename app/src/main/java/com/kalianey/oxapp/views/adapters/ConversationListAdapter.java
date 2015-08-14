@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -95,6 +96,15 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
 
         //Set onClick item
         final ViewHolder finalViewHolder = viewHolder;
+        viewHolder.avatarImageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(listContext, finalViewHolder.conversation.getName() + " icon clicked",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

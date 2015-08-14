@@ -36,6 +36,9 @@ public class FriendListAdapter extends ArrayAdapter<ModelFriend> {
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     private ViewHolder viewHolder;
 
+    //Vars
+    private String PACKAGE = "IDENTIFY";
+
 
     public FriendListAdapter(Activity context, int resource, List<ModelFriend> objs) {
         super(context, resource, objs);
@@ -122,9 +125,19 @@ public class FriendListAdapter extends ArrayAdapter<ModelFriend> {
                 query.user(viewHolder.friend.getOpponentId(), new QueryAPI.ApiResponse<ModelUser>() {
                     @Override
                     public void onCompletion(ModelUser result) {
+
                         Intent i = new Intent(listContext, Profile.class);
                         Bundle mBundle = new Bundle();
                         mBundle.putSerializable("userObj", result);
+
+                        int[] screen_location = new int[2];
+                        viewHolder.avatarImageView.getLocationOnScreen(screen_location);
+
+                        mBundle.putInt(PACKAGE + ".left", screen_location[0]);
+                        mBundle.putInt(PACKAGE + ".top", screen_location[1]);
+                        mBundle.putInt(PACKAGE + ".width", viewHolder.avatarImageView.getWidth());
+                        mBundle.putInt(PACKAGE + ".height", viewHolder.avatarImageView.getHeight());
+
                         i.putExtras(mBundle);
                         listContext.startActivity(i);
                     }

@@ -25,6 +25,7 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3' //TODO: remove if not used for top bar transparency and padding
+    compile 'com.squareup.picasso:picasso:2.5.2'
     //ClearUI
     //compile files('libs/android-support-v4.jar')
     compile files('libs/nineoldandroids-library-2.4.0.jar')

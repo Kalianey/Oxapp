@@ -2,7 +2,7 @@ package com.kalianey.oxapp.views;
 
 import android.annotation.SuppressLint;
 import android.app.LauncherActivity;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +21,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
@@ -31,6 +34,7 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -42,19 +46,6 @@ import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 public class ProfileFragment extends Fragment {
 
     private ModelUser user;
-
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        View view = inflater.inflate(R.layout.fragment_profile, container, false);
-//
-//        //Get serialized object
-//        user = (ModelUser) getActivity().getIntent().getSerializableExtra("userObj");
-//        Log.v("User name: ", user.getName());
-//
-//        return view;
-//    }
 
     //Configuration
     public static final int DURATION = 500; // in ms
@@ -78,6 +69,8 @@ public class ProfileFragment extends Fragment {
     String title;
     int imgId;
 
+    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+
     String lor1 = "Pellentesque in luctus dui, non egestas nisl. Donec sapien ante, faucibus a sem at, tincidunt dictum quam. Sed vel blandit neque. Maecenas tincidunt at sem vel sodales. Nullam dignissim eros id tellus commodo, eu vulputate massa accumsan.<br><br>Ut eget volutpat turpis. Praesent ac auctor nisi, sed imperdiet augue. Aenean consequat est vel odio molestie pellentesque. Suspendisse rhoncus velit dolor, at ultrices nulla ullamcorper a. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vivamus nec felis elit. Mauris at erat euismod leo sagittis gravida in id magna.";
     String lor2 = "Donec ornare eleifend turpis. Cras consectetur at neque sit amet bibendum. Nulla metus dui, porta vel mollis vitae, ornare sit amet lectus. Integer imperdiet quam eleifend nisl dictum vehicula. Suspendisse pharetra aliquet porttitor. Maecenas nec pharetra purus. Sed scelerisque suscipit faucibus. Etiam hendrerit tellus risus, et interdum tortor facilisis quis.";
     String lor3 = "Etiam tristique, sapien non rhoncus vestibulum, erat augue suscipit velit, vestibulum viverra justo nibh ut nibh. Vivamus pulvinar pharetra scelerisque. Curabitur ullamcorper tristique lacus.";
@@ -88,11 +81,15 @@ public class ProfileFragment extends Fragment {
     }
 
     @SuppressLint("NewApi")
-   // @Override
-    public View onCreate(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        //Get serialized object
+        user = (ModelUser) getActivity().getIntent().getSerializableExtra("userObj");
+        Log.v("User name: ", user.getName());
+
 
         //Get serialized object
         user = (ModelUser) getActivity().getIntent().getSerializableExtra("userObj");
@@ -101,7 +98,7 @@ public class ProfileFragment extends Fragment {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
-        getActivity().setContentView(R.layout.activity_detail_transition);
+        getActivity().setContentView(R.layout.fragment_profile);
 
         ((UIParallaxScroll) view.findViewById(R.id.scroller)).setOnScrollChangedListener(mOnScrollChangedListener);
 
@@ -127,9 +124,9 @@ public class ProfileFragment extends Fragment {
         final int left = bundle.getInt(PACKAGE + ".left");
         final int width = bundle.getInt(PACKAGE + ".width");
         final int height = bundle.getInt(PACKAGE + ".height");
-        title = bundle.getString("title");
-        String sum = bundle.getString("descr");
-        imgId = bundle.getInt("img");
+        title = user.getName();
+        String sum = user.getAddress();
+        imgId = 1;//bundle.getInt("img");
 
         //Our Animation initialization
         ViewTreeObserver observer = mImageView.getViewTreeObserver();
@@ -161,9 +158,18 @@ public class ProfileFragment extends Fragment {
             listView.addView(v);
         }
 
+
         mTitleView.setText(title);
         mSum.setText(sum);
-        mImageView.setImageResource(imgId);
+
+        mImageView.setImageResource(R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+
+        Picasso.with(getActivity())
+                .load(user.getAvatar_url())
+                .noFade()
+                .into(mImageView);
+
+
         mNavigationTitle.setText(title);
 
 //        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
@@ -182,22 +188,22 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        tab.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.toggle1:
-                        mTextView.setVisibility(View.GONE);
-                        listView.setVisibility(LinearLayout.VISIBLE);
-                        return;
-                    case R.id.toggle2:
-                        mTextView.setVisibility(View.VISIBLE);
-                        listView.setVisibility(LinearLayout.GONE);
-                        return;
-                }
-            }
-        });
+//        tab.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+//        {
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                switch (checkedId) {
+//
+//                    case R.id.toggle1:
+//                        mTextView.setVisibility(View.GONE);
+//                        listView.setVisibility(LinearLayout.VISIBLE);
+//                        return;
+//                    case R.id.toggle2:
+//                        mTextView.setVisibility(View.VISIBLE);
+//                        listView.setVisibility(LinearLayout.GONE);
+//                        return;
+//                }
+//            }
+//        });
 
         return view;
     }
