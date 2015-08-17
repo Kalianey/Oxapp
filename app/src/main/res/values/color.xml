@@ -11,7 +11,7 @@
     <color name="gray_light">#e8e8e8</color>
 
     <!-- Start Clear -->
-    <color name="theme_color">#ff33b5e5</color><!--  Main color, used for buttons & layouts as default -->
+    <color name="theme_color">#ff051216</color><!--  Main color, used for buttons & layouts as default -->
     <color name="sub_color">#cccccc</color><!--  Color used in the bar below the title, with actions -->
     <color name="bar_color">#676767</color>
     <color name="bar_color_transparent">#86676767</color>
