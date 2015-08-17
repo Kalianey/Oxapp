@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="com.kalianey.oxapp.views.MessageFragment">
+    tools:context="com.kalianey.oxapp.views.fragments.MessageFragment">
 
     <ListView
         android:id="@+id/message_list"

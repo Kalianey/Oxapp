@@ -15,7 +15,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
-import com.kalianey.oxapp.views.Profile;
+import com.kalianey.oxapp.views.activities.Profile;
 
 import java.util.List;
 
@@ -81,9 +81,6 @@ public class PeopleGridViewAdapter extends ArrayAdapter {
 
         //We can now display the data
         String avatar_url = viewHolder.user.getAvatar_url();
-        if (avatar_url == null){
-            avatar_url = viewHolder.user.getAvatar_url_default();
-        }
         viewHolder.avatarImageView.setImageUrl(avatar_url, imageLoader);
         viewHolder.username.setText(viewHolder.user.getName());
         //viewHolder.userStatusImageView : here change colour of image of  here according to bool

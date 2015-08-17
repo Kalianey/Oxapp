@@ -37,12 +37,15 @@ public class ModelUser implements Serializable {
     }
 
     public String getAvatar_url() {
+        if (this.avatar_url == null) {
+            return this.avatar_url_default;
+        }
         return avatar_url;
     }
 
     public void setAvatar_url(String avatar_url) { this.avatar_url = avatar_url; }
 
-    public String getAvatar_url_default() { return avatar_url_default; }
+    //public String getAvatar_url_default() { return avatar_url_default; }
 
     public void setAvatar_url_default(String avatar_url_default) { this.avatar_url_default = avatar_url_default; }
 
