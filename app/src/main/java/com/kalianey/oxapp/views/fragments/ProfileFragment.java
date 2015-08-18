@@ -152,12 +152,19 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+
+        //Here put gridview type instagram (in a scrollview?)
         final LinearLayout listView = (LinearLayout) view.findViewById(R.id.listView);
-        ArrayList<ListItem> data = generateData();
-        for (int i = 0; i < data.size(); i++) {
-            View v = DetailListAdapter.getView(data.get(i), getActivity().getApplicationContext());
-            listView.addView(v);
-        }
+//        ArrayList<ListItem> data = generateData();
+//        for (int i = 0; i < data.size(); i++) {
+//            View v = DetailListAdapter.getView(data.get(i), getActivity().getApplicationContext());
+//            listView.addView(v);
+//        }
+
+        //Then put a gridview in a scrollview for friends
+
+
+        //
 
         cImageView.setImageUrl(user.getCover_url(), imageLoader);
 

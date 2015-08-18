@@ -24,8 +24,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3' //TODO: remove if not used for top bar transparency and padding
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.google.android.gms:play-services-gcm:7.8.0' //maybe replace just by com.google.android.gms:play-services-gcm:7.8.0
     //ClearUI
     //compile files('libs/android-support-v4.jar')
     compile files('libs/nineoldandroids-library-2.4.0.jar')

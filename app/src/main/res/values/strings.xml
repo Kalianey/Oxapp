@@ -65,8 +65,8 @@
     <string name="social_1_placeholder_nr">15</string>
     <string name="sumary_placeholder">Summary</string>
     <string name="description_placeholder">Description</string>
-    <string name="description_tab_1">Wall</string>
-    <string name="description_tab_2">Contact</string>
+    <string name="description_tab_1">General</string>
+    <string name="description_tab_2">More</string>
     <string name="image_description">Image Description</string>
     <string name="description_title_placeholder">Cool Title Of Some Movie</string>
     <string name="social_2_placeholder">Hotels &amp; Clubs</string>
@@ -82,10 +82,10 @@
     <string name="dialog_text_placeholder">With Custom loader (loader is also usable separately)</string>
     <string name="dialog_title_placeholder">Styled Dialog</string>
     <string name="dialog_button_text">" Cancel "</string>
-    <string name="placeholder_views">16 Thousand</string>
-    <string name="views">Views</string>
-    <string name="followers_placeholder">503</string>
-    <string name="followers">Followers</string>
+    <string name="placeholder_views">(ADD)</string>
+    <string name="views">Favorite</string>
+    <string name="followers_placeholder">(ADD)</string>
+    <string name="followers">Friend</string>
     <string name="extra_info">delivered</string>
     <string name="coverImage">coverImage</string>
 

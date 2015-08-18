@@ -15,7 +15,6 @@ import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.views.adapters.PeopleGridViewAdapter;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,12 +60,6 @@ public class PeopleFragment extends Fragment {
     return view;
     }
 
-    public static void setInsets(Activity context, View view) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
-        SystemBarTintManager tintManager = new SystemBarTintManager(context);
-        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
-        view.setPadding(0, config.getPixelInsetTop(true), config.getPixelInsetRight(), config.getPixelInsetBottom());
-    }
 
 
 }
