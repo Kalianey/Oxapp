@@ -61,6 +61,11 @@ public class QueryAPI {
             return (data != null && data instanceof JSONObject);
         }
 
+        public boolean dataIsInteger()
+        {
+            return (data != null && data instanceof Integer);
+        }
+
         public JSONArray getDataAsArray()
         {
             if ( this.dataIsArray()) {
@@ -76,6 +81,17 @@ public class QueryAPI {
         {
             if ( this.dataIsObject()) {
                 return (JSONObject) this.data;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Integer getDataAsInteger()
+        {
+            if ( this.dataIsInteger()) {
+                return (Integer) this.data;
             }
             else
             {
@@ -111,7 +127,14 @@ public class QueryAPI {
                         catch (JSONException e)
                         {
                             Log.v("exception catch", e.getMessage());
-                            res.data = response.getJSONObject("data");
+                            try {
+                                res.data = response.getJSONObject("data");
+                            }
+                            catch (JSONException x)
+                            {
+                                Log.v("exception catch", x.getMessage());
+                                res.data = response.getInt("data");
+                            }
                         }
 
                         res.success = success;
@@ -426,8 +449,67 @@ public class QueryAPI {
 
 
 
+    public void conversationGet(String opponentId, final ApiResponse<String> completion) {
+        String url = "owapi/messenger/conversation/get/" + opponentId;
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                String convId = "";
+                if (res.success && res.dataIsInteger()) {
+                    Integer result = res.getDataAsInteger();
+                    convId = result.toString();
+                }
+                completion.onCompletion(convId);
+            }
+        });
+    }
 
 
+    public void conversationCreate(String opponentId, final ApiResponse<ModelConversation> completion) {
+        String url = "owapi/messenger/conversation/create";
+        //here need to pass post params
+        Log.v("url", url);
+
+//        this.RequestApi(url, new ApiResponse<ApiResult>() {
+//            @Override
+//            public void onCompletion(ApiResult res) {
+//
+//                String convId = "";
+//                if (res.success && res.dataIsInteger()) {
+//                    Integer result = res.getDataAsInteger();
+//                    convId = result.toString();
+//                    Log.v("My convid", convId);
+//                }
+//                completion.onCompletion(convId);
+//            }
+//        });
+    }
+
+//    func conversationCreate(initiatorId:String, interlocutorId:String, completion: (ModelConversation) -> ()) -> NSURLSessionDataTask {
+//
+//        let url = "owapi/messenger/conversation/create"
+//        var task = self.requestAPI(url, params: "initiatorId="+initiatorId+"&interlocutorId="+interlocutorId) { (res: ApiResponse) -> () in
+//
+//            let item: ModelConversation //TODO error checking
+//
+//            if(res.success)
+//            {
+//                var data = res.data as! NSDictionary
+//                //println(data)
+//                item = ModelConversation(data:data)
+//
+//            }
+//            else
+//            {
+//                item = ModelConversation()
+//            }
+//            completion(item)
+//
+//        }
+//        return task
+//    }
 
 
     /* LOGIN METHODS */

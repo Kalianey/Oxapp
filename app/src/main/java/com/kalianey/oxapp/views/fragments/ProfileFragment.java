@@ -2,6 +2,7 @@ package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
 //import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.AvoidXfermode;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -29,12 +30,14 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.etsy.android.grid.StaggeredGridView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
+import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
+import com.kalianey.oxapp.views.activities.Message;
 import com.kalianey.oxapp.views.adapters.ProfilePhotoRecyclerViewAdapter;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -57,6 +60,7 @@ public class ProfileFragment extends Fragment {
     //Configuration
     public static final int DURATION = 500; // in ms
     public static final String PACKAGE = "IDENTIFY";
+    QueryAPI query = new QueryAPI();
 
     //UI Elements
     private View view;
@@ -119,24 +123,15 @@ public class ProfileFragment extends Fragment {
         }
 
         //Get extra info for user
-        QueryAPI query = new QueryAPI();
         query.userExtra(user, new QueryAPI.ApiResponse<ModelUser>() {
             @Override
             public void onCompletion(ModelUser result) {
                 user = result;
 
-                //Here put gridview type instagram (in a scrollview?)
-                //gridView = (RecyclerView) view.findViewById(R.id.grid_view);
                 photoList.clear();
                 photoList.addAll(0,user.getPhotos());
-                //adapter = new ProfilePhotoRecyclerViewAdapter(getActivity(), user.getPhotos());
 
-                adapter.notifyDataSetChanged();
-                //StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.HORIZONTAL );
-                //gridView.setLayoutManager(gridLayoutManager);
-                //gridView.setAdapter(adapter);
-
-                //Then put a gridview in a scrollview for friends
+                adapter.setPhotos(photoList);
 
             }
         });
@@ -233,7 +228,48 @@ public class ProfileFragment extends Fragment {
         mShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Toast.makeText(getActivity().getApplicationContext(), "Clicked Msg", Toast.LENGTH_SHORT).show();
+
+                query.conversationGet(user.getUserId(), new QueryAPI.ApiResponse<String>() {
+                    @Override
+                    public void onCompletion(String result) {
+
+                        //Conv doesn't exist
+                        if (result.equals("") || result.equals("0")) {
+
+                        }
+                        //Conv already exist
+                        else {
+                            ModelConversation conv = new ModelConversation();
+                            conv.setId(result);
+                            conv.setName(user.getName());
+                            conv.setOpponentId(user.getUserId());
+                            //conv.setAvatarUrl(user.getAvatar_url());
+
+                            Intent i = new Intent(getActivity(), Message.class);
+                            Bundle mBundle = new Bundle();
+                            mBundle.putSerializable("convObj", conv);
+                            i.putExtras(mBundle);
+                            startActivity(i);
+                        }
+                    }
+                });
+
+                /*   else {
+
+                        //if not we create a new one //TODO: check why the conversation is displayed but not created (cannot send messages)
+                        let query = queryAPI()
+                        query.conversationCreate(KYController.sharedInstance.getUser()!.userId!, interlocutorId: self.currentUser.userId, completion: { (conv: ModelConversation) -> () in
+
+                            //pass the returned conversation model to var conversation
+                            self.openConversation = conv
+                            self.openConversation!.displayName = self.currentUser.name
+                            self.performSegueWithIdentifier("profileToMessage", sender: nil)
+                        })
+
+                    }
+
+                })
+                */
             }
         });
 
@@ -261,11 +297,11 @@ public class ProfileFragment extends Fragment {
     //http://blog.ashwanik.in/2015/05/handling-adapter-error-while-using-recyclerview.html
     void initializeRecyclerView() {
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
-        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.HORIZONTAL );
-        adapter = new ProfilePhotoRecyclerViewAdapter(getActivity(), photoList);
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL );
+        adapter = new ProfilePhotoRecyclerViewAdapter(getActivity());
         gridView.setAdapter(adapter);
         gridView.setLayoutManager(gridLayoutManager);
-        //gridView.setHasFixedSize(true);
+        gridView.setHasFixedSize(true);
     }
 
 //    @Override

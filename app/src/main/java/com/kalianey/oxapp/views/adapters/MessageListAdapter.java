@@ -85,7 +85,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         String senderId = messages.get(position).getSenderId();
         String userId = loggedInUser.getUserId();
 
-        int type = senderId.equals(userId)? CELL_RCV :CELL_SENT;
+        int type = senderId.equals(userId)? CELL_SENT :CELL_RCV;
 
         return type;
     }

@@ -17,6 +17,7 @@ import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,10 +33,16 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
 
-    public ProfilePhotoRecyclerViewAdapter(Activity context, List<ModelAttachment> objs) {
-        photos = objs;
+    public ProfilePhotoRecyclerViewAdapter(Activity context) {
+        photos = new ArrayList<>();
         listContext = context;
-        this.notifyDataSetChanged();
+        //this.notifyDataSetChanged();
+    }
+
+    public void setPhotos(List< ModelAttachment> photoList) {
+        photos.clear();
+        photos.addAll(photoList);
+        this.notifyItemRangeInserted(0, photos.size() - 1);
     }
 
     @Override

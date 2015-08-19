@@ -3,6 +3,7 @@ package com.kalianey.oxapp.views.adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,14 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.views.activities.Message;
+import com.kalianey.oxapp.views.activities.Profile;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -32,6 +36,8 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
     private Activity listContext;
     private int listRowLayoutId;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+
+    private String PACKAGE = "IDENTIFY";
 
 
     public ConversationListAdapter(Activity context, int resource, List<ModelConversation> objs) {
@@ -108,8 +114,28 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(listContext, finalViewHolder.conversation.getName() + " icon clicked",
-                        Toast.LENGTH_SHORT).show();
+
+                QueryAPI query = new QueryAPI();
+                query.user(finalViewHolder.conversation.getOpponentId(), new QueryAPI.ApiResponse<ModelUser>() {
+                    @Override
+                    public void onCompletion(ModelUser user) {
+
+                        Intent i = new Intent(listContext, Profile.class);
+                        Bundle mBundle = new Bundle();
+                        mBundle.putSerializable("userObj", user);
+
+                        int[] screen_location = new int[2];
+                        finalViewHolder.avatarImageView.getLocationOnScreen(screen_location);
+
+                        mBundle.putInt(PACKAGE + ".left", screen_location[0]);
+                        mBundle.putInt(PACKAGE + ".top", screen_location[1]);
+                        mBundle.putInt(PACKAGE + ".width", finalViewHolder.avatarImageView.getWidth());
+                        mBundle.putInt(PACKAGE + ".height", finalViewHolder.avatarImageView.getHeight());
+
+                        i.putExtras(mBundle);
+                        listContext.startActivity(i);
+                    }
+                });
 
             }
         });
