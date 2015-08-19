@@ -27,11 +27,13 @@ import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.menu.ResideMenuItem;
 
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.views.fragments.ConversationListFragment;
 import com.kalianey.oxapp.views.fragments.FriendsListFragment;
 import com.kalianey.oxapp.views.fragments.PeopleFragment;
+import com.kalianey.oxapp.views.fragments.ProfileFragment;
 
 public class MainActivity  extends FragmentActivity implements View.OnClickListener {
 
@@ -103,7 +105,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         resideMenu.setScaleValue(0.6f);
 
         itemHome     = new ResideMenuItem(this, R.drawable.ic_home,     "People");
-        itemConversations  = new ResideMenuItem(this, R.drawable.ic_elements_alternative,  "Messages");
+        itemConversations  = new ResideMenuItem(this, R.drawable.icons_chat,  "Messages");
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
 
@@ -140,7 +142,9 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         }else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
         }else if (view == itemProfile){
-            //changeFragment(new ProfileFragment());
+            ProfileFragment profile = new ProfileFragment();
+            profile.setUser(AppController.getInstance().getLoggedInUser());
+            changeFragment(profile);
         }else if (view == itemFriends){
             changeFragment(new FriendsListFragment());
         }

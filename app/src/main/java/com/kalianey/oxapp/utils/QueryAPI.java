@@ -9,6 +9,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelFriend;
 import com.kalianey.oxapp.models.ModelMessage;
@@ -20,6 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -132,22 +135,6 @@ public class QueryAPI {
     }
 
 
-//    func currentUser(completion: (ModelUser?) -> ()) {
-//
-//        self.requestAPI("owapi/user/profile", params: "") { (res: ApiResponse) -> () in
-//
-//            var item: ModelUser? //TODO error checking
-//
-//            if(res.success)
-//            {
-//                var data = res.data as! NSDictionary
-//                item = ModelUser(data: data)
-//            }
-//            completion(item) //TODO: check if it should be put inside if or outside
-//        }
-//
-//    }
-
     public void currentUser(final ApiResponse<ModelUser> completion) {
 
         String url = "owapi/user/profile";
@@ -185,14 +172,97 @@ public class QueryAPI {
                     ModelUser user = new ModelUser();
                     user = new Gson().fromJson(userObj.toString(), ModelUser.class);
                     completion.onCompletion(user);
-                }
-                else {
+                } else {
                     completion.onCompletion(user);
                 }
             }
         });
 
     }
+
+    public void userExtra(final ModelUser user, final ApiResponse<ModelUser> completion)  {
+
+        String url = "owapi/user/profile/extra/"+user.getUserId();
+        final List<ModelUser> friends = new ArrayList<ModelUser>();
+        final List<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+                if (res.success)
+                {
+                    JSONObject data = res.getDataAsObject();
+
+                    //Get friends
+                    try {
+                        JSONObject friendList = data.getJSONObject("friends");
+
+                        Iterator<String> keysIterator = friendList.keys();
+                        while (keysIterator.hasNext())
+                        {
+                            String keyStr = (String)keysIterator.next();
+                            String valueStr = friendList.getString(keyStr);
+                            ModelUser friend = new ModelUser();
+                            friend = new Gson().fromJson(valueStr.toString(), ModelUser.class);
+                            friends.add(friend);
+                        }
+
+                        user.setFriends(friends);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Get photos
+                    try {
+                        JSONObject photoList = data.getJSONObject("photos");
+
+                        Iterator<String> keysIterator = photoList.keys();
+                        while (keysIterator.hasNext())
+                        {
+                            String keyStr = (String)keysIterator.next();
+                            String valueStr = photoList.getString(keyStr);
+                            ModelAttachment photo = new ModelAttachment();
+                            photo = new Gson().fromJson(valueStr.toString(), ModelAttachment.class);
+                            photos.add(photo);
+                        }
+                        user.setPhotos(photos);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    //questions
+                    try {
+                        JSONObject questions = data.getJSONObject("questions");
+                        JSONArray sections = questions.getJSONArray("sections");
+                        Log.v("sections", sections.toString()); // ["Infos","Recherche"]
+                        JSONArray questionData = questions.getJSONArray("questionsData");
+                        Log.v("questionData", questionData.toString()); //[[{"questionValue":"07 Mai","sectionName":"Infos","sectionKey":"f90cde5913
+                        for (int i = 0; i < questionData.length(); i++) {
+                            JSONArray questionArray = questionData.getJSONArray(i);
+                            for (int index = 0; index < questionArray.length(); index++) {
+                                JSONObject questionObj = questionArray.getJSONObject(index);
+                                Log.v("1 question: ", questionObj.toString());
+                            }
+
+                        }
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+                completion.onCompletion(user);
+            }
+        });
+
+
+
+    }
+
 
 
     public void allUsers(final ApiResponse<List<ModelUser>> completion)
@@ -265,32 +335,6 @@ public class QueryAPI {
 
     }
 
-    //    func contactList(completion: ([ModelFriend]) -> ()) {
-//
-//        self.requestAPI("owapi/messenger/contactList", params: "") { (res: ApiResponse) -> () in
-//            var items = [ModelFriend]() //TODO error checking
-//
-//            if(res.success)
-//            {
-//                //println(res.data)
-//                var data = res.data as! NSDictionary
-//                var list = data["list"] as! NSArray
-//
-//                for item in list{
-//
-//                let item = ModelFriend(data: item as! NSDictionary)
-//                items.append(item)
-//
-//            }
-//
-//            }
-//
-//            completion(items)
-//
-//        }
-//
-//    }
-
 
     /* Conversation Functions */
 
@@ -351,6 +395,18 @@ public class QueryAPI {
                             JSONObject jsonObject = messageList.getJSONObject(i);
                             try {
                                 ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
+                                if (!message.getAttachment().equals("")){
+                                    Log.v("Message", message.getAttachment().toString());
+                                    LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
+                                    String downloadUrl = (String) attachment.get("downloadUrl");
+                                    String attachmentId = (String) attachment.get("id");
+                                    message.setDownloadUrl(downloadUrl);
+                                    message.setAttachmentId(attachmentId);
+                                    message.setIsMediaMessage(true);
+                                } else {
+                                    message.setIsMediaMessage(false);
+                                }
+
                                 messages.add(message);
                             }
                            catch (Exception e) {

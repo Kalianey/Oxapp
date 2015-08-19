@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">Oxapp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -59,8 +59,8 @@
     <string name="like">Like</string>
     <string name="reply">Reply</string>
 
-    <string name="detail_title_placeholder">Cool Title Of Some Movie</string>
-    <string name="contact_placeholder">Super useful contact info here I guess.\n\nProfile image is from FreePik.com</string>
+    <string name="detail_title_placeholder">Profile Title</string>
+    <string name="contact_placeholder">Here come the profile questions</string>
     <string name="social_1_placeholder">4.8</string>
     <string name="social_1_placeholder_nr">15</string>
     <string name="sumary_placeholder">Summary</string>
@@ -89,5 +89,13 @@
     <string name="extra_info">delivered</string>
     <string name="coverImage">coverImage</string>
 
+
     <!-- End Clear -->
+
+    <string name="today">today</string>
+    <string name="tomorrow">tomorrow</string>
+    <!-- Date format for displaying day of week and date (i.e. Mon Jun 1) [CHAR LIMIT=20] -->
+    <string name="format_full_friendly_date">
+        <xliff:g id="day_of_week">%1$s</xliff:g>, <xliff:g id="date">%2$s</xliff:g>
+    </string>
 </resources>

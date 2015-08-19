@@ -11,19 +11,6 @@
         android:weightSum="1"
         >
 
-        <ImageView
-            android:id="@+id/userStatus"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:paddingRight="10dp"
-            />
-
-        <!--com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/avatarImageView"
-            android:layout_height="50dp"
-            android:layout_width="50dp"
-            android:paddingRight="10dp" /-->
-
         <com.kalianey.oxapp.utils.UICircularImage
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/avatarImageView"
@@ -39,11 +26,24 @@
             app:line_width="1dp"
             app:padding ="0dp" />
 
+        <ImageView
+            android:id="@+id/userStatus"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:paddingRight="10dp"
+            />
+
+        <!--com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/avatarImageView"
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:paddingRight="10dp" /-->
+
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            >
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/username"
@@ -62,9 +62,33 @@
                 android:text="PreviewText"
                 android:textStyle="normal"
                 android:textColor="#ff212121"
-                android:textSize="13sp"
+                android:textSize="11sp"
 
                 />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ff212121"
+                android:textSize="9sp"
+                android:layout_marginTop="5dp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView2"
+                android:src="@drawable/icon_arrow_right"
+                android:contentDescription="arrow-right"
+                android:layout_gravity="bottom" />
 
         </LinearLayout>
 

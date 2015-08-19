@@ -6,14 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
+import com.kalianey.oxapp.utils.Utility;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +37,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     private ModelUser loggedInUser = AppController.getInstance().getLoggedInUser();
     private ModelUser senderUser;
+    private Integer countMessage = 0;
 
     public MessageListAdapter(Activity context, int resource, List<ModelMessage> objs) {
         super(context, resource, objs);
@@ -121,7 +125,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             viewHolder.avatarImageView = (UICircularImage) row.findViewById(R.id.avatarImageView);
             viewHolder.text = (TextView) row.findViewById(R.id.text);
             viewHolder.date = (TextView) row.findViewById(R.id.date);
-
+            viewHolder.attachment = (ImageView) row.findViewById(R.id.attachment);
             row.setTag(viewHolder);
 
         }
@@ -130,7 +134,14 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         }
 
         viewHolder.message = messages.get(position);
-
+        countMessage ++;
+        if (countMessage < 3) {
+            viewHolder.date.setVisibility(View.GONE);
+        }
+        else {
+            viewHolder.date.setVisibility(View.VISIBLE);
+            countMessage = 0;
+        }
         //We can now display the data
         //viewHolder.avatarImageView.setImageUrl(avatarUrl, imageLoader); //TODO: Placeholder
 
@@ -138,10 +149,22 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                 .load(avatarUrl)
                 .noFade()
                 .into(viewHolder.avatarImageView);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         String stringDate = sdf.format(new Date(viewHolder.message.getTimeStamp() * 1000));
         viewHolder.date.setText(stringDate);
         viewHolder.text.setText(viewHolder.message.getText());
+
+        if (viewHolder.message.getIsMediaMessage()){
+
+            viewHolder.text.setVisibility(View.GONE);
+            Picasso.with(listContext)
+                    .load(viewHolder.message.getDownloadUrl())
+                    .noFade()
+                    .into(viewHolder.attachment);
+        } else {
+            viewHolder.attachment.setVisibility(View.GONE);
+            viewHolder.text.setVisibility(View.VISIBLE);
+        }
 
         return  row;
     }
@@ -154,6 +177,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         TextView text;
         TextView date;
         TextView delivered;
+        ImageView attachment;
 
     }
 }

@@ -80,6 +80,7 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
             viewHolder.userStatusImageView = (ImageView) row.findViewById(R.id.userStatus);
             viewHolder.username = (TextView) row.findViewById(R.id.username);
             viewHolder.previewText = (TextView) row.findViewById(R.id.previewText);
+            viewHolder.date = (TextView) row.findViewById(R.id.date);
 
             row.setTag(viewHolder);
 
@@ -98,6 +99,7 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
                 .into(viewHolder.avatarImageView);
         viewHolder.username.setText(viewHolder.conversation.getName());
         viewHolder.previewText.setText(viewHolder.conversation.getPreviewText());
+        viewHolder.date.setText(viewHolder.conversation.getTimeLabel());
         //viewHolder.userStatusImageView : here change colour of image of  here according to bool
 
         //Set onClick item
@@ -134,6 +136,7 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
         ImageView userStatusImageView;
         TextView username;
         TextView previewText;
+        TextView date;
 
     }
 

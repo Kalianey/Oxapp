@@ -1,6 +1,10 @@
 package com.kalianey.oxapp.models;
 
+import android.graphics.AvoidXfermode;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kalianey on 11/08/2015.
@@ -19,6 +23,25 @@ public class ModelUser implements Serializable {
     private String age;
     private String email;
     private String distance;
+
+    private List<ModelUser> friends = new ArrayList<ModelUser>();
+    private List<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+
+    public List<ModelAttachment> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<ModelAttachment> photos) {
+        this.photos = photos;
+    }
+
+    public List<ModelUser> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<ModelUser> friends) {
+        this.friends = friends;
+    }
 
     public String getUserId() {
         return userId;

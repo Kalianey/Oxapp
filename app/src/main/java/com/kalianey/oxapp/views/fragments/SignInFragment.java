@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.views.activities.MainActivity;
 import com.kalianey.oxapp.views.activities.People;
 
 import org.w3c.dom.Text;
@@ -78,7 +79,7 @@ public class SignInFragment extends Fragment {
                         public void onCompletion(QueryAPI.ApiResult result) {
 
                             if (result.success) {
-                                Intent intent = new Intent(getActivity(), People.class);
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
                                 startActivity(intent);
                             }
                             else {
