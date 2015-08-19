@@ -13,6 +13,7 @@ public class Profile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
     }
 
 
@@ -37,4 +38,5 @@ public class Profile extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

@@ -216,14 +216,14 @@ public class ProfileFragment extends Fragment {
 
         mNavigationTitle.setText(title);
 
-//        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
-//
-//            @Override
-//            public void onClick(View arg0) {
-//                onBackPressed();
-//            }
-//
-//        });
+        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View arg0) {
+                onBackPressed();
+            }
+
+        });
 
         mShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -304,24 +304,23 @@ public class ProfileFragment extends Fragment {
         gridView.setHasFixedSize(true);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//
-//        runExitAnimation(new Runnable() {
-//            @Override
-//            public void run() {
-//                finish();
-//            }
-//        });
-//
-//    }
 
-//    @Override
-//    public void finish() {
-//
-//        super.finish();
-//        overridePendingTransition(0, 0);
-//    }
+    public void onBackPressed() {
+
+        runExitAnimation(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        });
+
+    }
+
+    public void finish() {
+
+        getActivity().finish();
+        getActivity().overridePendingTransition(0, 0);
+    }
 
 
     private void runEnterAnimation() {
