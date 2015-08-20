@@ -27,6 +27,7 @@ import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.menu.ResideMenuItem;
 
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
@@ -145,6 +146,15 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
             ProfileFragment profile = new ProfileFragment();
             profile.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(profile);
+
+//            Intent i = new Intent(this, Profile.class);
+//            Bundle mBundle = new Bundle();
+//            ModelUser user = AppController.getInstance().getLoggedInUser();
+//            mBundle.putSerializable("userObj", user);
+//            i.putExtras(mBundle);
+//            startActivity(i);
+
+
         }else if (view == itemFriends){
             changeFragment(new FriendsListFragment());
         }

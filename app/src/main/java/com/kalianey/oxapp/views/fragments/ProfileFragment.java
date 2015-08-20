@@ -16,9 +16,11 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -38,12 +40,20 @@ import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
 import com.kalianey.oxapp.views.activities.Message;
+import com.kalianey.oxapp.views.activities.Profile;
+import com.kalianey.oxapp.views.adapters.ProfileFriendListViewAdapter;
+import com.kalianey.oxapp.views.adapters.ProfilePhotoListViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfilePhotoRecyclerViewAdapter;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
+
+import org.lucasr.twowayview.TwoWayView;
+//import org.lucasr.twowayview.ItemClickSupport.OnItemClickListener;
+//import org.lucasr.twowayview.ItemClickSupport.OnItemLongClickListener;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +74,7 @@ public class ProfileFragment extends Fragment {
 
     //UI Elements
     private View view;
+    //private TwoWayView gridView;
     private RecyclerView gridView;
     private NetworkImageView cImageView;
     private UICircularImage mImageView;
@@ -74,7 +85,12 @@ public class ProfileFragment extends Fragment {
     private Button mNavigationBackBtn;
     private TextView mTitleView;
     private UICircularImage mShare;
+    //private ProfilePhotoListViewAdapter adapter;
     private ProfilePhotoRecyclerViewAdapter adapter;
+    private TwoWayView friendsListView;
+    private ProfileFriendListViewAdapter friendsAdapter;
+    private TextView profileFriendText;
+    private TextView profilePhotoText;
 
     //Vars
     private List<ModelAttachment> photoList = new ArrayList<ModelAttachment>();
@@ -115,6 +131,11 @@ public class ProfileFragment extends Fragment {
 
         initializeRecyclerView();
 
+        //gridView = (TwoWayView) view.findViewById(R.id.grid_view);
+        gridView = (RecyclerView) view.findViewById(R.id.grid_view);
+
+        //friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
+
         //Get logged in user
         if (user == null) {
             //If coming from intent, get serialized object
@@ -128,10 +149,42 @@ public class ProfileFragment extends Fragment {
             public void onCompletion(ModelUser result) {
                 user = result;
 
+                //Staggered grid view for the photos
                 photoList.clear();
-                photoList.addAll(0,user.getPhotos());
-
+                photoList.addAll(0, user.getPhotos());
                 adapter.setPhotos(photoList);
+                adapter.notifyDataSetChanged();
+
+//                adapter = new ProfilePhotoListViewAdapter(getActivity(), R.layout.profile_photogrid_item, user.getPhotos());
+//                gridView.setAdapter(adapter);
+//                adapter.notifyDataSetChanged();
+
+                //Horizontal ListView for friends
+//                friendsAdapter = new ProfileFriendListViewAdapter(getActivity(), R.layout.profile_friend_list_item, user.getFriends());
+//                friendsListView.setAdapter(friendsAdapter);
+
+//                final ItemClickSupport itemClick = ItemClickSupport.addTo(friendsAdapter);
+//
+//                friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                        Intent i = new Intent(getActivity(), Profile.class);
+//                        Bundle mBundle = new Bundle();
+//                        mBundle.putSerializable("userObj", user.getFriends().get(position));
+//
+//                        int[] screen_location = new int[2];
+//                        friendsListView.getLocationOnScreen(screen_location);
+//
+//                        mBundle.putInt(PACKAGE + ".left", screen_location[0]);
+//                        mBundle.putInt(PACKAGE + ".top", screen_location[1]);
+//                        mBundle.putInt(PACKAGE + ".width", 90);
+//                        mBundle.putInt(PACKAGE + ".height", 90);
+//
+//                        i.putExtras(mBundle);
+//                        getActivity().startActivity(i);
+//                    }
+//                });
 
             }
         });
@@ -140,7 +193,7 @@ public class ProfileFragment extends Fragment {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
-        getActivity().setContentView(R.layout.fragment_profile);
+
 
         ((UIParallaxScroll) view.findViewById(R.id.scroller)).setOnScrollChangedListener(mOnScrollChangedListener);
 
@@ -155,6 +208,8 @@ public class ProfileFragment extends Fragment {
         TextView mSum = (TextView) view.findViewById(R.id.sumary);
         mShare = (UICircularImage) view.findViewById(R.id.action1);
         UITabs tab = (UITabs) view.findViewById(R.id.toggle);
+//        profilePhotoText = (TextView) view.findViewById(R.id.profile_photo_text);
+//        profileFriendText = (TextView) view.findViewById(R.id.profile_friend_text);
 
         mNavigationTop.getBackground().setAlpha(0);
         mNavigationTitle.setVisibility(View.INVISIBLE);
@@ -281,10 +336,16 @@ public class ProfileFragment extends Fragment {
                     case R.id.toggle1:
                         mTextView.setVisibility(View.GONE);
                         gridView.setVisibility(LinearLayout.VISIBLE);
+                        friendsListView.setVisibility(LinearLayout.VISIBLE);
+                        profilePhotoText.setVisibility(LinearLayout.VISIBLE);
+                        profileFriendText.setVisibility(LinearLayout.VISIBLE);
                         return;
                     case R.id.toggle2:
                         mTextView.setVisibility(View.VISIBLE);
                         gridView.setVisibility(LinearLayout.GONE);
+                        friendsListView.setVisibility(LinearLayout.GONE);
+                        profilePhotoText.setVisibility(LinearLayout.GONE);
+                        profileFriendText.setVisibility(LinearLayout.GONE);
                         return;
                 }
             }
@@ -297,7 +358,8 @@ public class ProfileFragment extends Fragment {
     //http://blog.ashwanik.in/2015/05/handling-adapter-error-while-using-recyclerview.html
     void initializeRecyclerView() {
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
-        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL );
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.HORIZONTAL );
+        gridLayoutManager.setOrientation(gridLayoutManager.HORIZONTAL);
         adapter = new ProfilePhotoRecyclerViewAdapter(getActivity());
         gridView.setAdapter(adapter);
         gridView.setLayoutManager(gridLayoutManager);

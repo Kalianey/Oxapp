@@ -1,6 +1,7 @@
 package com.kalianey.oxapp.utils;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -20,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -155,6 +157,66 @@ public class QueryAPI {
         );
         AppController.getInstance().addToRequestQueue(jsonRequest);
 
+    }
+
+
+    public void RequestApiPOST (String url, final Map<String, String> params, final ApiResponse<ApiResult> completion )
+    {
+
+        StringRequest strRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response)
+                    {
+                        //Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                        ApiResult res = new ApiResult();
+                        Log.v("POST Response", response);
+                        //Log.v("Data: ", response.toString());
+//                        try {
+//
+//                            Boolean success = response.getBoolean("success");
+//                            try {
+//                                res.data = response.getJSONArray("data");
+//                            }
+//                            catch (JSONException e)
+//                            {
+//                                Log.v("exception catch", e.getMessage());
+//                                try {
+//                                    res.data = response.getJSONObject("data");
+//                                }
+//                                catch (JSONException x)
+//                                {
+//                                    Log.v("exception catch", x.getMessage());
+//                                    res.data = response.getInt("data");
+//                                }
+//                            }
+//
+//                            res.success = success;
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+                        completion.onCompletion(res);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        //Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                return params;
+            }
+        };
+
+        AppController.getInstance().addToRequestQueue(strRequest);
     }
 
 
@@ -487,29 +549,45 @@ public class QueryAPI {
 //        });
     }
 
-//    func conversationCreate(initiatorId:String, interlocutorId:String, completion: (ModelConversation) -> ()) -> NSURLSessionDataTask {
+
+
+
+    public void messageSend(String convId, String messageText, final ApiResponse<ModelMessage> completion) {
+
+        String url = "owapi/messenger/conversation/"+convId+"/send/";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("text", messageText);
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult result) {
+
+                Log.v("VicRes", result.toString());
+                completion.onCompletion(null);
+            }
+        });
+
+    }
+
+//    func messageSend(convId:String, messageText: String, completion: (ModelMessage?) -> ()) -> NSURLSessionDataTask {
+//        let url = "owapi/messenger/conversation/"+convId+"/send/"
+//        var task = self.requestAPI(url, params: "text="+messageText) { (res: ApiResponse) -> () in
 //
-//        let url = "owapi/messenger/conversation/create"
-//        var task = self.requestAPI(url, params: "initiatorId="+initiatorId+"&interlocutorId="+interlocutorId) { (res: ApiResponse) -> () in
-//
-//            let item: ModelConversation //TODO error checking
+//            var item: ModelMessage?
 //
 //            if(res.success)
 //            {
+//                println(res.data)
 //                var data = res.data as! NSDictionary
-//                //println(data)
-//                item = ModelConversation(data:data)
+//                item = ModelMessage(data: data)
 //
 //            }
-//            else
-//            {
-//                item = ModelConversation()
-//            }
+//
 //            completion(item)
-//
 //        }
 //        return task
 //    }
+
 
 
     /* LOGIN METHODS */

@@ -6,7 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
@@ -15,6 +18,8 @@ import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.adapters.MessageListAdapter;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +35,8 @@ public class MessageFragment extends Fragment {
     private MessageListAdapter adapter;
     private List<ModelMessage> messages = new ArrayList<>();
     private ModelConversation conversation;
+    private Button sendButton;
+    private TextView text;
 
     public MessageFragment() {
     }
@@ -40,6 +47,8 @@ public class MessageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
 
         listView = (ListView) view.findViewById(R.id.message_list);
+        text = (TextView) view.findViewById(R.id.txt);
+        sendButton = (Button) view.findViewById(R.id.btnSend);
 
         //Get serialized object
         conversation = (ModelConversation) getActivity().getIntent().getSerializableExtra("convObj");
@@ -64,6 +73,21 @@ public class MessageFragment extends Fragment {
                 });
 
 
+            }
+        });
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String messageToSend = text.getText().toString();
+                Toast.makeText(getActivity(), messageToSend, Toast.LENGTH_LONG).show();
+
+                query.messageSend(conversation.getId(), messageToSend, new QueryAPI.ApiResponse<ModelMessage>() {
+                    @Override
+                    public void onCompletion(ModelMessage result) {
+
+                    }
+                });
             }
         });
 
