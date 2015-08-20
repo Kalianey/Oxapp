@@ -131,10 +131,9 @@ public class ProfileFragment extends Fragment {
 
         initializeRecyclerView();
 
-        //gridView = (TwoWayView) view.findViewById(R.id.grid_view);
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
 
-        //friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
+        friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
 
         //Get logged in user
         if (user == null) {
@@ -155,13 +154,9 @@ public class ProfileFragment extends Fragment {
                 adapter.setPhotos(photoList);
                 adapter.notifyDataSetChanged();
 
-//                adapter = new ProfilePhotoListViewAdapter(getActivity(), R.layout.profile_photogrid_item, user.getPhotos());
-//                gridView.setAdapter(adapter);
-//                adapter.notifyDataSetChanged();
-
                 //Horizontal ListView for friends
-//                friendsAdapter = new ProfileFriendListViewAdapter(getActivity(), R.layout.profile_friend_list_item, user.getFriends());
-//                friendsListView.setAdapter(friendsAdapter);
+                friendsAdapter = new ProfileFriendListViewAdapter(getActivity(), R.layout.profile_friend_list_item, user.getFriends());
+                friendsListView.setAdapter(friendsAdapter);
 
 //                final ItemClickSupport itemClick = ItemClickSupport.addTo(friendsAdapter);
 //
@@ -208,8 +203,8 @@ public class ProfileFragment extends Fragment {
         TextView mSum = (TextView) view.findViewById(R.id.sumary);
         mShare = (UICircularImage) view.findViewById(R.id.action1);
         UITabs tab = (UITabs) view.findViewById(R.id.toggle);
-//        profilePhotoText = (TextView) view.findViewById(R.id.profile_photo_text);
-//        profileFriendText = (TextView) view.findViewById(R.id.profile_friend_text);
+        profilePhotoText = (TextView) view.findViewById(R.id.profile_photo_text);
+        profileFriendText = (TextView) view.findViewById(R.id.profile_friend_text);
 
         mNavigationTop.getBackground().setAlpha(0);
         mNavigationTitle.setVisibility(View.INVISIBLE);
@@ -364,6 +359,7 @@ public class ProfileFragment extends Fragment {
         gridView.setAdapter(adapter);
         gridView.setLayoutManager(gridLayoutManager);
         gridView.setHasFixedSize(true);
+        //gridView.setVisibility(View.GONE);
     }
 
 
