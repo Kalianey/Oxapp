@@ -4,9 +4,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
@@ -21,7 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,156 +52,190 @@ public class QueryAPI {
 
     }
 
-    public class ApiResult
-    {
+    public class ApiResult {
         public Boolean success;
         public String message;
         public Object data;
 
-        public boolean dataIsArray()
-        {
+        public boolean dataIsArray() {
             return (data != null && data instanceof JSONArray);
         }
 
-        public boolean dataIsObject()
-        {
+        public boolean dataIsObject() {
             return (data != null && data instanceof JSONObject);
         }
 
-        public boolean dataIsInteger()
-        {
+        public boolean dataIsInteger() {
             return (data != null && data instanceof Integer);
         }
 
-        public JSONArray getDataAsArray()
-        {
-            if ( this.dataIsArray()) {
+        public JSONArray getDataAsArray() {
+            if (this.dataIsArray()) {
                 return (JSONArray) this.data;
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
 
-        public JSONObject getDataAsObject()
-        {
-            if ( this.dataIsObject()) {
+        public JSONObject getDataAsObject() {
+            if (this.dataIsObject()) {
                 return (JSONObject) this.data;
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
 
-        public Integer getDataAsInteger()
-        {
-            if ( this.dataIsInteger()) {
+        public Integer getDataAsInteger() {
+            if (this.dataIsInteger()) {
                 return (Integer) this.data;
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
 
     }
 
-    public interface ApiResponse<T>
-    {
+    public interface ApiResponse<T> {
         public void onCompletion(T result);
     }
 
 
-    public void RequestApi( String url, final ApiResponse<ApiResult> completion  )
-    {
+    public void RequestApi(String url, final ApiResponse<ApiResult> completion) {
         Log.v("Performing request: ", url);
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, hostname+url, (JSONObject) null,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response)
-                {
-                    ApiResult res = new ApiResult();
-                    Log.v("RequestApi Response", response.toString());
-                    //Log.v("Data: ", response.toString());
-                    try {
-
-                        Boolean success = response.getBoolean("success");
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, hostname + url, (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        ApiResult res = new ApiResult();
+                        Log.v("RequestApi Response", response.toString());
+                        //Log.v("Data: ", response.toString());
                         try {
-                            res.data = response.getJSONArray("data");
-                        }
-                        catch (JSONException e)
-                        {
-                            Log.v("exception catch", e.getMessage());
+
+                            Boolean success = response.getBoolean("success");
                             try {
-                                res.data = response.getJSONObject("data");
+                                res.data = response.getJSONArray("data");
+                            } catch (JSONException e) {
+                                Log.v("exception catch", e.getMessage());
+                                try {
+                                    res.data = response.getJSONObject("data");
+                                } catch (JSONException x) {
+                                    Log.v("exception catch", x.getMessage());
+                                    res.data = response.getInt("data");
+                                }
                             }
-                            catch (JSONException x)
-                            {
-                                Log.v("exception catch", x.getMessage());
-                                res.data = response.getInt("data");
-                            }
+
+                            res.success = success;
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-                        res.success = success;
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        completion.onCompletion(res);
                     }
-                    completion.onCompletion(res);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    ApiResult res = new ApiResult();
-                    res.success = false;
-                    completion.onCompletion(res);
-                }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ApiResult res = new ApiResult();
+                res.success = false;
+                completion.onCompletion(res);
             }
+        }
         );
         AppController.getInstance().addToRequestQueue(jsonRequest);
 
     }
 
 
+//    public void RequestApiPost(String url, final Map<String, String> params, final ApiResponse<ApiResult> completion) {
+//
+//        String body = "";
+//        StringBuilder encodedParams = new StringBuilder();
+//        try {
+//            for (Map.Entry<String, String> entry : params.entrySet()) {
+//                encodedParams.append(URLEncoder.encode(entry.getKey(), "UTF8"));
+//                encodedParams.append('=');
+//                encodedParams.append(URLEncoder.encode(entry.getValue(), "UTF8"));
+//                encodedParams.append('&');
+//            }
+//            body = encodedParams.toString();
+//        } catch (UnsupportedEncodingException uee) {
+//            Log.v("RequestApiPost ", "error encoding UTF8");
+//        }
+//
+//
+//
+//
+//
+//
+//        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, hostname + url, body,
+//            new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    System.out.println(response);
+//
+//                }
+//            },
+//            new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    System.out.println(error.getLocalizedMessage());
+//                }
+//            }){
+//
+//            public String getBodyContentType() {
+//                return "application/x-www-form-urlencoded; charset=utf-8" ;
+//            }
+//        }
+//        ;
+//
+//        AppController.getInstance().addToRequestQueue(jsonRequest);
+//    }
+
+
     public void RequestApiPOST (String url, final Map<String, String> params, final ApiResponse<ApiResult> completion )
     {
 
-        StringRequest strRequest = new StringRequest(Request.Method.POST, url,
+        StringRequest strRequest = new StringRequest(Request.Method.POST, hostname+url,
                 new Response.Listener<String>()
                 {
                     @Override
-                    public void onResponse(String response)
+                    public void onResponse(String responseString)
                     {
-                        //Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                        JSONObject response = null;
                         ApiResult res = new ApiResult();
-                        Log.v("POST Response", response);
-                        //Log.v("Data: ", response.toString());
-//                        try {
-//
-//                            Boolean success = response.getBoolean("success");
-//                            try {
-//                                res.data = response.getJSONArray("data");
-//                            }
-//                            catch (JSONException e)
-//                            {
-//                                Log.v("exception catch", e.getMessage());
-//                                try {
-//                                    res.data = response.getJSONObject("data");
-//                                }
-//                                catch (JSONException x)
-//                                {
-//                                    Log.v("exception catch", x.getMessage());
-//                                    res.data = response.getInt("data");
-//                                }
-//                            }
-//
-//                            res.success = success;
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
+                        try {
+                            response = new JSONObject(responseString);
+
+                            Log.v("POST Response", response.toString());
+                            try {
+
+                                Boolean success = response.getBoolean("success");
+                                try {
+                                    res.data = response.getJSONArray("data");
+                                }
+                                catch (JSONException e)
+                                {
+                                    Log.v("exception catch", e.getMessage());
+                                    try {
+                                        res.data = response.getJSONObject("data");
+                                    }
+                                    catch (JSONException x)
+                                    {
+                                        Log.v("exception catch", x.getMessage());
+                                        res.data = response.getInt("data");
+                                    }
+                                }
+
+                                res.success = success;
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                         completion.onCompletion(res);
                     }
                 },
@@ -205,9 +244,10 @@ public class QueryAPI {
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
-                        //Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                        Log.v("error post:" , error.getLocalizedMessage());
                     }
                 })
+
         {
             @Override
             protected Map<String, String> getParams()
@@ -350,10 +390,10 @@ public class QueryAPI {
 
 
 
-    public void allUsers(final ApiResponse<List<ModelUser>> completion)
+    public void allUsers(String first, final ApiResponse<List<ModelUser>> completion)
     {
 
-        String url = "owapi/user/all";
+        String url = "owapi/user/all/"+first;
         final List<ModelUser> users = new ArrayList<ModelUser>();
 
         this.RequestApi(url, new ApiResponse<ApiResult>() {
@@ -560,33 +600,21 @@ public class QueryAPI {
 
         this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
             @Override
-            public void onCompletion(ApiResult result) {
+            public void onCompletion(ApiResult res) {
 
-                Log.v("VicRes", result.toString());
-                completion.onCompletion(null);
+                Log.v("VicRes", res.toString());
+                if (res.success) {
+                    ModelMessage message = new ModelMessage();
+                    message = new Gson().fromJson(res.data.toString(), ModelMessage.class);
+                    completion.onCompletion(message);
+
+                } else {
+                    completion.onCompletion(null);
+                }
             }
         });
 
     }
-
-//    func messageSend(convId:String, messageText: String, completion: (ModelMessage?) -> ()) -> NSURLSessionDataTask {
-//        let url = "owapi/messenger/conversation/"+convId+"/send/"
-//        var task = self.requestAPI(url, params: "text="+messageText) { (res: ApiResponse) -> () in
-//
-//            var item: ModelMessage?
-//
-//            if(res.success)
-//            {
-//                println(res.data)
-//                var data = res.data as! NSDictionary
-//                item = ModelMessage(data: data)
-//
-//            }
-//
-//            completion(item)
-//        }
-//        return task
-//    }
 
 
 
