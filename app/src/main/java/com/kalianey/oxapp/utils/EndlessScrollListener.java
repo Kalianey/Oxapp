@@ -1,11 +1,16 @@
 package com.kalianey.oxapp.utils;
 
+import android.util.Log;
 import android.widget.AbsListView;
 
 /**
  * Created by kalianey on 21/08/2015.
  */
 public abstract class EndlessScrollListener implements AbsListView.OnScrollListener {
+
+    public final static int SCROLL_DIRECTION_UP = 0;
+    public final static int SCROLL_DIRECTION_DOWN = 1;
+
     // The minimum amount of items to have below your current scroll position
     // before loading more.
     private int visibleThreshold = 5;
@@ -13,10 +18,13 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
     private int currentPage = 0;
     // The total number of items in the dataset after the last load
     private int previousTotalItemCount = 0;
+
     // True if we are still waiting for the last set of data to load.
     private boolean loading = true;
     // Sets the starting page index
     private int startingPageIndex = 0;
+
+    private int scrollDirection = SCROLL_DIRECTION_DOWN;
 
     public EndlessScrollListener() {
     }
@@ -37,6 +45,7 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
     {
+
         // If the total item count is zero and the previous isn't, assume the
         // list is invalidated and should be reset back to initial state
         if (totalItemCount < previousTotalItemCount) {
@@ -56,9 +65,16 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
         // If it isn’t currently loading, we check to see if we have breached
         // the visibleThreshold and need to reload more data.
         // If we do need to reload some more data, we execute onLoadMore to fetch the data.
-        if (!loading && (totalItemCount - visibleItemCount)<=(firstVisibleItem + visibleThreshold)) {
-            onLoadMore(currentPage + 1, totalItemCount);
-            loading = true;
+        if (!loading)
+        {
+            if( scrollDirection == SCROLL_DIRECTION_DOWN && (totalItemCount - visibleItemCount)<=(firstVisibleItem + visibleThreshold)) {
+                onLoadMore(currentPage + 1, totalItemCount);
+                loading = true;
+            }
+            else if( scrollDirection == SCROLL_DIRECTION_UP && firstVisibleItem<=visibleThreshold) {
+                onLoadMore(currentPage + 1, totalItemCount);
+                loading = true;
+            }
         }
     }
 
@@ -69,4 +85,22 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         // Don't take any action on changed
     }
+
+    public int getScrollDirection() {
+        return scrollDirection;
+    }
+
+    public void setScrollDirection(int scrollDirection) {
+        if (scrollDirection == SCROLL_DIRECTION_DOWN || scrollDirection == SCROLL_DIRECTION_UP)
+        { this.scrollDirection = scrollDirection; }
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
+
+    public void finishedLoading() {
+        this.loading = false;
+    }
+
 }

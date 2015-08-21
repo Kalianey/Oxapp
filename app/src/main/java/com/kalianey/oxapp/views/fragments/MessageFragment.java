@@ -27,6 +27,7 @@ import com.kalianey.oxapp.views.adapters.MessageListAdapter;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,6 +47,8 @@ public class MessageFragment extends Fragment {
     private Button mNavigationBackBtn;
     private Button sendButton;
     private TextView text;
+
+    private EndlessScrollListener scrollListener;
 
     public MessageFragment() {
     }
@@ -118,14 +121,47 @@ public class MessageFragment extends Fragment {
             }
         });
 
-
+        scrollListener = new EndlessScrollListener(){
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                loadMore(page);
+                // or customLoadMoreDataFromApi(totalItemsCount);
+            }
+        };
+        scrollListener.setScrollDirection(EndlessScrollListener.SCROLL_DIRECTION_UP);
         //Load more on scroll top
-
+        listView.setOnScrollListener(scrollListener);
 
         return view;
     }
 
 
+    // Append more data into the adapter
+    public void loadMore(int offset) {
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
+        Toast.makeText(getActivity(), "Scrolled to top", Toast.LENGTH_SHORT).show();
+
+        String lastMessageId = messages.get(0).getId();
+        query.conversationHistory(conversation.getId(), lastMessageId, new QueryAPI.ApiResponse<List<ModelMessage>>() {
+            @Override
+            public void onCompletion(List<ModelMessage> result) {
+                Collections.reverse(result);
+                int index = result.size();  //listView.getFirstVisiblePosition();
+                View v = listView.getChildAt(0);
+                int top = (v == null) ? 0 : (v.getTop() - listView.getPaddingTop());
+
+                messages.addAll(0, result);
+                //adapter.notifyDataSetChanged();
+
+                listView.setSelectionFromTop(index, top);
+                scrollListener.finishedLoading();
+            }
+        });
+    }
 
     public void finish() {
 

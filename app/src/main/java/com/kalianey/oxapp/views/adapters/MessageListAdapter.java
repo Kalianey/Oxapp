@@ -85,7 +85,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         String senderId = messages.get(position).getSenderId();
         String userId = loggedInUser.getUserId();
 
-        int type = senderId.equals(userId)? CELL_SENT :CELL_RCV;
+        int type = senderId.equals(userId)? CELL_SENT:CELL_RCV;
 
         return type;
     }
@@ -136,7 +136,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         viewHolder.message = messages.get(position);
         countMessage ++;
         if (countMessage < 3) {
-            viewHolder.date.setVisibility(View.GONE);
+            //viewHolder.date.setVisibility(View.GONE);
         }
         else {
             viewHolder.date.setVisibility(View.VISIBLE);

@@ -53,7 +53,7 @@
         android:dividerHeight="@dimen/pad_5dp"
         android:fastScrollEnabled="true"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"
+        android:transcriptMode="normal"
         android:paddingBottom="@dimen/pad_10dp"
         android:paddingTop="@dimen/pad_10dp">
     </ListView>

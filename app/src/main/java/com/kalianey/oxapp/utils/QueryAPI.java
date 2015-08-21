@@ -590,6 +590,84 @@ public class QueryAPI {
     }
 
 
+    public void conversationHistory(String conversationId, String lastMessageId, final ApiResponse<List<ModelMessage>> completion) {
+
+        String url = "owapi/messenger/conversation/"+conversationId+"/history/"+lastMessageId;
+
+        final List<ModelMessage> messages = new ArrayList<ModelMessage>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+                Log.d("Success MessHist",res.data.toString() );
+
+                if (res.success && res.dataIsArray()) {
+                    JSONArray messageList = res.getDataAsArray();
+
+                    Log.d("MessageList",messageList.toString() );
+                    for (int i = 0; i < messageList.length(); i++) {
+
+                        try {
+                            JSONObject jsonObject = messageList.getJSONObject(i);
+                            try {
+                                ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
+                                if (!message.getAttachment().equals("")){
+                                    Log.v("Message", message.getAttachment().toString());
+                                    LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
+                                    String downloadUrl = (String) attachment.get("downloadUrl");
+                                    String attachmentId = (String) attachment.get("id");
+                                    message.setDownloadUrl(downloadUrl);
+                                    message.setAttachmentId(attachmentId);
+                                    message.setIsMediaMessage(true);
+                                } else {
+                                    message.setIsMediaMessage(false);
+                                }
+
+                                messages.add(message);
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                //Log.d("ConvList Completion", res.data.toString());
+                completion.onCompletion(messages);
+            }
+        });
+
+    }
+
+//    func conversationHistory(conversationId: String, lastMessageId: String, completion: ([ModelMessage]) -> ()) -> NSURLSessionDataTask {
+//
+//        let url = "owapi/messenger/conversation/"+conversationId+"/history/"+lastMessageId
+//        println(url)
+//
+//        var task = self.requestAPI(url, params: "") { (res: ApiResponse) -> () in
+//            var items = [ModelMessage]() //TODO error checking
+//
+//            if(res.success)
+//            {
+//                var data = res.data as! NSArray
+//                //println(data)
+//                for item in data{
+//
+//                let msg = ModelMessage(data: item as! NSDictionary)
+//                items.append(msg)
+//
+//            }
+//
+//            }
+//
+//            completion(items)
+//
+//        }
+//        return task
+//    }
+
 
 
     public void messageSend(String convId, String messageText, final ApiResponse<ModelMessage> completion) {
