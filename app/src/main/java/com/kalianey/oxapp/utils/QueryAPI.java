@@ -695,6 +695,33 @@ public class QueryAPI {
     }
 
 
+    /* DEVICE REGISTRATION FOR GCM PUSH NOTIFICATIONS */
+
+    public void registerForNotifications(String token, final ApiResponse<String> completion) {
+
+        String url = "owapi/device/register";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("token", token);
+        params.put("kind", "android");
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.v("GCM registration:", res.success.toString());
+                res.message = "GCM registration "+ res.success.toString();
+
+                if (res.success){
+                    res.message = "GCM registration successful";
+                }
+
+                completion.onCompletion(res.message);
+
+            }
+        });
+
+    }
+
 
     /* LOGIN METHODS */
 
