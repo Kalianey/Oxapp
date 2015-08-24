@@ -1,7 +1,12 @@
 package com.kalianey.oxapp.views.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,6 +62,8 @@ public class MessageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, new IntentFilter("Msg"));
 
         mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
         mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
@@ -168,6 +175,20 @@ public class MessageFragment extends Fragment {
         getActivity().finish();
         getActivity().overridePendingTransition(0, 0);
     }
+
+
+    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.v("Mess: ", intent.toString());
+
+            //add row
+
+
+
+        }
+    };
 
 }
 

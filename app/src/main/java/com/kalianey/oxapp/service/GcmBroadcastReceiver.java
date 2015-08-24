@@ -15,19 +15,24 @@
  */
 package com.kalianey.oxapp.service;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.views.activities.MainActivity;
+
+import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulService;
 
 public class GcmBroadcastReceiver extends BroadcastReceiver {
     private final String LOG_TAG = BroadcastReceiver.class.getSimpleName();
@@ -66,6 +71,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
                     String alert = "New message: " + message;
 
                     sendNotification(context, alert);
+
                 }
 
                 Log.i(LOG_TAG, "Received: " + extras.toString());
