@@ -14,7 +14,7 @@ public class ModelMessage implements Serializable {
     String senderId;
     String senderDisplayName;
     Long timeStamp;
-    Boolean isMediaMessage;
+    Boolean isMediaMessage = false;
     Integer messageHash;
     String text;
     /**/
@@ -23,7 +23,8 @@ public class ModelMessage implements Serializable {
     String conversationId;
     String imageUrl;
     String recipientId;
-    Boolean recipientRead;
+    //Boolean recipientRead;
+    Integer recipientRead;
 
     String attachmentId;
     String downloadUrl;
@@ -120,11 +121,19 @@ public class ModelMessage implements Serializable {
         this.recipientId = recipientId;
     }
 
-    public Boolean getRecipientRead() {
+//    public Boolean getRecipientRead() {
+//        return recipientRead;
+//    }
+
+    public Integer getRecipientRead() {
         return recipientRead;
     }
 
-    public void setRecipientRead(Boolean recipientRead) {
+//    public void setRecipientRead(Boolean recipientRead) {
+//        this.recipientRead = recipientRead;
+//    }
+
+    public void setRecipientRead(Integer recipientRead) {
         this.recipientRead = recipientRead;
     }
 

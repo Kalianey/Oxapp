@@ -1,11 +1,15 @@
 package com.kalianey.oxapp.utils;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
@@ -20,6 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,116 +52,211 @@ public class QueryAPI {
 
     }
 
-    public class ApiResult
-    {
+    public class ApiResult {
         public Boolean success;
         public String message;
         public Object data;
 
-        public boolean dataIsArray()
-        {
+        public boolean dataIsArray() {
             return (data != null && data instanceof JSONArray);
         }
 
-        public boolean dataIsObject()
-        {
+        public boolean dataIsObject() {
             return (data != null && data instanceof JSONObject);
         }
 
-        public boolean dataIsInteger()
-        {
+        public boolean dataIsInteger() {
             return (data != null && data instanceof Integer);
         }
 
-        public JSONArray getDataAsArray()
-        {
-            if ( this.dataIsArray()) {
+        public JSONArray getDataAsArray() {
+            if (this.dataIsArray()) {
                 return (JSONArray) this.data;
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
 
-        public JSONObject getDataAsObject()
-        {
-            if ( this.dataIsObject()) {
+        public JSONObject getDataAsObject() {
+            if (this.dataIsObject()) {
                 return (JSONObject) this.data;
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
 
-        public Integer getDataAsInteger()
-        {
-            if ( this.dataIsInteger()) {
+        public Integer getDataAsInteger() {
+            if (this.dataIsInteger()) {
                 return (Integer) this.data;
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
 
     }
 
-    public interface ApiResponse<T>
-    {
+    public interface ApiResponse<T> {
         public void onCompletion(T result);
     }
 
 
-    public void RequestApi( String url, final ApiResponse<ApiResult> completion  )
-    {
+    public void RequestApi(String url, final ApiResponse<ApiResult> completion) {
         Log.v("Performing request: ", url);
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, hostname+url, (JSONObject) null,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response)
-                {
-                    ApiResult res = new ApiResult();
-                    Log.v("RequestApi Response", response.toString());
-                    //Log.v("Data: ", response.toString());
-                    try {
-
-                        Boolean success = response.getBoolean("success");
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, hostname + url, (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        ApiResult res = new ApiResult();
+                        Log.v("RequestApi Response", response.toString());
+                        //Log.v("Data: ", response.toString());
                         try {
-                            res.data = response.getJSONArray("data");
-                        }
-                        catch (JSONException e)
-                        {
-                            Log.v("exception catch", e.getMessage());
+
+                            Boolean success = response.getBoolean("success");
                             try {
-                                res.data = response.getJSONObject("data");
+                                res.data = response.getJSONArray("data");
+                            } catch (JSONException e) {
+                                Log.v("exception catch", e.getMessage());
+                                try {
+                                    res.data = response.getJSONObject("data");
+                                } catch (JSONException x) {
+                                    Log.v("exception catch", x.getMessage());
+                                    res.data = response.getInt("data");
+                                }
                             }
-                            catch (JSONException x)
-                            {
-                                Log.v("exception catch", x.getMessage());
-                                res.data = response.getInt("data");
-                            }
+
+                            res.success = success;
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-                        res.success = success;
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        completion.onCompletion(res);
                     }
-                    completion.onCompletion(res);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    ApiResult res = new ApiResult();
-                    res.success = false;
-                    completion.onCompletion(res);
-                }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ApiResult res = new ApiResult();
+                res.success = false;
+                completion.onCompletion(res);
             }
+        }
         );
         AppController.getInstance().addToRequestQueue(jsonRequest);
 
+    }
+
+
+//    public void RequestApiPost(String url, final Map<String, String> params, final ApiResponse<ApiResult> completion) {
+//
+//        String body = "";
+//        StringBuilder encodedParams = new StringBuilder();
+//        try {
+//            for (Map.Entry<String, String> entry : params.entrySet()) {
+//                encodedParams.append(URLEncoder.encode(entry.getKey(), "UTF8"));
+//                encodedParams.append('=');
+//                encodedParams.append(URLEncoder.encode(entry.getValue(), "UTF8"));
+//                encodedParams.append('&');
+//            }
+//            body = encodedParams.toString();
+//        } catch (UnsupportedEncodingException uee) {
+//            Log.v("RequestApiPost ", "error encoding UTF8");
+//        }
+//
+//
+//
+//
+//
+//
+//        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, hostname + url, body,
+//            new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    System.out.println(response);
+//
+//                }
+//            },
+//            new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    System.out.println(error.getLocalizedMessage());
+//                }
+//            }){
+//
+//            public String getBodyContentType() {
+//                return "application/x-www-form-urlencoded; charset=utf-8" ;
+//            }
+//        }
+//        ;
+//
+//        AppController.getInstance().addToRequestQueue(jsonRequest);
+//    }
+
+
+    public void RequestApiPOST (String url, final Map<String, String> params, final ApiResponse<ApiResult> completion )
+    {
+
+        StringRequest strRequest = new StringRequest(Request.Method.POST, hostname+url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String responseString)
+                    {
+                        JSONObject response = null;
+                        ApiResult res = new ApiResult();
+                        try {
+                            response = new JSONObject(responseString);
+
+                            Log.v("POST Response", response.toString());
+                            try {
+
+                                Boolean success = response.getBoolean("success");
+                                try {
+                                    res.data = response.getJSONArray("data");
+                                }
+                                catch (JSONException e)
+                                {
+                                    Log.v("exception catch", e.getMessage());
+                                    try {
+                                        res.data = response.getJSONObject("data");
+                                    }
+                                    catch (JSONException x)
+                                    {
+                                        Log.v("exception catch", x.getMessage());
+                                        res.data = response.getInt("data");
+                                    }
+                                }
+
+                                res.success = success;
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        completion.onCompletion(res);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        Log.v("error post:" , error.getLocalizedMessage());
+                    }
+                })
+
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                return params;
+            }
+        };
+
+        AppController.getInstance().addToRequestQueue(strRequest);
     }
 
 
@@ -288,10 +390,10 @@ public class QueryAPI {
 
 
 
-    public void allUsers(final ApiResponse<List<ModelUser>> completion)
+    public void allUsers(String first, final ApiResponse<List<ModelUser>> completion)
     {
 
-        String url = "owapi/user/all";
+        String url = "owapi/user/all/"+first;
         final List<ModelUser> users = new ArrayList<ModelUser>();
 
         this.RequestApi(url, new ApiResponse<ApiResult>() {
@@ -487,29 +589,138 @@ public class QueryAPI {
 //        });
     }
 
-//    func conversationCreate(initiatorId:String, interlocutorId:String, completion: (ModelConversation) -> ()) -> NSURLSessionDataTask {
+
+    public void conversationHistory(String conversationId, String lastMessageId, final ApiResponse<List<ModelMessage>> completion) {
+
+        String url = "owapi/messenger/conversation/"+conversationId+"/history/"+lastMessageId;
+
+        final List<ModelMessage> messages = new ArrayList<ModelMessage>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+                Log.d("Success MessHist",res.data.toString() );
+
+                if (res.success && res.dataIsArray()) {
+                    JSONArray messageList = res.getDataAsArray();
+
+                    Log.d("MessageList",messageList.toString() );
+                    for (int i = 0; i < messageList.length(); i++) {
+
+                        try {
+                            JSONObject jsonObject = messageList.getJSONObject(i);
+                            try {
+                                ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
+                                if (!message.getAttachment().equals("")){
+                                    Log.v("Message", message.getAttachment().toString());
+                                    LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
+                                    String downloadUrl = (String) attachment.get("downloadUrl");
+                                    String attachmentId = (String) attachment.get("id");
+                                    message.setDownloadUrl(downloadUrl);
+                                    message.setAttachmentId(attachmentId);
+                                    message.setIsMediaMessage(true);
+                                } else {
+                                    message.setIsMediaMessage(false);
+                                }
+
+                                messages.add(message);
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                //Log.d("ConvList Completion", res.data.toString());
+                completion.onCompletion(messages);
+            }
+        });
+
+    }
+
+//    func conversationHistory(conversationId: String, lastMessageId: String, completion: ([ModelMessage]) -> ()) -> NSURLSessionDataTask {
 //
-//        let url = "owapi/messenger/conversation/create"
-//        var task = self.requestAPI(url, params: "initiatorId="+initiatorId+"&interlocutorId="+interlocutorId) { (res: ApiResponse) -> () in
+//        let url = "owapi/messenger/conversation/"+conversationId+"/history/"+lastMessageId
+//        println(url)
 //
-//            let item: ModelConversation //TODO error checking
+//        var task = self.requestAPI(url, params: "") { (res: ApiResponse) -> () in
+//            var items = [ModelMessage]() //TODO error checking
 //
 //            if(res.success)
 //            {
-//                var data = res.data as! NSDictionary
+//                var data = res.data as! NSArray
 //                //println(data)
-//                item = ModelConversation(data:data)
+//                for item in data{
+//
+//                let msg = ModelMessage(data: item as! NSDictionary)
+//                items.append(msg)
 //
 //            }
-//            else
-//            {
-//                item = ModelConversation()
+//
 //            }
-//            completion(item)
+//
+//            completion(items)
 //
 //        }
 //        return task
 //    }
+
+
+
+    public void messageSend(String convId, String messageText, final ApiResponse<ModelMessage> completion) {
+
+        String url = "owapi/messenger/conversation/"+convId+"/send/";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("text", messageText);
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.v("VicRes", res.toString());
+                if (res.success) {
+                    ModelMessage message = new ModelMessage();
+                    message = new Gson().fromJson(res.data.toString(), ModelMessage.class);
+                    completion.onCompletion(message);
+
+                } else {
+                    completion.onCompletion(null);
+                }
+            }
+        });
+
+    }
+
+
+    /* DEVICE REGISTRATION FOR GCM PUSH NOTIFICATIONS */
+
+    public void registerForNotifications(String token, final ApiResponse<String> completion) {
+
+        String url = "owapi/device/register";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("token", token);
+        params.put("kind", "android");
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.v("GCM registration:", res.success.toString());
+                res.message = "GCM registration "+ res.success.toString();
+
+                if (res.success){
+                    res.message = "GCM registration successful";
+                }
+
+                completion.onCompletion(res.message);
+
+            }
+        });
+
+    }
 
 
     /* LOGIN METHODS */

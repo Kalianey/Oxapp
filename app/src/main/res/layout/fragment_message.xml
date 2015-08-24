@@ -6,6 +6,44 @@
     android:background="@color/white"
     tools:context="com.kalianey.oxapp.views.fragments.MessageFragment">
 
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_navigation">
+
+    <FrameLayout
+        android:id="@+id/layout_top"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows = "true"
+        android:background="@color/bar_color">
+
+        <Button
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/titlebar_back_selector"
+            android:id="@+id/title_bar_left_menu"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/titleBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="7dp"
+            android:fontFamily="sans-serif-light"
+            android:ellipsize="marquee"
+            android:singleLine="false"
+            android:text=""
+            android:textSize="@dimen/textsize_large"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
+
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/message_list"
         android:layout_width="match_parent"
@@ -15,7 +53,7 @@
         android:dividerHeight="@dimen/pad_5dp"
         android:fastScrollEnabled="true"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"
+        android:transcriptMode="normal"
         android:paddingBottom="@dimen/pad_10dp"
         android:paddingTop="@dimen/pad_10dp">
     </ListView>

@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.utils.EndlessScrollListener;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.QueryAPI;
@@ -29,6 +31,7 @@ public class PeopleFragment extends Fragment {
     private SessionManager session;
     private PeopleGridViewAdapter adapter;
     private List<ModelUser> users = new ArrayList<>();
+    private Integer first = 0;
 
     public PeopleFragment() {
     }
@@ -42,7 +45,7 @@ public class PeopleFragment extends Fragment {
         gridView.setClipToPadding(false);
         //setInsets(gridView);
 
-        query.allUsers(new QueryAPI.ApiResponse<List<ModelUser>>() {
+        query.allUsers(first.toString(), new QueryAPI.ApiResponse<List<ModelUser>>() {
             @Override
             public void onCompletion(List<ModelUser> result) {
                 Log.v("UserListCompletion", result.toString());
@@ -57,9 +60,41 @@ public class PeopleFragment extends Fragment {
 
         });
 
+        gridView.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                loadMore(page);
+                // or customLoadMoreDataFromApi(totalItemsCount);
+            }
+        });
+
     return view;
+
     }
 
 
+    // Append more data into the adapter
+    public void loadMore(int offset) {
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
+
+        //Toast.makeText(getActivity(), "Scrolled to bottom", Toast.LENGTH_LONG).show();
+
+        Integer index = users.size();
+        query.allUsers(index.toString(), new QueryAPI.ApiResponse<List<ModelUser>>() {
+            @Override
+            public void onCompletion(List<ModelUser> result) {
+                Log.v("UserListCompletion", result.toString());
+                if (!result.isEmpty() && result != null) {
+                    users.addAll(result);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+        });
+    }
 
 }

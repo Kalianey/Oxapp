@@ -8,6 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
 
 
@@ -30,15 +31,9 @@ public class AppController extends Application {
 
     private static Context mContext;
 
+    private static String appName;
+
     private ModelUser loggedInUser;
-
-    public ModelUser getLoggedInUser() {
-        return loggedInUser;
-    }
-
-    public void setLoggedInUser(ModelUser user) {
-        this.loggedInUser = user;
-    }
 
     @Override
     public void onCreate() {
@@ -48,7 +43,24 @@ public class AppController extends Application {
         mInstance = this;
         mContext = getApplicationContext();
         loggedInUser = new ModelUser();
+        appName = mContext.getResources().getString(R.string.app_name);
 
+    }
+
+    public ModelUser getLoggedInUser() {
+        return loggedInUser;
+    }
+
+    public void setLoggedInUser(ModelUser user) {
+        this.loggedInUser = user;
+    }
+
+    public static String getAppName() {
+        return appName;
+    }
+
+    public static void setAppName(String appName) {
+        AppController.appName = appName;
     }
 
     public static synchronized AppController getInstance() {
