@@ -44,6 +44,7 @@ import com.kalianey.oxapp.views.activities.Profile;
 import com.kalianey.oxapp.views.adapters.ProfileFriendListViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfilePhotoListViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfilePhotoRecyclerViewAdapter;
+import com.kalianey.oxapp.views.adapters.ProfileQuestionListAdapter;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -57,6 +58,8 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
@@ -78,7 +81,7 @@ public class ProfileFragment extends Fragment {
     private RecyclerView gridView;
     private NetworkImageView cImageView;
     private UICircularImage mImageView;
-    private TextView mTextView;
+    //private TextView mTextView;
     private RelativeLayout mLayoutContainer;
     private FrameLayout mNavigationTop;
     private TextView mNavigationTitle;
@@ -91,6 +94,7 @@ public class ProfileFragment extends Fragment {
     private ProfileFriendListViewAdapter friendsAdapter;
     private TextView profileFriendText;
     private TextView profilePhotoText;
+    private StickyListHeadersListView stickyList;
 
     //Vars
     private List<ModelAttachment> photoList = new ArrayList<ModelAttachment>();
@@ -158,6 +162,13 @@ public class ProfileFragment extends Fragment {
                 friendsAdapter = new ProfileFriendListViewAdapter(getActivity(), R.layout.profile_friend_list_item, user.getFriends());
                 friendsListView.setAdapter(friendsAdapter);
 
+                //Profile Questions
+
+                stickyList = (StickyListHeadersListView) view.findViewById(R.id.questions_list);
+                ProfileQuestionListAdapter adapter = new ProfileQuestionListAdapter(getActivity(), user);
+                stickyList.setAdapter(adapter);
+
+
 //                final ItemClickSupport itemClick = ItemClickSupport.addTo(friendsAdapter);
 //
 //                friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -194,7 +205,7 @@ public class ProfileFragment extends Fragment {
 
         cImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
         mImageView = (UICircularImage) view.findViewById(R.id.image_view);
-        mTextView = (TextView) view.findViewById(R.id.contact);
+       // mTextView = (TextView) view.findViewById(R.id.contact);
         mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
         mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
         mLayoutContainer = (RelativeLayout) view.findViewById(R.id.bg_layout);
@@ -329,14 +340,16 @@ public class ProfileFragment extends Fragment {
                 switch (checkedId) {
 
                     case R.id.toggle1:
-                        mTextView.setVisibility(View.GONE);
+                        //mTextView.setVisibility(View.GONE);
                         gridView.setVisibility(LinearLayout.VISIBLE);
                         friendsListView.setVisibility(LinearLayout.VISIBLE);
                         profilePhotoText.setVisibility(LinearLayout.VISIBLE);
                         profileFriendText.setVisibility(LinearLayout.VISIBLE);
+                        stickyList.setVisibility(View.GONE);
                         return;
                     case R.id.toggle2:
-                        mTextView.setVisibility(View.VISIBLE);
+                       // mTextView.setVisibility(View.VISIBLE);
+                        stickyList.setVisibility(View.VISIBLE);
                         gridView.setVisibility(LinearLayout.GONE);
                         friendsListView.setVisibility(LinearLayout.GONE);
                         profilePhotoText.setVisibility(LinearLayout.GONE);

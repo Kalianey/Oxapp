@@ -2,6 +2,8 @@ package com.kalianey.oxapp.models;
 
 import android.graphics.AvoidXfermode;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +25,13 @@ public class ModelUser implements Serializable {
     private String age;
     private String email;
     private String distance;
-
+    private List<ModelQuestion> questions;
+    private JSONArray sections;
     private List<ModelUser> friends = new ArrayList<ModelUser>();
     private List<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+
+
+
 
     public List<ModelAttachment> getPhotos() {
         return photos;
@@ -127,13 +133,22 @@ public class ModelUser implements Serializable {
     }
 
 
+    public JSONArray getSections() {
+        return sections;
+    }
 
-//    var sections: NSArray?
-//    var questions: NSArray?
-//
-//    var photos: Array<AnyObject>?
-//    var friends: Array<ModelUser>?
+    public void setSections(JSONArray sections) {
+        this.sections = sections;
+    }
 
+
+    public List<ModelQuestion> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<ModelQuestion> questions) {
+        this.questions = questions;
+    }
 
 
 
