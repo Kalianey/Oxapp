@@ -176,14 +176,18 @@
                     android:id="@+id/profile_photo_text"
                     android:text="@string/profile_photo_text"
                     android:layout_gravity="left"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"/>
 
 
                 <android.support.v7.widget.RecyclerView
                   android:id="@+id/grid_view"
                   android:layout_width="match_parent"
                   android:layout_height="250dp"
-                  app:layoutManager="StaggeredGridLayoutManager"/>
+                  app:layoutManager="StaggeredGridLayoutManager"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"/>
 
 
                 <TextView
@@ -192,7 +196,9 @@
                     android:id="@+id/profile_friend_text"
                     android:text="@string/profile_friend_text"
                     android:layout_gravity="left"
-                    android:layout_marginTop="20dp" />
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"/>
 
                 <org.lucasr.twowayview.TwoWayView
                     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -205,23 +211,14 @@
                     android:drawSelectorOnTop="false"
                     tools:context=".MainActivity"
                     android:paddingTop="10dp"
-                    android:paddingBottom="10dp" />
-
-                <!--<TextView-->
-                    <!--android:id="@+id/contact"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="fill_parent"-->
-                    <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
-                    <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
-                    <!--android:text="@string/contact_placeholder"-->
-                    <!--android:visibility="gone"/>-->
+                    android:paddingBottom="10dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"/>
 
                 <se.emilsjolander.stickylistheaders.StickyListHeadersListView
                     android:id="@+id/questions_list"
                     android:layout_width="match_parent"
                     android:layout_height="500dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:visibility="gone" />
 
 

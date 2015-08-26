@@ -31,13 +31,14 @@ public class ProfileQuestionListAdapter extends BaseAdapter implements StickyLis
     private List<ModelQuestion> questions;
     private JSONArray sectionsArray;
     private LayoutInflater inflater;
+    private int headerInt;
+    private String headerText;
 
     public ProfileQuestionListAdapter(Context context, ModelUser user) {
         inflater = LayoutInflater.from(context);
         this.user = user;
         questions = user.getQuestions();
         sectionsArray = user.getSections();
-
 
     }
 
@@ -106,22 +107,23 @@ public class ProfileQuestionListAdapter extends BaseAdapter implements StickyLis
         if(q.getQuestionName().equals("Localisation")) {
             questionValue = user.getAddress();
         }
-//        else if let questionArray = currentUser.questions![i][indexPath.row]["questionValue"]! as? NSDictionary {
-//            var i = 0
-//            for (question, value) in questionArray {
-//                ++i
-//                questionAnswer += (value as! String)
-//                if i < questionArray.count {
-//                    questionAnswer += ", "
-//                }
-//            }
-//        }
+
 
         holder.question.setText(q.getQuestionName());
         holder.answer.setText(questionValue);
 
-//        holder.question.setText("question");
-//        holder.answer.setText("answer");
+        headerText = questions.get(position).getSection();
+
+        for (int i = 0; i < sectionsArray.length(); ++i) {
+            try {
+                String sectionName = sectionsArray.getString(i);
+                if (q.getSection() == sectionName) {
+                    headerInt = i;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         return convertView;
     }
@@ -139,7 +141,6 @@ public class ProfileQuestionListAdapter extends BaseAdapter implements StickyLis
         }
         //set header text as first char in name
         //String headerText = "" + questions.optJSONObject(position).subSequence(0, 1).charAt(0);
-        String headerText = questions.get(position).getSection();
         holder.headerText.setText(headerText);
         return convertView;
     }
@@ -148,7 +149,8 @@ public class ProfileQuestionListAdapter extends BaseAdapter implements StickyLis
     public long getHeaderId(int position) {
         //return the first character of the country as ID because this is what headers are based upon
         //return questions[position].subSequence(0, 1).charAt(0);
-        return 1;
+
+        return questions.get(position).getSection().charAt(0);
     }
 
     class HeaderViewHolder {
