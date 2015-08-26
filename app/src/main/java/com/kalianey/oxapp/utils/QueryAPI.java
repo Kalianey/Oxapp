@@ -18,6 +18,7 @@ import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelFriend;
 import com.kalianey.oxapp.models.ModelMessage;
+import com.kalianey.oxapp.models.ModelQuestion;
 import com.kalianey.oxapp.models.ModelUser;
 
 import org.json.JSONArray;
@@ -362,16 +363,32 @@ public class QueryAPI {
                         JSONObject questions = data.getJSONObject("questions");
                         JSONArray sections = questions.getJSONArray("sections");
                         Log.v("sections", sections.toString()); // ["Infos","Recherche"]
+                        user.setSections(sections);
                         JSONArray questionData = questions.getJSONArray("questionsData");
-                        Log.v("questionData", questionData.toString()); //[[{"questionValue":"07 Mai","sectionName":"Infos","sectionKey":"f90cde5913
+                        //user.setQuestions(questionData);
+
+                        List<ModelQuestion> questionList = new ArrayList<ModelQuestion>();
+
                         for (int i = 0; i < questionData.length(); i++) {
-                            JSONArray questionArray = questionData.getJSONArray(i);
-                            for (int index = 0; index < questionArray.length(); index++) {
-                                JSONObject questionObj = questionArray.getJSONObject(index);
-                                Log.v("1 question: ", questionObj.toString());
+                            try {
+                                JSONArray questionArray = questionData.getJSONArray(i);
+                                for (int index = 0; index < questionArray.length(); index++) {
+                                    JSONObject questionObj = questionArray.getJSONObject(index);
+                                    ModelQuestion q = new ModelQuestion();
+                                    q.setQuestionName( questionObj.getString("questionName") );
+                                    q.setQuestionValue( questionObj.getString("questionValue") );
+                                    q.setSection( questionObj.getString("sectionName") );
+                                    questionList.add(q);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
 
                         }
+                        user.setQuestions(questionList);
+
+                        Log.v("questionData", questionData.toString()); //[[{"questionValue":"07 Mai","sectionName":"Infos","sectionKey":"f90cde5913
+
                     }
                     catch (JSONException e) {
                         e.printStackTrace();

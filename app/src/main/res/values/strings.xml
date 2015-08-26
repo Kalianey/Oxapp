@@ -60,7 +60,7 @@
     <string name="reply">Reply</string>
 
     <string name="detail_title_placeholder">Profile Title</string>
-    <string name="contact_placeholder">Here come the profile questions</string>
+    <string name="contact_placeholder">Profile Questions</string>
     <string name="social_1_placeholder">4.8</string>
     <string name="social_1_placeholder_nr">15</string>
     <string name="sumary_placeholder">Summary</string>

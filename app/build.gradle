@@ -32,6 +32,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.+'
     //compile 'com.google.android.gms:play-services-gcm:7.8.0' //maybe replace just by com.google.android.gms:play-services-gcm:7.8.0
     compile 'com.google.android.gms:play-services:7.8.0'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
 
     //ClearUI
     //compile files('libs/android-support-v4.jar')
