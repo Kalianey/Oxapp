@@ -1,9 +1,13 @@
 package com.kalianey.oxapp.models;
 
+import java.io.Serializable;
+
 /**
  * Created by kalianey on 18/08/2015.
  */
-public class ModelAttachment {
+public class ModelAttachment implements Serializable {
+
+    private static final long serial = 1L;
 
     String id;
     String thumb;

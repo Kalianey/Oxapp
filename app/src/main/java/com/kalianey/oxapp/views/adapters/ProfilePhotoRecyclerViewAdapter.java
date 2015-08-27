@@ -13,6 +13,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
+import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.views.activities.ProfilePhotos;
@@ -28,6 +29,7 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
 
     private LayoutInflater inflater;
     private List<ModelAttachment> photos; //data
+    private ModelUser user;
     private Activity listContext;
     //private Context listContext;
     private int listRowLayoutId;
@@ -46,6 +48,10 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
         this.notifyItemRangeInserted(0, photos.size() - 1);
     }
 
+    public void setUser(ModelUser user) {
+        this.user = user;
+    }
+
     @Override
     public ProfilePhotoRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
 
@@ -56,7 +62,7 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
             public void onClick(View v) {
                 Intent i = new Intent(listContext, ProfilePhotos.class);
 //                Bundle mBundle = new Bundle();
-//                mBundle.putSerializable("convObj", finalViewHolder.photo);
+//                mBundle.putSerializable("user", user);
 //                i.putExtras(mBundle);
                 listContext.startActivity(i);
             }

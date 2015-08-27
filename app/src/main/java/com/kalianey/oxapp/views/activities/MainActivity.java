@@ -218,10 +218,6 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         }
         else if (view == itemMap){
             Intent i = new Intent(this, MapsActivity.class);
-//            Bundle mBundle = new Bundle();
-//            ModelUser user = AppController.getInstance().getLoggedInUser();
-//            mBundle.putSerializable("userObj", user);
-//            i.putExtras(mBundle);
             startActivity(i);
         }
 

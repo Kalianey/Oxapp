@@ -10,9 +10,17 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.models.ModelAttachment;
+import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.utils.AppController;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -21,9 +29,10 @@ public class ProfilePhotosFragment extends Fragment {
 
 
     private ViewPager awesomePager;
-    private static int NUM_AWESOME_VIEWS = 20;
     private Context cxt;
     private AwesomePagerAdapter awesomeAdapter;
+    private List<ModelAttachment> photos;
+    private ModelAttachment currentPhoto;
 
     /** Called when the activity is first created. */
 
@@ -37,6 +46,11 @@ public class ProfilePhotosFragment extends Fragment {
 
         cxt = getActivity();
 
+        ModelUser user = (ModelUser) getActivity().getIntent().getSerializableExtra("user");
+        //photos = user.getPhotos();
+        photos = AppController.getInstance().getLoggedInUser().getPhotos();
+        //currentPhoto = (ModelAttachment) getActivity().getIntent().getSerializableExtra("photo");
+
         awesomeAdapter = new AwesomePagerAdapter();
         awesomePager = (ViewPager) view.findViewById(R.id.awesomepager);
         awesomePager.setAdapter(awesomeAdapter);
@@ -48,10 +62,13 @@ public class ProfilePhotosFragment extends Fragment {
 
     private class AwesomePagerAdapter extends PagerAdapter {
 
+        private NetworkImageView mImageView;
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+
 
         @Override
         public int getCount() {
-            return NUM_AWESOME_VIEWS;
+            return photos.size();
         }
 
         /**
@@ -67,14 +84,22 @@ public class ProfilePhotosFragment extends Fragment {
          */
         @Override
         public Object instantiateItem(ViewGroup collection, int position) {
-            TextView tv = new TextView(cxt);
-            tv.setText("Hello" + position);
-            tv.setTextColor(Color.WHITE);
-            tv.setTextSize(30);
+            LayoutInflater inflater = (LayoutInflater) cxt.getSystemService(cxt.LAYOUT_INFLATER_SERVICE);
 
-            collection.addView(tv,0);
+//            TextView tv = new TextView(cxt);
+//            tv.setText("Hello" + position);
+//            tv.setTextColor(Color.WHITE);
+//            tv.setTextSize(30);
 
-            return tv;
+            mImageView = new NetworkImageView(cxt);
+
+            mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
+            mImageView.setLayoutParams(new ViewGroup.LayoutParams(500, 500));
+
+            collection.addView(mImageView,0);
+
+            return mImageView;
+            //return tv;
         }
 
         /**

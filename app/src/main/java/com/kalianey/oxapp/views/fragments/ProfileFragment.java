@@ -3,10 +3,8 @@ package com.kalianey.oxapp.views.fragments;
 import android.annotation.SuppressLint;
 //import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.AvoidXfermode;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -16,20 +14,16 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.etsy.android.grid.StaggeredGridView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelConversation;
@@ -40,9 +34,7 @@ import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
 import com.kalianey.oxapp.views.activities.Message;
-import com.kalianey.oxapp.views.activities.Profile;
 import com.kalianey.oxapp.views.adapters.ProfileFriendListViewAdapter;
-import com.kalianey.oxapp.views.adapters.ProfilePhotoListViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfilePhotoRecyclerViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfileQuestionListAdapter;
 import com.nineoldandroids.animation.Animator;
@@ -54,7 +46,6 @@ import com.squareup.picasso.Picasso;
 import org.lucasr.twowayview.TwoWayView;
 //import org.lucasr.twowayview.ItemClickSupport.OnItemClickListener;
 //import org.lucasr.twowayview.ItemClickSupport.OnItemLongClickListener;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,6 +142,7 @@ public class ProfileFragment extends Fragment {
                 photoList.clear();
                 photoList.addAll(0, user.getPhotos());
                 adapter.setPhotos(photoList);
+                adapter.setUser(user);
                 adapter.notifyDataSetChanged();
 
                 //Horizontal ListView for friends

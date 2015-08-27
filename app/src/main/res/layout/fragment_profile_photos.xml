@@ -4,7 +4,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.kalianey.oxapp.views.fragments.ProfilePhotosFragment">
+    tools:context="com.kalianey.oxapp.views.fragments.ProfilePhotosFragment"
+    android:background="#000000">
 
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
