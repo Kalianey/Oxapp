@@ -9,8 +9,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- Creates a custom permission so only this app can receive its messages. -->
-    <permission android:name="com.kalianey.oxapp.permission.C2D_MESSAGE"
-        android:protectionLevel="signature"/>
+    <permission
+        android:name="com.kalianey.oxapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="com.kalianey.oxapp.permission.C2D_MESSAGE" />
 
     <!-- This app has permission to register and receive data message. -->
@@ -24,7 +26,14 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-             android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".views.activities.MainActivity"
             android:label="@string/app_name" >
@@ -54,6 +63,10 @@
             android:name=".views.activities.Profile"
             android:label="@string/title_activity_profile" >
         </activity>
+        <activity
+            android:name=".views.activities.MapsActivity"
+            android:label="@string/title_activity_map" >
+        </activity>
 
         <!-- GOOGLE CLOUD MESSAGING -->
         <receiver
@@ -63,17 +76,21 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <!-- for Gingerbread GSF backward compat -->
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="com.kalianey.oxapp" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.GcmService" android:exported="false">
+        <service
+            android:name=".service.GcmService"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-
-        <service android:name=".service.LoggingService" android:exported="false" />
+        <service
+            android:name=".service.LoggingService"
+            android:exported="false" />
 
         <!-- GCM receiver -->
         <receiver
@@ -81,10 +98,15 @@
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="com.kalianey.oxapp" />
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".views.activities.ProfilePhotos"
+            android:label="@string/title_activity_profile_photos" >
+        </activity>
     </application>
 
 </manifest>

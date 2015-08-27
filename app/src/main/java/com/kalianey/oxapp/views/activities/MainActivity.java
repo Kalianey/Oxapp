@@ -61,6 +61,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
     private ResideMenuItem itemConversations;
     private ResideMenuItem itemProfile;
     private ResideMenuItem itemFriends;
+    private ResideMenuItem itemMap;
 
 
     // GCM
@@ -168,16 +169,19 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         itemConversations  = new ResideMenuItem(this, R.drawable.icons_chat,  "Messages");
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
+        itemMap = new ResideMenuItem(this, R.drawable.icons_filter, "Map");
 
         itemHome.setOnClickListener(this);
         itemConversations.setOnClickListener(this);
         itemProfile.setOnClickListener(this);
         itemFriends.setOnClickListener(this);
+        itemMap.setOnClickListener(this);
 
         resideMenu.addMenuItem(itemHome);
         resideMenu.addMenuItem(itemConversations);
         resideMenu.addMenuItem(itemProfile);
         resideMenu.addMenuItem(itemFriends);
+        resideMenu.addMenuItem(itemMap);
 
 
         findViewById(R.id.title_bar_left_menu).setOnClickListener(new View.OnClickListener() {
@@ -199,23 +203,26 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
 
         if (view == itemHome){
             changeFragment(new PeopleFragment());
-        }else if (view == itemConversations){
+        }
+        else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
-        }else if (view == itemProfile){
+        }
+        else if (view == itemProfile){
             ProfileFragment profile = new ProfileFragment();
             profile.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(profile);
 
-//            Intent i = new Intent(this, Profile.class);
+        }
+        else if (view == itemFriends){
+            changeFragment(new FriendsListFragment());
+        }
+        else if (view == itemMap){
+            Intent i = new Intent(this, MapsActivity.class);
 //            Bundle mBundle = new Bundle();
 //            ModelUser user = AppController.getInstance().getLoggedInUser();
 //            mBundle.putSerializable("userObj", user);
 //            i.putExtras(mBundle);
-//            startActivity(i);
-
-
-        }else if (view == itemFriends){
-            changeFragment(new FriendsListFragment());
+            startActivity(i);
         }
 
         resideMenu.closeMenu();

@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.kalianey.oxapp"
-        minSdkVersion 14
+        minSdkVersion 17
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -33,6 +33,7 @@ dependencies {
     //compile 'com.google.android.gms:play-services-gcm:7.8.0' //maybe replace just by com.google.android.gms:play-services-gcm:7.8.0
     compile 'com.google.android.gms:play-services:7.8.0'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
 
     //ClearUI
     //compile files('libs/android-support-v4.jar')
