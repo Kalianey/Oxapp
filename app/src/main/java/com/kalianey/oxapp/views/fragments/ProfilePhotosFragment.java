@@ -17,6 +17,7 @@ import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,8 +29,8 @@ public class ProfilePhotosFragment extends Fragment {
     private ViewPager awesomePager;
     private Context cxt;
     private AwesomePagerAdapter awesomeAdapter;
-    private List<ModelAttachment> photos;
-    private ModelAttachment currentPhoto;
+    private ArrayList<ModelAttachment> photos;
+    private int currentIndex;
 
     /** Called when the activity is first created. */
 
@@ -43,14 +44,13 @@ public class ProfilePhotosFragment extends Fragment {
 
         cxt = getActivity();
 
-        ModelUser user = (ModelUser) getActivity().getIntent().getSerializableExtra("user");
-        //photos = user.getPhotos();
-        photos = AppController.getInstance().getLoggedInUser().getPhotos();
-        //currentPhoto = (ModelAttachment) getActivity().getIntent().getSerializableExtra("photo");
+        photos = (ArrayList<ModelAttachment>) getActivity().getIntent().getSerializableExtra("photoList");
+        currentIndex = (int) getActivity().getIntent().getSerializableExtra("photoIndex");
 
         awesomeAdapter = new AwesomePagerAdapter();
         awesomePager = (ViewPager) view.findViewById(R.id.awesomepager);
         awesomePager.setAdapter(awesomeAdapter);
+        awesomePager.setCurrentItem(currentIndex);
 
         return view;
     }
@@ -88,7 +88,7 @@ public class ProfilePhotosFragment extends Fragment {
             mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
             mImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-            collection.addView(mImageView,0);
+            collection.addView(mImageView);
 
             return mImageView;
 

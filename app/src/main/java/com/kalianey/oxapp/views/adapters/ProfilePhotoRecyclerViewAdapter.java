@@ -28,7 +28,7 @@ import java.util.List;
 public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<ProfilePhotoRecyclerViewAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
-    private List<ModelAttachment> photos; //data
+    private ArrayList<ModelAttachment> photos; //data
     private ModelUser user;
     private Activity listContext;
     //private Context listContext;
@@ -42,7 +42,7 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
         //this.notifyDataSetChanged();
     }
 
-    public void setPhotos(List< ModelAttachment> photoList) {
+    public void setPhotos(ArrayList< ModelAttachment> photoList) {
         photos.clear();
         photos.addAll(photoList);
         this.notifyItemRangeInserted(0, photos.size() - 1);
@@ -53,29 +53,32 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
     }
 
     @Override
-    public ProfilePhotoRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+    public ProfilePhotoRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, final int i) {
 
-        View itemView = LayoutInflater.from(listContext).inflate(R.layout.profile_photogrid_item, parent, false);
+        final View itemView = LayoutInflater.from(listContext).inflate(R.layout.profile_photogrid_item, parent, false);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(listContext, ProfilePhotos.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putSerializable("user", user);
-                i.putExtras(mBundle);
-                listContext.startActivity(i);
-            }
-        });
+
 
         return new ProfilePhotoRecyclerViewAdapter.ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(ProfilePhotoRecyclerViewAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final ProfilePhotoRecyclerViewAdapter.ViewHolder viewHolder, final int i) {
 
         ModelAttachment photo = photos.get(i);
         viewHolder.imageView.setImageUrl(photo.getUrl(), imageLoader);
+
+        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(listContext, ProfilePhotos.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("photoList", photos);
+                mBundle.putInt("photoIndex", viewHolder.getAdapterPosition());
+                intent.putExtras(mBundle);
+                listContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

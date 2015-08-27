@@ -84,7 +84,7 @@ public class ProfileFragment extends Fragment {
     private StickyListHeadersListView stickyList;
 
     //Vars
-    private List<ModelAttachment> photoList = new ArrayList<ModelAttachment>();
+    private ArrayList<ModelAttachment> photoList = new ArrayList<ModelAttachment>();
     private Boolean isLoggedInUser = true;
     private int delta_top;
     private int delta_left;

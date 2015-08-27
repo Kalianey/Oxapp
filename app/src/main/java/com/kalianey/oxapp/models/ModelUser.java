@@ -32,15 +32,23 @@ public class ModelUser implements Serializable, ClusterItem {
     private List<ModelQuestion> questions;
     private JSONArray sections;
     private List<ModelUser> friends = new ArrayList<ModelUser>();
-    private List<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+    //private List<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+    private ArrayList<ModelAttachment> photos = new ArrayList<ModelAttachment>();
 
 
+//    public List<ModelAttachment> getPhotos() {
+//        return photos;
+//    }
+//
+//    public void setPhotos(List<ModelAttachment> photos) {
+//        this.photos = photos;
+//    }
 
-    public List<ModelAttachment> getPhotos() {
+    public ArrayList<ModelAttachment> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(List<ModelAttachment> photos) {
+    public void setPhotos(ArrayList<ModelAttachment> photos) {
         this.photos = photos;
     }
 

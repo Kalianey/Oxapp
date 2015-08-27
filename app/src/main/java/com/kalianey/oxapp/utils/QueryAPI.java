@@ -310,7 +310,7 @@ public class QueryAPI {
 
         String url = "owapi/user/profile/extra/"+user.getUserId();
         final List<ModelUser> friends = new ArrayList<ModelUser>();
-        final List<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+        final ArrayList<ModelAttachment> photos = new ArrayList<ModelAttachment>();
 
         this.RequestApi(url, new ApiResponse<ApiResult>() {
             @Override
