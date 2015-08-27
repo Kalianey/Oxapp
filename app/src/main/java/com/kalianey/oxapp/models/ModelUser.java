@@ -2,16 +2,20 @@ package com.kalianey.oxapp.models;
 
 import android.graphics.AvoidXfermode;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import org.json.JSONArray;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kalianey on 11/08/2015.
  */
-public class ModelUser implements Serializable {
+public class ModelUser implements Serializable, ClusterItem {
 
     private static final long id = 1L;
     private String userId;
@@ -29,7 +33,6 @@ public class ModelUser implements Serializable {
     private JSONArray sections;
     private List<ModelUser> friends = new ArrayList<ModelUser>();
     private List<ModelAttachment> photos = new ArrayList<ModelAttachment>();
-
 
 
 
@@ -152,4 +155,31 @@ public class ModelUser implements Serializable {
 
 
 
+    /** LOCATION **/
+    private LatLng mPosition;
+    private double lat;
+    private double lng;
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
+
+    @Override
+    public LatLng getPosition() {
+        return mPosition = new LatLng(lat, lng);
+
+    }
 }

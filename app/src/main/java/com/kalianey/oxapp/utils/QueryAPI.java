@@ -712,6 +712,43 @@ public class QueryAPI {
     }
 
 
+    /* LOCATION */
+
+    public void nearUsers(final ApiResponse<List<ModelUser>> completion) {
+
+        String url = "owapi/user/near/";
+
+        final List<ModelUser> users = new ArrayList<ModelUser>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+                    @Override
+                    public void onCompletion(ApiResult res) {
+                        Log.d("Success NearUsers", res.data.toString());
+
+                        if (res.success && res.dataIsArray()) {
+
+                            JSONArray usersList = res.getDataAsArray();
+                            for (int i = 0; i < usersList.length(); i++) {
+
+                                try {
+                                    JSONObject jsonObject = usersList.getJSONObject(i);
+                                    ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
+                                    users.add(user);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                        completion.onCompletion(users);
+                    }
+                });
+    }
+
+
+
+
     /* DEVICE REGISTRATION FOR GCM PUSH NOTIFICATIONS */
 
     public void registerForNotifications(String token, final ApiResponse<String> completion) {
