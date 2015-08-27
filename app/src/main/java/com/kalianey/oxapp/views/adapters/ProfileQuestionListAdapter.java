@@ -44,7 +44,11 @@ public class ProfileQuestionListAdapter extends BaseAdapter implements StickyLis
 
     @Override
     public int getCount() {
-        return questions.size();
+        if (questions != null) {
+            return questions.size();
+        } else {
+            return 0;
+        }
     }
 
     @Override

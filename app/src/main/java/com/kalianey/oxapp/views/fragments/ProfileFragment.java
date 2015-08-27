@@ -1,7 +1,6 @@
 package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
-//import android.app.Fragment;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -68,18 +67,15 @@ public class ProfileFragment extends Fragment {
 
     //UI Elements
     private View view;
-    //private TwoWayView gridView;
     private RecyclerView gridView;
     private NetworkImageView cImageView;
     private UICircularImage mImageView;
-    //private TextView mTextView;
     private RelativeLayout mLayoutContainer;
     private FrameLayout mNavigationTop;
     private TextView mNavigationTitle;
     private Button mNavigationBackBtn;
     private TextView mTitleView;
     private UICircularImage mShare;
-    //private ProfilePhotoListViewAdapter adapter;
     private ProfilePhotoRecyclerViewAdapter adapter;
     private TwoWayView friendsListView;
     private ProfileFriendListViewAdapter friendsAdapter;
@@ -101,6 +97,7 @@ public class ProfileFragment extends Fragment {
 
 
     public ProfileFragment() {
+
     }
 
     public ModelUser getUser() {

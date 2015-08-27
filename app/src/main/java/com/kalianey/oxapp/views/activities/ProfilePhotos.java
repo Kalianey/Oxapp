@@ -1,9 +1,13 @@
 package com.kalianey.oxapp.views.activities;
 
+import android.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 
 import com.kalianey.oxapp.R;
 
@@ -11,8 +15,21 @@ public class ProfilePhotos extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_profile_photos);
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
     }
 
 

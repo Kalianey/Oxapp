@@ -61,9 +61,9 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(listContext, ProfilePhotos.class);
-//                Bundle mBundle = new Bundle();
-//                mBundle.putSerializable("user", user);
-//                i.putExtras(mBundle);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("user", user);
+                i.putExtras(mBundle);
                 listContext.startActivity(i);
             }
         });

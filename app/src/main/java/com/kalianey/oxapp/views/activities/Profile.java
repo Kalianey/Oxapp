@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 
 import com.kalianey.oxapp.R;
 
@@ -11,8 +13,16 @@ public class Profile extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_profile);
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
 
     }
 

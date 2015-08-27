@@ -1,7 +1,6 @@
 package com.kalianey.oxapp.views.fragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,8 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -86,20 +83,15 @@ public class ProfilePhotosFragment extends Fragment {
         public Object instantiateItem(ViewGroup collection, int position) {
             LayoutInflater inflater = (LayoutInflater) cxt.getSystemService(cxt.LAYOUT_INFLATER_SERVICE);
 
-//            TextView tv = new TextView(cxt);
-//            tv.setText("Hello" + position);
-//            tv.setTextColor(Color.WHITE);
-//            tv.setTextSize(30);
-
             mImageView = new NetworkImageView(cxt);
 
             mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
-            mImageView.setLayoutParams(new ViewGroup.LayoutParams(500, 500));
+            mImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
             collection.addView(mImageView,0);
 
             return mImageView;
-            //return tv;
+
         }
 
         /**
@@ -114,7 +106,7 @@ public class ProfilePhotosFragment extends Fragment {
          */
         @Override
         public void destroyItem(ViewGroup collection, int position, Object view) {
-            collection.removeView((TextView) view);
+            collection.removeView((NetworkImageView) view);
         }
 
 

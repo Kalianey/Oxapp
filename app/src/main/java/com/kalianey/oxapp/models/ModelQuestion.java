@@ -1,9 +1,13 @@
 package com.kalianey.oxapp.models;
 
+import java.io.Serializable;
+
 /**
  * Created by kalianey on 26/08/2015.
  */
-public class ModelQuestion {
+public class ModelQuestion  implements Serializable {
+
+    private static final long id = 1L;
 
     private String questionName;
     private String questionValue;
