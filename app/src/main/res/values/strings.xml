@@ -101,5 +101,6 @@
     </string>
     <string name="profile_photo_text">PHOTOS</string>
     <string name="profile_friend_text">FRIENDS</string>
+    <string name="title_activity_profile_photos">ProfilePhotos</string>
 
 </resources>

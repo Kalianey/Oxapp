@@ -15,6 +15,7 @@ import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
+import com.kalianey.oxapp.views.activities.ProfilePhotos;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -49,6 +50,17 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
     public ProfilePhotoRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
 
         View itemView = LayoutInflater.from(listContext).inflate(R.layout.profile_photogrid_item, parent, false);
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(listContext, ProfilePhotos.class);
+//                Bundle mBundle = new Bundle();
+//                mBundle.putSerializable("convObj", finalViewHolder.photo);
+//                i.putExtras(mBundle);
+                listContext.startActivity(i);
+            }
+        });
 
         return new ProfilePhotoRecyclerViewAdapter.ViewHolder(itemView);
     }

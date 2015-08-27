@@ -1,9 +1,16 @@
 package com.kalianey.oxapp.views.activities;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -12,15 +19,19 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +44,17 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     private List<ModelUser> users = new ArrayList<ModelUser>();
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
+
     //UI
     NetworkImageView avatarImageView;
     TextView name;
     TextView infos;
     TextView distance;
     RelativeLayout detailView;
+
+    private FrameLayout mNavigationTop;
+    private TextView mNavigationTitle;
+    private Button mNavigationBackBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +69,20 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
         infos = (TextView) findViewById(R.id.info);
         distance = (TextView) findViewById(R.id.distance);
 
+        mNavigationTop = (FrameLayout) findViewById(R.id.layout_top);
+        mNavigationTitle = (TextView) findViewById(R.id.titleBar);
+        mNavigationBackBtn = (Button) findViewById(R.id.title_bar_left_menu);
+        mNavigationTitle.setText("Near you");
+
+        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View arg0) {
+                finish();
+            }
+
+        });
+
 
         query.nearUsers(new QueryAPI.ApiResponse<List<ModelUser>>() {
             @Override
@@ -61,6 +91,8 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
                 users = result;
 
                 setUpClusterer();
+
+                mNavigationTop.bringToFront();
             }
         });
 
@@ -123,6 +155,7 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
         // manager.
         getMap().setOnCameraChangeListener(mClusterManager);
         getMap().setOnMarkerClickListener(mClusterManager);
+        mClusterManager.setRenderer(new PersonRenderer());
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
@@ -147,7 +180,7 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     }
 
     @Override
-    public boolean onClusterItemClick(ModelUser item) {
+    public boolean onClusterItemClick(final ModelUser item) {
         // Does nothing, but you could go into the user's profile page, for example.
         Log.d("User clicked:", item.getName());
         avatarImageView.setImageUrl(item.getAvatar_url(), imageLoader);
@@ -156,6 +189,19 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
         double d = Double.parseDouble(item.getDistance());
         distance.setText( String.format("%.1f", d) + "Km");
         detailView.setVisibility(View.VISIBLE);
+
+        detailView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(getApplicationContext(), Profile.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("userObj", item);
+                i.putExtras(mBundle);
+                startActivity(i);
+
+            }
+        });
         return false;
     }
 
@@ -163,5 +209,58 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     public void onClusterItemInfoWindowClick(ModelUser item) {
         // Does nothing, but you could go into the user's profile page, for example.
         Log.d("User Window clicked:", item.getName());
+    }
+
+    /**
+     * Draws profile photos inside markers (using IconGenerator).
+     * When there are multiple people in the cluster, draw multiple photos (using MultiDrawable).
+     */
+    private class PersonRenderer extends DefaultClusterRenderer<ModelUser> {
+        private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
+        private final UICircularImage mImageView;
+        //private final int mDimension;
+
+        public PersonRenderer() {
+            super(getApplicationContext(), getMap(), mClusterManager);
+
+            View profile = getLayoutInflater().inflate(R.layout.map_marker_item, null);
+            mIconGenerator.setContentView(profile);
+            mImageView = (UICircularImage) profile.findViewById(R.id.avatarImageView);
+
+//            mImageView = new UICircularImage(getApplicationContext());
+//            mDimension = (int) getResources().getDimension(R.dimen.custom_profile_image);
+//            mImageView.setLayoutParams(new ViewGroup.LayoutParams(mDimension, mDimension));
+//            int padding = (int) getResources().getDimension(R.dimen.custom_profile_padding);
+//            mImageView.setPadding(padding, padding, padding, padding);
+//            mIconGenerator.setContentView(mImageView);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(ModelUser user, MarkerOptions markerOptions) {
+            // Draw a single person.
+            // Set the info window to show their name.
+           // mImageView.setImageUrl(user.getAvatar_url(), imageLoader);
+            Log.d("Avatar url:", user.getAvatar_url());
+            Picasso.with(getApplicationContext())
+                    .load(user.getAvatar_url())
+                    .noFade()
+                    .into(mImageView, new com.squareup.picasso.Callback() {
+                        @Override
+                        public void onSuccess() {
+                            mClusterManager.cluster(); //TODO: remove, doesn't do anything
+                            //http://stackoverflow.com/questions/22287207/clustermanager-repaint-markers-of-google-maps-v2-utils
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
+
+            Bitmap icon = mIconGenerator.makeIcon();
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(user.getName());
+        }
+
+
     }
 }

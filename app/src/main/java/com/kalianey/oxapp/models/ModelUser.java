@@ -156,7 +156,6 @@ public class ModelUser implements Serializable, ClusterItem {
 
 
     /** LOCATION **/
-    private LatLng mPosition;
     private double lat;
     private double lng;
 
@@ -179,7 +178,6 @@ public class ModelUser implements Serializable, ClusterItem {
 
     @Override
     public LatLng getPosition() {
-        return mPosition = new LatLng(lat, lng);
-
+        return new LatLng(lat, lng);
     }
 }

@@ -1,6 +1,8 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.utils.AppController;
+import com.kalianey.oxapp.views.activities.ProfilePhotos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,11 +92,11 @@ public class ProfilePhotoListViewAdapter extends ArrayAdapter<ModelAttachment> {
             @Override
             public void onClick(View v) {
 
-//                Intent i = new Intent(listContext, Message.class);
+                Intent i = new Intent(listContext, ProfilePhotos.class);
 //                Bundle mBundle = new Bundle();
-//                mBundle.putSerializable("convObj", finalViewHolder.conversation);
+//                mBundle.putSerializable("convObj", finalViewHolder.photo);
 //                i.putExtras(mBundle);
-//                listContext.startActivity(i);
+                listContext.startActivity(i);
             }
         });
 
