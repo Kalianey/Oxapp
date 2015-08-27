@@ -3,7 +3,12 @@ package com.kalianey.oxapp.views.activities;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -13,7 +18,9 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.ui.IconGenerator;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.utils.UICircularImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +31,28 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private QueryAPI query = new QueryAPI();
     private List<ModelUser> users = new ArrayList<ModelUser>();
+    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+
+    //UI
+    NetworkImageView avatarImageView;
+    TextView name;
+    TextView infos;
+    TextView distance;
+    RelativeLayout detailView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         setUpMapIfNeeded();
+
+        detailView = (RelativeLayout) findViewById(R.id.detailView);
+        avatarImageView = (NetworkImageView) findViewById(R.id.imageView);
+        name = (TextView) findViewById(R.id.name);
+        infos = (TextView) findViewById(R.id.info);
+        distance = (TextView) findViewById(R.id.distance);
+
 
         query.nearUsers(new QueryAPI.ApiResponse<List<ModelUser>>() {
             @Override
@@ -84,7 +107,6 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
         mMap.setMyLocationEnabled(true);
     }
 
@@ -101,6 +123,8 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
         // manager.
         getMap().setOnCameraChangeListener(mClusterManager);
         getMap().setOnMarkerClickListener(mClusterManager);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
         // Add cluster items (markers) to the cluster manager.
         addItems();
@@ -114,6 +138,7 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
 
             mClusterManager.addItem(user);
         }
+
     }
 
     protected GoogleMap getMap() {
@@ -125,6 +150,12 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     public boolean onClusterItemClick(ModelUser item) {
         // Does nothing, but you could go into the user's profile page, for example.
         Log.d("User clicked:", item.getName());
+        avatarImageView.setImageUrl(item.getAvatar_url(), imageLoader);
+        name.setText(item.getName());
+        infos.setText(item.getAge());
+        double d = Double.parseDouble(item.getDistance());
+        distance.setText( String.format("%.1f", d) + "Km");
+        detailView.setVisibility(View.VISIBLE);
         return false;
     }
 
