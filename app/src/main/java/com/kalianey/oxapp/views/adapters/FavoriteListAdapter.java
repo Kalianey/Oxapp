@@ -125,32 +125,24 @@ public class FavoriteListAdapter extends ArrayAdapter<ModelUser> {
             @Override
             public void onClick(View v) {
 
-                Log.d("Friend clicked: ", finalViewHolder.user.getName());
-                QueryAPI query = new QueryAPI();
-                query.user(finalViewHolder.user.getUserId(), new QueryAPI.ApiResponse<ModelUser>() {
-                    @Override
-                    public void onCompletion(ModelUser user) {
+                Intent i = new Intent(listContext, Profile.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("userObj", finalViewHolder.user);
+                Log.d("User clicked: ", finalViewHolder.user.getName());
 
-                        Intent i = new Intent(listContext, Profile.class);
-                        Bundle mBundle = new Bundle();
-                        mBundle.putSerializable("userObj", user);
-                        Log.d("Friend clicked: ", user.getName());
+                int[] screen_location = new int[2];
+                finalViewHolder.avatarImageView.getLocationOnScreen(screen_location);
 
-                        int[] screen_location = new int[2];
-                        finalViewHolder.avatarImageView.getLocationOnScreen(screen_location);
+                mBundle.putInt(PACKAGE + ".left", screen_location[0]);
+                mBundle.putInt(PACKAGE + ".top", screen_location[1]);
+                mBundle.putInt(PACKAGE + ".width", finalViewHolder.avatarImageView.getWidth());
+                mBundle.putInt(PACKAGE + ".height", finalViewHolder.avatarImageView.getHeight());
 
-                        mBundle.putInt(PACKAGE + ".left", screen_location[0]);
-                        mBundle.putInt(PACKAGE + ".top", screen_location[1]);
-                        mBundle.putInt(PACKAGE + ".width", finalViewHolder.avatarImageView.getWidth());
-                        mBundle.putInt(PACKAGE + ".height", finalViewHolder.avatarImageView.getHeight());
-
-                        i.putExtras(mBundle);
-                        listContext.startActivity(i);
-                    }
-                });
-
+                i.putExtras(mBundle);
+                listContext.startActivity(i);
             }
         });
+
 
 
         return row;
