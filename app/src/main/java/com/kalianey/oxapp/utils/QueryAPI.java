@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.models.ModelFavorite;
 import com.kalianey.oxapp.models.ModelFriend;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelQuestion;
@@ -275,8 +276,7 @@ public class QueryAPI {
                     ModelUser user = new ModelUser();
                     user = new Gson().fromJson(userObj.toString(), ModelUser.class);
                     completion.onCompletion(user);
-                }
-                else {
+                } else {
                     completion.onCompletion(user);
                 }
             }
@@ -436,8 +436,8 @@ public class QueryAPI {
             }
         });
 
-
     }
+
 
     public void friendList(final ApiResponse<List<ModelFriend>> completion)
     {
@@ -449,7 +449,6 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                Log.d("Friends", res.data.toString());
                 if (res.success && res.dataIsObject() ) {
                     JSONObject data = res.getDataAsObject();
                     JSONArray friendList = null;
@@ -458,7 +457,6 @@ public class QueryAPI {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Log.d("FriendList",friendList.toString() );
                     for (int i = 0; i < friendList.length(); i++) {
                         try {
                             JSONObject jsonObject = friendList.getJSONObject(i);
@@ -474,6 +472,80 @@ public class QueryAPI {
             }
         });
 
+    }
+
+
+    public void favorite(final ApiResponse<ModelFavorite> completion)
+    {
+
+        String url = "owapi/user/favorite/list";
+        final ModelFavorite favorite = new ModelFavorite();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                if (res.success && res.dataIsObject() ) {
+
+                    JSONObject usersList = res.getDataAsObject();
+
+                    //Get Me array
+                    try {
+                        JSONObject me = usersList.getJSONObject("me");
+                        favorite.setMeMenuLabel(me.getString("menu-label"));
+                        JSONArray list =  me.getJSONArray("userIds");
+                        ArrayList<ModelUser> users = new ArrayList<ModelUser>();
+                        for (int i = 0; i < list.length(); i++) {
+
+                            JSONObject jsonObject = list.getJSONObject(i);
+                            ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
+                            users.add(user);
+                        }
+                        favorite.setMe(users);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Get My array
+                    try {
+                        JSONObject my = usersList.getJSONObject("my");
+                        favorite.setMyMenuLabel(my.getString("menu-label"));
+                        JSONArray list =  my.getJSONArray("userIds");
+                        ArrayList<ModelUser> users = new ArrayList<ModelUser>();
+                        for (int i = 0; i < list.length(); i++) {
+
+                            JSONObject jsonObject = list.getJSONObject(i);
+                            ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
+                            users.add(user);
+                        }
+                        favorite.setMy(users);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Get Mutual array
+                    try {
+                        JSONObject mutual = usersList.getJSONObject("mutual");
+                        favorite.setMutualMenuLabel(mutual.getString("menu-label"));
+                        JSONArray list =  mutual.getJSONArray("userIds");
+                        ArrayList<ModelUser> users = new ArrayList<ModelUser>();
+                        for (int i = 0; i < list.length(); i++) {
+
+                            JSONObject jsonObject = list.getJSONObject(i);
+                            ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
+                            users.add(user);
+                        }
+                        favorite.setMutual(users);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+                completion.onCompletion(favorite);
+            }
+        });
 
     }
 
