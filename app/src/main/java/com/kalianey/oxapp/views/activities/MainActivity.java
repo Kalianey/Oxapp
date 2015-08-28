@@ -62,6 +62,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
     private ResideMenuItem itemProfile;
     private ResideMenuItem itemFriends;
     private ResideMenuItem itemMap;
+    private ResideMenuItem itemFav;
 
 
     // GCM
@@ -170,19 +171,21 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
         itemMap = new ResideMenuItem(this, R.drawable.icons_filter, "Map");
+        itemFav = new ResideMenuItem(this, R.drawable.icons_star, "Favorites");
 
         itemHome.setOnClickListener(this);
         itemConversations.setOnClickListener(this);
         itemProfile.setOnClickListener(this);
         itemFriends.setOnClickListener(this);
         itemMap.setOnClickListener(this);
+        itemFav.setOnClickListener(this);
 
         resideMenu.addMenuItem(itemHome);
         resideMenu.addMenuItem(itemConversations);
         resideMenu.addMenuItem(itemProfile);
         resideMenu.addMenuItem(itemFriends);
         resideMenu.addMenuItem(itemMap);
-
+        resideMenu.addMenuItem(itemFav);
 
         findViewById(R.id.title_bar_left_menu).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,6 +221,10 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         }
         else if (view == itemMap){
             Intent i = new Intent(this, MapsActivity.class);
+            startActivity(i);
+        }
+        else if (view == itemFav){
+            Intent i = new Intent(this, Favorite.class);
             startActivity(i);
         }
 
