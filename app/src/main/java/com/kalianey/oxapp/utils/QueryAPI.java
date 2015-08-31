@@ -203,6 +203,9 @@ public class QueryAPI {
                     @Override
                     public void onResponse(String responseString)
                     {
+                        if (responseString != null) {
+                            Log.d("POSTResponse", responseString);
+                        }
                         JSONObject response = null;
                         ApiResult res = new ApiResult();
                         try {
@@ -797,29 +800,29 @@ public class QueryAPI {
         final List<ModelUser> users = new ArrayList<ModelUser>();
 
         this.RequestApi(url, new ApiResponse<ApiResult>() {
-                    @Override
-                    public void onCompletion(ApiResult res) {
-                        Log.d("Success NearUsers", res.data.toString());
+            @Override
+            public void onCompletion(ApiResult res) {
+                Log.d("Success NearUsers", res.data.toString());
 
-                        if (res.success && res.dataIsArray()) {
+                if (res.success && res.dataIsArray()) {
 
-                            JSONArray usersList = res.getDataAsArray();
-                            for (int i = 0; i < usersList.length(); i++) {
+                    JSONArray usersList = res.getDataAsArray();
+                    for (int i = 0; i < usersList.length(); i++) {
 
-                                try {
-                                    JSONObject jsonObject = usersList.getJSONObject(i);
-                                    ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
-                                    users.add(user);
+                        try {
+                            JSONObject jsonObject = usersList.getJSONObject(i);
+                            ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
+                            users.add(user);
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        completion.onCompletion(users);
                     }
-                });
+
+                }
+                completion.onCompletion(users);
+            }
+        });
     }
 
 
@@ -838,7 +841,7 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                if (res.success != null && res.success){
+                if (res.success != null && res.success) {
                     Log.v("GCM registration:", res.success.toString());
                     res.message = "GCM registration successful";
                 }
@@ -994,6 +997,34 @@ public class QueryAPI {
 
     }
 
+
+    /* GOOGLE CONNECT */
+    public void googleConnect(String token, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/site/glconnect/";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("token", token);
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.v("GoogleRes", res.toString());
+                if (res.success) {
+                    setSession(new ApiResponse<Boolean>() {
+                        @Override
+                        public void onCompletion(Boolean result) {
+                            completion.onCompletion(result);
+                        }
+                    });
+
+                } else {
+                    completion.onCompletion(false);
+                }
+            }
+        });
+
+    }
 
 
 

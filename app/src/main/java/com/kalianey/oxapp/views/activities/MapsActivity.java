@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -258,11 +261,38 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
 //                        }
 //                    });
 
-            Picasso.with(getApplicationContext())
-                    .load(user.getAvatar_url())
-                    .into(new com.squareup.picasso.Target() {
+//            Picasso.with(getApplicationContext())
+//                    .load(user.getAvatar_url())
+//                    .into(new com.squareup.picasso.Target() {
+//                        @Override
+//                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+//                            // let's find marker for this user
+//                            Marker markerToChange = null;
+//                            for (Marker marker : mClusterManager.getMarkerCollection().getMarkers()) {
+//                                if (marker.getPosition().equals(user.getPosition())) {
+//                                    markerToChange = marker;
+//                                }
+//                            }
+//                            // if found - change icon
+//                            if (markerToChange != null) {
+//                                markerToChange.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+//                            }
+//                        }
+//                        @Override
+//                        public void onBitmapFailed(Drawable errorDrawable) {
+//                        }
+//                        @Override
+//                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+//                        }
+//                    });
+
+            Glide.with(getApplicationContext()).
+                    load(user.getAvatar_url())
+                    .asBitmap()
+                    .fitCenter()
+                    .into(new SimpleTarget<Bitmap>() {
                         @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                             // let's find marker for this user
                             Marker markerToChange = null;
                             for (Marker marker : mClusterManager.getMarkerCollection().getMarkers()) {
@@ -275,16 +305,10 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
                                 markerToChange.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
                             }
                         }
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                        }
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        }
                     });
 
-//            Bitmap icon = mIconGenerator.makeIcon();
-//            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(user.getName());
+            Bitmap icon = mIconGenerator.makeIcon();
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(user.getName());
         }
 
 
