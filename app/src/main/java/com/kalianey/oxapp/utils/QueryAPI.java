@@ -665,24 +665,40 @@ public class QueryAPI {
     }
 
 
-    public void conversationCreate(String opponentId, final ApiResponse<ModelConversation> completion) {
+    public void conversationCreate(final String initiatorId, String interlocutorId, final ApiResponse<ModelConversation> completion) {
         String url = "owapi/messenger/conversation/create";
         //here need to pass post params
         Log.v("url", url);
 
-//        this.RequestApi(url, new ApiResponse<ApiResult>() {
-//            @Override
-//            public void onCompletion(ApiResult res) {
-//
-//                String convId = "";
-//                if (res.success && res.dataIsInteger()) {
-//                    Integer result = res.getDataAsInteger();
-//                    convId = result.toString();
-//                    Log.v("My convid", convId);
-//                }
-//                completion.onCompletion(convId);
-//            }
-//        });
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("initiatorId", initiatorId);
+        params.put("interlocutorId", interlocutorId);
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.v("GoogleRes", res.toString());
+                ModelConversation conversation = new ModelConversation();
+                if (res.success && res.dataIsObject()) {
+
+                    JSONObject data = res.getDataAsObject();
+                    conversation = new Gson().fromJson(data.toString(), ModelConversation.class);
+                    try {
+                        conversation.setId(data.getString("id"));
+                        conversation.setOpponentId(data.getString("interlocutorId"));
+                        conversation.setInitiatorId(data.getString("initiatorId"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                completion.onCompletion(conversation);
+            }
+
+        });
+
+
     }
 
 
@@ -736,33 +752,6 @@ public class QueryAPI {
         });
 
     }
-
-//    func conversationHistory(conversationId: String, lastMessageId: String, completion: ([ModelMessage]) -> ()) -> NSURLSessionDataTask {
-//
-//        let url = "owapi/messenger/conversation/"+conversationId+"/history/"+lastMessageId
-//        println(url)
-//
-//        var task = self.requestAPI(url, params: "") { (res: ApiResponse) -> () in
-//            var items = [ModelMessage]() //TODO error checking
-//
-//            if(res.success)
-//            {
-//                var data = res.data as! NSArray
-//                //println(data)
-//                for item in data{
-//
-//                let msg = ModelMessage(data: item as! NSDictionary)
-//                items.append(msg)
-//
-//            }
-//
-//            }
-//
-//            completion(items)
-//
-//        }
-//        return task
-//    }
 
 
 

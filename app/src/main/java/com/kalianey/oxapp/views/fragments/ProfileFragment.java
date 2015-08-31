@@ -261,7 +261,7 @@ public class ProfileFragment extends Fragment {
 
         mNavigationTitle.setText(title);
 
-        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
+        mNavigationBackBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
@@ -281,18 +281,32 @@ public class ProfileFragment extends Fragment {
                         //Conv doesn't exist
                         if (result.equals("") || result.equals("0")) {
 
+                            query.conversationCreate(AppController.getInstance().getLoggedInUser().getUserId(), user.getUserId(), new QueryAPI.ApiResponse<ModelConversation>() {
+                                @Override
+                                public void onCompletion(ModelConversation conversation) {
+
+                                    conversation.setAvatarUrl(user.getAvatar_url());
+                                    conversation.setName(user.getName());
+                                    Intent i = new Intent(getActivity(), Message.class);
+                                    Bundle mBundle = new Bundle();
+                                    mBundle.putSerializable("convObj", conversation);
+                                    i.putExtras(mBundle);
+                                    startActivity(i);
+
+                                }
+                            });
                         }
                         //Conv already exist
                         else {
-                            ModelConversation conv = new ModelConversation();
-                            conv.setId(result);
-                            conv.setName(user.getName());
-                            conv.setOpponentId(user.getUserId());
+                            ModelConversation conversation = new ModelConversation();
+                            conversation.setId(result);
+                            conversation.setName(user.getName());
+                            conversation.setOpponentId(user.getUserId());
                             //conv.setAvatarUrl(user.getAvatar_url());
 
                             Intent i = new Intent(getActivity(), Message.class);
                             Bundle mBundle = new Bundle();
-                            mBundle.putSerializable("convObj", conv);
+                            mBundle.putSerializable("convObj", conversation);
                             i.putExtras(mBundle);
                             startActivity(i);
                         }
@@ -318,8 +332,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        tab.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        tab.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
 
@@ -332,7 +345,7 @@ public class ProfileFragment extends Fragment {
                         stickyList.setVisibility(View.GONE);
                         return;
                     case R.id.toggle2:
-                       // mTextView.setVisibility(View.VISIBLE);
+                        // mTextView.setVisibility(View.VISIBLE);
                         stickyList.setVisibility(View.VISIBLE);
                         gridView.setVisibility(LinearLayout.GONE);
                         friendsListView.setVisibility(LinearLayout.GONE);

@@ -45,6 +45,11 @@ import com.kalianey.oxapp.views.activities.MainActivity;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 /**
  * For google sign in try to follow : https://gist.github.com/ianbarber/9607551
@@ -406,16 +411,37 @@ public class SignInFragment extends Fragment implements
 
 //            Log.i("Token JWT", accessToken);
 
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                    .setAudience(Arrays.asList(CLIENT_ID))
+                    .build();
 
-            query.googleConnect(accessToken, new QueryAPI.ApiResponse<Boolean>() {
-                @Override
-                public void onCompletion(Boolean result) {
-                    if (result) {
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        startActivity(intent);
-                    }
+// (Receive idTokenString by HTTPS POST)
+
+            GoogleIdToken idToken = verifier.verify(idTokenString);
+            if (idToken != null) {
+                Payload payload = idToken.getPayload();
+                if (payload.getHostedDomain().equals(APPS_DOMAIN_NAME)
+                        // If multiple clients access the backend server:
+                        && Arrays.asList(ANDROID_CLIENT_ID, IOS_CLIENT_ID).contains(payload.getAuthorizedParty())) {
+                    System.out.println("User ID: " + payload.getSubject());
+                } else {
+                    System.out.println("Invalid ID token.");
                 }
-            });
+            } else {
+                System.out.println("Invalid ID token.");
+            }
+
+
+            //Make the app crash because of debug answer from API
+//            query.googleConnect(accessToken, new QueryAPI.ApiResponse<Boolean>() {
+//                @Override
+//                public void onCompletion(Boolean result) {
+//                    if (result) {
+//                        Intent intent = new Intent(getActivity(), MainActivity.class);
+//                        startActivity(intent);
+//                    }
+//                }
+//            });
 
         }
     }
