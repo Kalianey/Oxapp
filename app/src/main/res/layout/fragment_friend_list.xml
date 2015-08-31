@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-              
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <com.kalianey.oxapp.utils.SlidingTabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#ff051216"
+        android:clickable="true"
+        android:focusableInTouchMode="true">
+
+    </com.kalianey.oxapp.utils.SlidingTabLayout>
+
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
@@ -13,4 +24,4 @@
     	android:layout_marginLeft="@dimen/list_horizontal_margin"
         android:divider="@null" />
     
-</FrameLayout>
+</LinearLayout>

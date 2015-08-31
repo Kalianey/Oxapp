@@ -8,6 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.facebook.FacebookSdk;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
 
@@ -44,6 +45,9 @@ public class AppController extends Application {
         mContext = getApplicationContext();
         loggedInUser = new ModelUser();
         appName = mContext.getResources().getString(R.string.app_name);
+
+        //FBK
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
     }
 

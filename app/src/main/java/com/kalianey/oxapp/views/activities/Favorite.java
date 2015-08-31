@@ -12,7 +12,6 @@ import com.kalianey.oxapp.views.adapters.FavoriteTabsPagerAdapter;
 
 public class Favorite extends AppCompatActivity {
 
-    private android.support.v7.widget.Toolbar toolbar;
     private ViewPager mPager;
     private SlidingTabLayout mTabs;
 
@@ -29,7 +28,6 @@ public class Favorite extends AppCompatActivity {
         mTabs.setSelectedIndicatorColors(getResources().getColor(R.color.red));
         mTabs.setBackgroundColor(getResources().getColor(R.color.theme_color));
         mTabs.setViewPager(mPager);
-
 
     }
 

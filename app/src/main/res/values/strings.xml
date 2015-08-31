@@ -104,4 +104,7 @@
     <string name="title_activity_profile_photos">ProfilePhotos</string>
     <string name="title_activity_favorite">Favorite</string>
 
+    <!-- FB -->
+    <string name="facebook_app_id">344271245710270</string>
+
 </resources>

@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -246,7 +247,7 @@ public class QueryAPI {
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
-                        Log.v("error post:" , error.getLocalizedMessage());
+                        Log.v("error post:" , error.toString());
                     }
                 })
 
@@ -257,6 +258,9 @@ public class QueryAPI {
                 return params;
             }
         };
+
+        //Added for fb connect which timeout
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 1, 1.0f));
 
         AppController.getInstance().addToRequestQueue(strRequest);
     }
@@ -834,10 +838,8 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                Log.v("GCM registration:", res.success.toString());
-                res.message = "GCM registration "+ res.success.toString();
-
-                if (res.success){
+                if (res.success != null && res.success){
+                    Log.v("GCM registration:", res.success.toString());
                     res.message = "GCM registration successful";
                 }
 
@@ -850,6 +852,33 @@ public class QueryAPI {
 
 
     /* LOGIN METHODS */
+
+    public void setSession(final ApiResponse<Boolean> completion) {
+
+        final ApiResult res = new ApiResult();
+
+        session = new SessionManager(AppController.getContext());
+        session.setLogin(true);
+
+        //Here request user and save it in a local var (or in sqlite), then in completion save email and password in sqlite
+        currentUser(new ApiResponse<ModelUser>() {
+            @Override
+            public void onCompletion(ModelUser user) {
+                if(user != null){
+                    res.success = true;
+                    AppController.getInstance().setLoggedInUser(user);
+                    ModelUser currentUser = AppController.getInstance().getLoggedInUser();
+                    Log.v("Global var created", currentUser.toString());
+
+                }
+                else {
+                    res.success = false;
+                }
+                completion.onCompletion(res.success);
+            }
+        });
+
+    }
 
     public void login(final String username, final String password, final ApiResponse<ApiResult> completion) {
 
@@ -935,6 +964,36 @@ public class QueryAPI {
         AppController.getInstance().addToRequestQueue(postRequest);
 
     }
+
+    /* FB CONNECT */
+
+    public void fbConnect(String token, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/site/fbconnect/";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("token", token);
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.v("FBRes", res.toString());
+                if (res.success) {
+                    setSession(new ApiResponse<Boolean>() {
+                        @Override
+                        public void onCompletion(Boolean result) {
+                            completion.onCompletion(result);
+                        }
+                    });
+
+                } else {
+                    completion.onCompletion(false);
+                }
+            }
+        });
+
+    }
+
 
 
 

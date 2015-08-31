@@ -28,6 +28,8 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.ListView;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -63,7 +65,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
     private ResideMenuItem itemFriends;
     private ResideMenuItem itemMap;
     private ResideMenuItem itemFav;
-
+    private ResideMenuItem itemLogout;
 
     // GCM
     private final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -82,6 +84,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(Build.VERSION.SDK_INT >= 21){
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -152,8 +155,18 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
             // Store regID as null
         }
 
+        // FB: Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // FB : Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
+    }
 
     private void setUpMenu() {
 
@@ -172,6 +185,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
         itemMap = new ResideMenuItem(this, R.drawable.icons_filter, "Map");
         itemFav = new ResideMenuItem(this, R.drawable.icons_star, "Favorites");
+        itemLogout = new ResideMenuItem(this, R.drawable.ic_cast_off_light, "LOGOUT");
 
         itemHome.setOnClickListener(this);
         itemConversations.setOnClickListener(this);
@@ -179,6 +193,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         itemFriends.setOnClickListener(this);
         itemMap.setOnClickListener(this);
         itemFav.setOnClickListener(this);
+        itemLogout.setOnClickListener(this);
 
         resideMenu.addMenuItem(itemHome);
         resideMenu.addMenuItem(itemConversations);
@@ -186,6 +201,7 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         resideMenu.addMenuItem(itemFriends);
         resideMenu.addMenuItem(itemMap);
         resideMenu.addMenuItem(itemFav);
+        resideMenu.addMenuItem(itemLogout);
 
         findViewById(R.id.title_bar_left_menu).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +241,10 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         }
         else if (view == itemFav){
             Intent i = new Intent(this, Favorite.class);
+            startActivity(i);
+        }
+        else if (view == itemLogout){
+            Intent i = new Intent(this, SignIn.class);
             startActivity(i);
         }
 

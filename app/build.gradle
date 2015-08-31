@@ -20,6 +20,9 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
 
 dependencies {
     //compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -34,6 +37,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.8.0'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.google.maps.android:android-maps-utils:0.4+'
+    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
 
     //ClearUI
     //compile files('libs/android-support-v4.jar')
