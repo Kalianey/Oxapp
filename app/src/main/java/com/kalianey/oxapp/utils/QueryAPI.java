@@ -143,6 +143,10 @@ public class QueryAPI {
             }
         }
         );
+
+        //Added because of Login ERROR﹕ error => com.android.volley.TimeoutError
+        jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 1, 1.0f));
+
         AppController.getInstance().addToRequestQueue(jsonRequest);
 
     }

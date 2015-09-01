@@ -45,11 +45,12 @@ import com.kalianey.oxapp.views.activities.MainActivity;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+//import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+//import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+//import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 /**
  * For google sign in try to follow : https://gist.github.com/ianbarber/9607551
@@ -85,9 +86,8 @@ public class SignInFragment extends Fragment implements
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
     private String mAccountName;
-    private static final String SERVER_CLIENT_ID = "AIzaSyCERu4ma259yHkUhypmEpEzV_-YwTAhk9Y";
+    private static final String CLIENT_ID = "645184786563-95fhqa4mqa2m2s8bdq36ki1edr7ij192.apps.googleusercontent.com";
     private String accessToken;
-
 
     public SignInFragment() {
     }
@@ -411,25 +411,32 @@ public class SignInFragment extends Fragment implements
 
 //            Log.i("Token JWT", accessToken);
 
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-                    .setAudience(Arrays.asList(CLIENT_ID))
-                    .build();
-
-// (Receive idTokenString by HTTPS POST)
-
-            GoogleIdToken idToken = verifier.verify(idTokenString);
-            if (idToken != null) {
-                Payload payload = idToken.getPayload();
-                if (payload.getHostedDomain().equals(APPS_DOMAIN_NAME)
-                        // If multiple clients access the backend server:
-                        && Arrays.asList(ANDROID_CLIENT_ID, IOS_CLIENT_ID).contains(payload.getAuthorizedParty())) {
-                    System.out.println("User ID: " + payload.getSubject());
-                } else {
-                    System.out.println("Invalid ID token.");
-                }
-            } else {
-                System.out.println("Invalid ID token.");
-            }
+//            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+//                    .setAudience(Arrays.asList(CLIENT_ID))
+//                    .build();
+//
+//            // (Receive idTokenString by HTTPS POST)
+//
+//            GoogleIdToken idToken = null;
+//            try {
+//                idToken = verifier.verify(accessToken);
+//            } catch (GeneralSecurityException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            if (idToken != null) {
+//                Payload payload = idToken.getPayload();
+//                if (payload.getHostedDomain().equals(APPS_DOMAIN_NAME)
+//                        // If multiple clients access the backend server:
+//                        && Arrays.asList(ANDROID_CLIENT_ID, IOS_CLIENT_ID).contains(payload.getAuthorizedParty())) {
+//                    System.out.println("User ID: " + payload.getSubject());
+//                } else {
+//                    System.out.println("Invalid ID token.");
+//                }
+//            } else {
+//                System.out.println("Invalid ID token.");
+//            }
 
 
             //Make the app crash because of debug answer from API

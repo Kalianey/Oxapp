@@ -16,17 +16,28 @@ import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -48,7 +59,7 @@ import com.kalianey.oxapp.views.fragments.ProfileFragment;
 
 import java.io.IOException;
 
-public class MainActivity  extends FragmentActivity implements View.OnClickListener {
+public class MainActivity  extends AppCompatActivity implements View.OnClickListener {
 
     private SessionManager session;
     private DrawerLayout drawerLayout;
@@ -67,6 +78,10 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
     private ResideMenuItem itemFav;
     private ResideMenuItem itemLogout;
 
+    //Action Bar
+    android.support.v7.app.ActionBar mActionBar;
+    private TextView mTitleTextView;
+
     // GCM
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -83,7 +98,10 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
+
+        showActionBar();
 
         if(Build.VERSION.SDK_INT >= 21){
             getWindow().getDecorView().setSystemUiVisibility(
@@ -203,13 +221,6 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         resideMenu.addMenuItem(itemFav);
         resideMenu.addMenuItem(itemLogout);
 
-        findViewById(R.id.title_bar_left_menu).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resideMenu.openMenu();
-            }
-        });
-
     }
 
     @Override
@@ -225,15 +236,17 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         }
         else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
+            mTitleTextView.setText("Conversations");
         }
         else if (view == itemProfile){
             ProfileFragment profile = new ProfileFragment();
             profile.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(profile);
-
+            mActionBar.hide();
         }
         else if (view == itemFriends){
             changeFragment(new FriendsListFragment());
+            mTitleTextView.setText("Friends");
         }
         else if (view == itemMap){
             Intent i = new Intent(this, MapsActivity.class);
@@ -377,6 +390,39 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         }
         return result;
     }
+
+
+    //Custom action bar
+
+    private void showActionBar() {
+        mActionBar = getSupportActionBar();
+        mActionBar.setDisplayShowHomeEnabled(false);
+        mActionBar.setDisplayShowTitleEnabled(false);
+        LayoutInflater mInflater = LayoutInflater.from(this);
+
+        View mCustomView = mInflater.inflate(R.layout.custom_actionbar, null);
+        mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
+        mTitleTextView.setText("Bonnie&Clit");
+
+        ImageButton imageButton = (ImageButton) mCustomView
+                .findViewById(R.id.menu);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (resideMenu.isOpened()){
+                    resideMenu.closeMenu();
+                } else {
+                    resideMenu.openMenu();
+                }
+            }
+        });
+
+        mActionBar.setCustomView(mCustomView);
+        mActionBar.setDisplayShowCustomEnabled(true);
+
+    }
+
 
 
     /************************** GCM ********************************************************************************************/
