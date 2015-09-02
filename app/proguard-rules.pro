@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Works regardless of whether this is commented out or not.
+#-keep class ** {*;}
+
+# We know these reference classes that we don't have. It's ok.

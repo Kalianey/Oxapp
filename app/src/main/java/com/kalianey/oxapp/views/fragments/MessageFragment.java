@@ -32,15 +32,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.EndlessScrollListener;
+import com.kalianey.oxapp.utils.MultipartRequest;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.adapters.MessageListAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -327,6 +333,16 @@ public class MessageFragment extends Fragment {
                         //String realPath = getRealPathFromURI(getActivity().getApplicationContext(), selectedImageUri);
                         String realPath = getImagePath(selectedImageUri);
                         File imgFile = new File(realPath);
+                        String lastMessage = messages.get(messages.size() - 1).getId();
+
+                        query.messageSendWithMedia(conversation.getId(), conversation.getOpponentId(),lastMessage, imgFile, new QueryAPI.ApiResponse<ModelMessage>() {
+                            @Override
+                            public void onCompletion(ModelMessage result) {
+
+                                Log.d("Result media", result.toString());
+                            }
+                        });
+
                         //File imgFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), selectedImageUri));
 
                         if (imgFile.exists()) {
@@ -334,6 +350,7 @@ public class MessageFragment extends Fragment {
                             Bitmap myBitmap = getScaledBitmap(imgFile.getAbsolutePath(), 800, 800);
 
                             //TODO: send bitmap
+
                             Log.v("Image picked", selectedImageUri.toString());
                         }
                     }

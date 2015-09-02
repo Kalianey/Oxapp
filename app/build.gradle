@@ -11,12 +11,17 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        multiDexEnabled = true
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
     }
 }
 
@@ -45,8 +50,16 @@ dependencies {
     //compile 'com.google.api-client:google-api-client:1.20.0'
     //compile 'com.google.api-client:google-api-client-android:1.20.0'
 
+    //HTTP Client for multipart
+    compile 'com.android.support:multidex:1.0.0'
+    compile ('org.apache.httpcomponents:httpmime:4.3.5') {
+        // avoid "is ignored for the default configuration X" warnings
+        // since httpclient is included in the android SDK.
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+
     //ClearUI
-    //compile files('libs/android-support-v4.jar')
     compile files('libs/nineoldandroids-library-2.4.0.jar')
     compile files('libs/renderscript-v8.jar')
 }

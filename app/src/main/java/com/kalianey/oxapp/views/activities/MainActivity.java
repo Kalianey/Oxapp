@@ -98,8 +98,12 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
+
+        //TODO remove me
+        test();
 
         showActionBar();
 
@@ -568,5 +572,16 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+    }
+
+    private void test(){
+        String string = "<script>if(parent.window.owFileAttachments['mailbox_dialog_1_4_3333']){parent.window.owFileAttachments['mailbox_dialog_1_4_3333'].updateItems({\"noData\":false,\"items\":{\"\":{\"result\":true,\"dbId\":101}},\"result\":true});}</script>";
+        String pattern = ".*updateItems\\((.+)\\);.*";
+        String replacement = "$1";
+
+
+        String processedStr = string.replaceAll(pattern, replacement);
+        Log.d("ProcessedStr", processedStr);
+
     }
 }

@@ -1,5 +1,6 @@
 package com.kalianey.oxapp.utils;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.net.URLEncoder;
@@ -35,6 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by kalianey on 11/08/2015.
@@ -267,6 +270,36 @@ public class QueryAPI {
 
         AppController.getInstance().addToRequestQueue(strRequest);
     }
+
+
+    public void RequestMultiPart(File file, String filename, String boundary, String url, Map<String,String> params, final ApiResponse<String> completion ) {
+
+        MultipartRequest imageUploadReq = new MultipartRequest(url,params,file,filename,"ow_file_attachment[]",
+            new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("Login ERROR","error => "+error.toString());
+                    }
+                },
+            new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        //<script>if(parent.window.owFileAttachments['mailbox_dialog_1_4_3333']){parent.window.owFileAttachments['mailbox_dialog_1_4_3333'].updateItems({"noData":false,"items":{"":{"result":true,"dbId":101}},"result":true});}</script>
+                        Log.d("MediaSent Response", response);
+                        completion.onCompletion(response);
+
+                    }
+                }
+            );
+
+        //imageUploadReq.setBoundary(boundary);
+        AppController.getInstance().addToRequestQueue(imageUploadReq);
+    }
+
+    /*** END REQUESTS METHODS ***/
 
 
     public void currentUser(final ApiResponse<ModelUser> completion) {
@@ -711,19 +744,19 @@ public class QueryAPI {
         this.RequestApi(url, new ApiResponse<ApiResult>() {
             @Override
             public void onCompletion(ApiResult res) {
-                Log.d("Success MessHist",res.data.toString() );
+                Log.d("Success MessHist", res.data.toString());
 
                 if (res.success && res.dataIsArray()) {
                     JSONArray messageList = res.getDataAsArray();
 
-                    Log.d("MessageList",messageList.toString() );
+                    Log.d("MessageList", messageList.toString());
                     for (int i = 0; i < messageList.length(); i++) {
 
                         try {
                             JSONObject jsonObject = messageList.getJSONObject(i);
                             try {
                                 ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
-                                if (!message.getAttachment().equals("")){
+                                if (!message.getAttachment().equals("")) {
                                     Log.v("Message", message.getAttachment().toString());
                                     LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
                                     String downloadUrl = (String) attachment.get("downloadUrl");
@@ -736,8 +769,7 @@ public class QueryAPI {
                                 }
 
                                 messages.add(message);
-                            }
-                            catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
@@ -774,6 +806,49 @@ public class QueryAPI {
                 } else {
                     completion.onCompletion(null);
                 }
+            }
+        });
+
+    }
+
+    public void messageSendWithMedia(String convId, String opponentId, String lastMessage, File media, final ApiResponse<ModelMessage> completion) {
+
+        String bundle = "mailbox_dialog_"+convId+"_"+opponentId+"_3333";
+        String url = hostname+"base/attachment/add-file/?flUid="+bundle;
+
+        String uuid = UUID.randomUUID().toString();
+        String boundary = "----------------------------"+uuid;
+        String fileName = uuid+".jpg";
+        String mediaName = "{"+fileName+":1}";//Utils.urlEncode( "{\"\(uuid).jpg\":1}" )
+        Map<String,String> params = new HashMap<>();
+        params.put("flData", mediaName);
+        params.put("flUid", bundle);
+        params.put("pluginKey", "mailbox");
+
+        /*
+        let boundary = "----------------------------"+uuid; // This should be auto-generated.
+        let contentType = "multipart/form-data; boundary=" + boundary
+         */
+
+
+        this.RequestMultiPart(media, fileName, boundary, url, params, new ApiResponse<String>() {
+            @Override
+            public void onCompletion(String result) {
+
+                //Parse result
+
+
+                ApiResult res = new ApiResult();
+
+                Log.d("messageSendWithMedia", result);
+
+
+//                var pattern = ".*updateItems\\((.+)\\);.*"
+//
+//                var jsonString = dataString!.stringByReplacingOccurrencesOfString(pattern, withString: "$1", options: NSStringCompareOptions.RegularExpressionSearch, range: NSMakeRange(0, dataString!.length))
+//                var jsonData = jsonString.dataUsingEncoding(NSASCIIStringEncoding, allowLossyConversion: false)
+
+                completion.onCompletion(new ModelMessage());
             }
         });
 

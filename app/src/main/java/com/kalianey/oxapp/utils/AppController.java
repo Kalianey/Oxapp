@@ -2,6 +2,7 @@ package com.kalianey.oxapp.utils;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -20,7 +21,7 @@ import java.net.CookiePolicy;
 /**
  * Created by kalianey on 10/08/2015.
  */
-public class AppController extends Application {
+public class AppController extends MultiDexApplication {
 
     public static final String TAG = AppController.class
             .getSimpleName();
