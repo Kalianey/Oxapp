@@ -90,6 +90,7 @@
     <string name="followers">Friend</string>
     <string name="extra_info">delivered</string>
     <string name="coverImage">coverImage</string>
+    <string name="add_ambaj_select_source">Select source</string>
 
 
     <!-- End Clear -->

@@ -76,6 +76,14 @@
             android:hint="@string/type_msg" >
         </EditText>
 
+        <ImageView
+            android:id="@+id/camera"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/camera"
+            android:scaleType="centerInside"
+            android:layout_marginRight="10dp" />
+
         <Button
             android:id="@+id/btnSend"
             style="@style/btn"

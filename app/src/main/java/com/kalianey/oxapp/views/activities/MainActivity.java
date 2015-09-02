@@ -249,12 +249,11 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             mTitleTextView.setText("Friends");
         }
         else if (view == itemMap){
-            Intent i = new Intent(this, MapsActivity.class);
-            startActivity(i);
+
         }
         else if (view == itemFav){
-            Intent i = new Intent(this, Favorite.class);
-            startActivity(i);
+            changeFragment(new FavoriteActivityFragment());
+            mTitleTextView.setText("Favorites");
         }
         else if (view == itemLogout){
             Intent i = new Intent(this, SignIn.class);
@@ -404,19 +403,31 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
         mTitleTextView.setText("Bonnie&Clit");
 
-        ImageButton imageButton = (ImageButton) mCustomView
+        ImageButton menuButton = (ImageButton) mCustomView
                 .findViewById(R.id.menu);
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        menuButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                if (resideMenu.isOpened()){
+                if (resideMenu.isOpened()) {
                     resideMenu.closeMenu();
                 } else {
                     resideMenu.openMenu();
                 }
             }
         });
+
+        ImageButton mapButton = (ImageButton) mCustomView
+                .findViewById(R.id.map);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(i);
+            }
+        });
+
 
         mActionBar.setCustomView(mCustomView);
         mActionBar.setDisplayShowCustomEnabled(true);

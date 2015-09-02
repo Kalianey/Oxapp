@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.AvoidXfermode;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -29,9 +30,14 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.views.activities.MainActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static android.support.v4.content.WakefulBroadcastReceiver.completeWakefulIntent;
 import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulService;
 
 public class GcmBroadcastReceiver extends BroadcastReceiver {
@@ -68,9 +74,34 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
                     // Process message and then post a notification of the received message.
                     String type = extras.getString(EXTRA_TYPE);
                     String message = extras.getString(EXTRA_MESSAGE);
-                    String alert = "New message: " + message;
+                    String dataString = extras.getString("extra");
 
+                    //Build a conv to send to MessageView
+                    ModelConversation conversation = new ModelConversation();
+                    try {
+                        JSONObject dataObj = new JSONObject(dataString); //{"senderId":3,"conversationId":2,"displayName":"Veda","recipientId":"1","message":"test again"}
+                        conversation.setId(dataObj.getString("conversationId"));
+                        conversation.setName(dataObj.getString("displayName"));
+                        conversation.setPreviewText(message);
+                        conversation.setOpponentId(dataObj.getString("senderId"));
+                        conversation.setInitiatorId(dataObj.getString("recipientId"));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Send notification
+                    String alert = "New message: " + message;
                     sendNotification(context, alert);
+
+                    //Send to MessageFragment
+                    Intent broadcastIntent = new Intent();
+                    Bundle mBundle = new Bundle();
+                    mBundle.putSerializable("convObj", conversation);
+                    broadcastIntent.setAction("GCM_RECEIVED_ACTION");
+                    broadcastIntent.putExtra("conversation", mBundle);
+                    broadcastIntent.putExtra("gcm", message);
+                    context.sendBroadcast(broadcastIntent);
 
                 }
 
@@ -81,9 +112,9 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with a GCM message.
+    //http://developer.android.com/guide/topics/ui/notifiers/notifications.html
     private void sendNotification(Context context, String msg) {
-        mNotificationManager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
+
         String appName = AppController.getAppName();
 
         PendingIntent contentIntent =
@@ -99,6 +130,10 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
                         .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         mBuilder.setContentIntent(contentIntent);
+
+        mNotificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 }

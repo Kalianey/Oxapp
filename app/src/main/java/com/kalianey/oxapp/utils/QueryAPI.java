@@ -145,7 +145,7 @@ public class QueryAPI {
         );
 
         //Added because of Login ERROR﹕ error => com.android.volley.TimeoutError
-        jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 1, 1.0f));
+        //jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 1, 1.0f));
 
         AppController.getInstance().addToRequestQueue(jsonRequest);
 
@@ -167,10 +167,6 @@ public class QueryAPI {
 //        } catch (UnsupportedEncodingException uee) {
 //            Log.v("RequestApiPost ", "error encoding UTF8");
 //        }
-//
-//
-//
-//
 //
 //
 //        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, hostname + url, body,
@@ -997,6 +993,7 @@ public class QueryAPI {
         String url = "owapi/site/glconnect/";
         Map<String, String> params = new HashMap<String, String>();
         params.put("token", token);
+        params.put("kind", "android");
 
         this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
             @Override

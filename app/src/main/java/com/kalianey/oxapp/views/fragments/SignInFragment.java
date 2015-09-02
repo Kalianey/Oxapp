@@ -386,7 +386,11 @@ public class SignInFragment extends Fragment implements
         @Override
         protected String doInBackground(String... params) {
             String accountName = params[0];
-            String scopes = "oauth2:profile email";
+            //String scopes = "oauth2:profile email";
+            String scopes = "oauth2:"
+                    + Scopes.PLUS_LOGIN
+                    + " "
+                    + Scopes.PROFILE;
             String token = null;
             try {
                 token = GoogleAuthUtil.getToken(getActivity().getApplicationContext(), accountName, scopes);
@@ -440,15 +444,15 @@ public class SignInFragment extends Fragment implements
 
 
             //Make the app crash because of debug answer from API
-//            query.googleConnect(accessToken, new QueryAPI.ApiResponse<Boolean>() {
-//                @Override
-//                public void onCompletion(Boolean result) {
-//                    if (result) {
-//                        Intent intent = new Intent(getActivity(), MainActivity.class);
-//                        startActivity(intent);
-//                    }
-//                }
-//            });
+            query.googleConnect(accessToken, new QueryAPI.ApiResponse<Boolean>() {
+                @Override
+                public void onCompletion(Boolean result) {
+                    if (result) {
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
 
         }
     }

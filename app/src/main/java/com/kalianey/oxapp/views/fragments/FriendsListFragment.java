@@ -2,6 +2,7 @@ package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import com.kalianey.oxapp.views.adapters.FriendListAdapter;
 
 import android.view.Window;
 import android.widget.ListView;
+import android.widget.TabHost;
 
 import com.kalianey.oxapp.R;
 
@@ -39,6 +41,7 @@ public class FriendsListFragment extends Fragment {
         android.support.v7.app.ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
 
 
+
     }
 
     @Override
@@ -46,6 +49,7 @@ public class FriendsListFragment extends Fragment {
         parentView = inflater.inflate(R.layout.fragment_friend_list, container, false);
         listView   = (ListView) parentView.findViewById(R.id.listView);
         initView();
+
         return parentView;
     }
 
