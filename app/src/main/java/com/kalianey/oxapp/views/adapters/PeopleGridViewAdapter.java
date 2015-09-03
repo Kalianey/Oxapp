@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.views.activities.Profile;
 
 import java.util.List;

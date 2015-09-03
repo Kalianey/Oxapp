@@ -1,21 +1,18 @@
 package com.kalianey.oxapp.views.fragments;
 
-import android.support.v4.app.Fragment;
-import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.utils.EndlessScrollListener;
-import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.utils.EndlessScrollListener;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.adapters.PeopleGridViewAdapter;
 
 import java.util.ArrayList;

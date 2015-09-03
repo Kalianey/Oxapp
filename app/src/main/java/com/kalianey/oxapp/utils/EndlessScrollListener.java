@@ -1,6 +1,5 @@
 package com.kalianey.oxapp.utils;
 
-import android.util.Log;
 import android.widget.AbsListView;
 
 /**

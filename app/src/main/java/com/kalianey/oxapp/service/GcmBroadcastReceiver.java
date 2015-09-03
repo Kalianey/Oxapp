@@ -15,17 +15,13 @@
  */
 package com.kalianey.oxapp.service;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.AvoidXfermode;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -36,9 +32,6 @@ import com.kalianey.oxapp.views.activities.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static android.support.v4.content.WakefulBroadcastReceiver.completeWakefulIntent;
-import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulService;
 
 public class GcmBroadcastReceiver extends BroadcastReceiver {
     private final String LOG_TAG = BroadcastReceiver.class.getSimpleName();

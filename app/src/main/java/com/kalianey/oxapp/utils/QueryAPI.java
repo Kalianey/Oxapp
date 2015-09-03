@@ -1,17 +1,12 @@
 package com.kalianey.oxapp.utils;
 
-import android.graphics.Bitmap;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
@@ -29,9 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,7 +39,9 @@ import java.util.UUID;
 
 public class QueryAPI {
 
-    private String hostname = "http://bonnieandclit.com/";
+//    private String hostname = "http://bonnieandclit.com/";
+    private String hostname = "http://192.168.123.1/bonnieandclit/";
+//    private String hostname = "http://localhost/bonnieandclit/";
 
     private SessionManager session;
 
@@ -1090,6 +1084,50 @@ public class QueryAPI {
         AppController.getInstance().addToRequestQueue(postRequest);
 
     }
+
+
+
+    public void logout( final ApiResponse<Boolean> completion) {
+
+        String url = hostname+"sign-out";
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        completion.onCompletion(true);
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("Login ERROR","error => "+error.toString());
+                        completion.onCompletion(false);
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("User-Agent", "Oxapp");
+                params.put("X-Requested-With", "XMLHTTPRequest");
+
+                return params;
+            }
+        };
+
+        Log.v("Login Request", postRequest.toString());
+        AppController.getInstance().addToRequestQueue(postRequest);
+
+    }
+
+
 
     /* FB CONNECT */
 

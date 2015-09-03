@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelQuestion;
 import com.kalianey.oxapp.models.ModelUser;
-import com.kalianey.oxapp.views.activities.Profile;
 
 import org.json.JSONArray;
 import org.json.JSONException;

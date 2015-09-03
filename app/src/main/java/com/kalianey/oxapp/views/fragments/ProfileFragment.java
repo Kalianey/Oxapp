@@ -2,8 +2,8 @@ package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -43,15 +43,15 @@ import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
 
 import org.lucasr.twowayview.TwoWayView;
-//import org.lucasr.twowayview.ItemClickSupport.OnItemClickListener;
-//import org.lucasr.twowayview.ItemClickSupport.OnItemLongClickListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+
+//import org.lucasr.twowayview.ItemClickSupport.OnItemClickListener;
+//import org.lucasr.twowayview.ItemClickSupport.OnItemLongClickListener;
 
 /**
  * A placeholder fragment containing a simple view.

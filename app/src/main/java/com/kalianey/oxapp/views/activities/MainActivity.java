@@ -13,21 +13,15 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -37,21 +31,23 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.plus.Plus;
+import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.menu.ResideMenuItem;
-
-import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
-import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.fragments.ConversationListFragment;
 import com.kalianey.oxapp.views.fragments.FriendsListFragment;
 import com.kalianey.oxapp.views.fragments.PeopleFragment;
@@ -93,6 +89,9 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
      */
     public static final String PROJECT_NUMBER = "645184786563";
     private GoogleCloudMessaging mGcm;
+
+    //GOOGLE SIGN IN
+    private GoogleApiClient mGoogleApiClient;
 
 
     @SuppressLint("NewApi")
@@ -204,7 +203,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
         itemMap = new ResideMenuItem(this, R.drawable.icons_filter, "Map");
         itemFav = new ResideMenuItem(this, R.drawable.icons_star, "Favorites");
-        itemLogout = new ResideMenuItem(this, R.drawable.ic_cast_off_light, "LOGOUT");
+        itemLogout = new ResideMenuItem(this, R.drawable.ic_calendar, "LOGOUT");
 
         itemHome.setOnClickListener(this);
         itemConversations.setOnClickListener(this);
@@ -257,8 +256,9 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             mTitleTextView.setText("Favorites");
         }
         else if (view == itemLogout){
-            Intent i = new Intent(this, SignIn.class);
-            startActivity(i);
+
+            logout();
+
         }
 
         resideMenu.closeMenu();
@@ -569,6 +569,35 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+    }
+
+    private void logout(){
+
+        //Google
+        mGoogleApiClient = AppController.getInstance().getmGoogleApiClient();
+        mGoogleApiClient.connect();
+
+        if (mGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
+        }
+
+        //Facebook
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        LoginManager.getInstance().logOut();
+
+        //Oxwall
+        query.logout(new QueryAPI.ApiResponse<Boolean>() {
+            @Override
+            public void onCompletion(Boolean result) {
+                Intent i = new Intent(getApplicationContext(), SignIn.class);
+                startActivity(i);
+            }
+        });
+
+//        Intent i = new Intent(getApplicationContext(), SignIn.class);
+//        startActivity(i);
+
     }
 
 

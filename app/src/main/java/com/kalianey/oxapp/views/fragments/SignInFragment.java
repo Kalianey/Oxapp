@@ -1,15 +1,13 @@
 package com.kalianey.oxapp.views.fragments;
 
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,15 +36,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.activities.MainActivity;
 
 import org.w3c.dom.Text;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
 
 //import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 //import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -373,10 +369,6 @@ public class SignInFragment extends Fragment implements
                 Toast.makeText(getActivity().getApplicationContext(), connectionResult.toString(), Toast.LENGTH_LONG);
                 //showErrorDialog(connectionResult);
             }
-        } else {
-            // Show the signed-out UI
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
         }
     }
 

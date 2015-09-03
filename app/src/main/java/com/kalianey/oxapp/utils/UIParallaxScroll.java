@@ -8,8 +8,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ScrollView;
 
-import com.nineoldandroids.view.ViewHelper;
 import com.kalianey.oxapp.R;
+import com.nineoldandroids.view.ViewHelper;
 
 public class UIParallaxScroll extends ScrollView {
 

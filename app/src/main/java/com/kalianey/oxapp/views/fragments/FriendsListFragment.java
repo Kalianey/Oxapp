@@ -1,26 +1,18 @@
 package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.content.res.Resources;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelFriend;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.views.activities.MainActivity;
 import com.kalianey.oxapp.views.adapters.FriendListAdapter;
-
-import android.view.Window;
-import android.widget.ListView;
-import android.widget.TabHost;
-
-import com.kalianey.oxapp.R;
 
 import java.util.ArrayList;
 import java.util.List;
