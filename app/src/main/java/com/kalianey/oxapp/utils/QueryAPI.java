@@ -636,7 +636,7 @@ public class QueryAPI {
 
                 if (res.success && res.dataIsObject()) {
                     JSONObject conversation = res.getDataAsObject();
-                    JSONArray messageList = null;
+                    JSONArray messageList = new JSONArray();
                     try {
                         messageList = conversation.getJSONArray("messages");
                     } catch (JSONException e) {
@@ -678,6 +678,56 @@ public class QueryAPI {
         });
     };
 
+    public void messageUnread(String convId, String lastMessage, final ApiResponse<List<ModelMessage>> completion) {
+        String url = "owapi/messenger/conversation/"+convId+"/unread/"+lastMessage;
+
+        final List<ModelMessage> messages = new ArrayList<ModelMessage>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.d("messageUnread ", res.data.toString());
+
+                if (res.success && res.dataIsArray()) {
+                    JSONArray messageList = res.getDataAsArray();
+                    for (int i = 0; i < messageList.length(); i++) {
+
+                        try {
+                            JSONObject jsonObject = messageList.getJSONObject(i);
+                            try {
+                                ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
+                                if (message.getAttachment() != null){
+                                    Log.v("Message", message.getAttachment().toString());
+                                    LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
+                                    String downloadUrl = (String) attachment.get("downloadUrl");
+                                    String attachmentId = (String) attachment.get("id");
+                                    message.setDownloadUrl(downloadUrl);
+                                    message.setAttachmentId(attachmentId);
+                                    message.setIsMediaMessage(true);
+                                } else {
+                                    message.setIsMediaMessage(false);
+                                }
+
+                                messages.add(message);
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                //Log.d("ConvList Completion", res.data.toString());
+                completion.onCompletion(messages);
+
+            }
+
+        });
+
+    }
 
 
     public void conversationGet(String opponentId, final ApiResponse<String> completion) {
@@ -811,7 +861,7 @@ public class QueryAPI {
 
     }
 
-    public void messageSendWithMedia(String convId, String opponentId, String lastMessage, File media, final ApiResponse<ModelMessage> completion) {
+    public void messageSendWithMedia(final String convId, String opponentId, final String lastMessage, File media, final ApiResponse<List<ModelMessage>> completion) {
 
         String bundle = "mailbox_dialog_"+convId+"_"+opponentId+"_3333";
         String url = hostname+"base/attachment/add-file/?flUid="+bundle;
@@ -825,30 +875,39 @@ public class QueryAPI {
         params.put("flUid", bundle);
         params.put("pluginKey", "mailbox");
 
-        /*
-        let boundary = "----------------------------"+uuid; // This should be auto-generated.
-        let contentType = "multipart/form-data; boundary=" + boundary
-         */
-
-
         this.RequestMultiPart(media, fileName, boundary, url, params, new ApiResponse<String>() {
             @Override
             public void onCompletion(String result) {
 
                 //Parse result
+                String pattern = ".*updateItems\\((.+)\\);.*";
+                String replacement = "$1";
+                String processedStr = result.replaceAll(pattern, replacement);
+                Log.d("ProcessedStr", processedStr);
 
+                List<ModelMessage> messages = new ArrayList<ModelMessage>();
 
-                ApiResult res = new ApiResult();
+                try {
 
-                Log.d("messageSendWithMedia", result);
+                    JSONObject data = new JSONObject(processedStr);
+                    Boolean success = data.getBoolean("result");
+                    if (success) {
 
+                        //Here query unread messages and return it in completion res
+                        messageUnread(convId, lastMessage, new ApiResponse<List<ModelMessage>>() {
 
-//                var pattern = ".*updateItems\\((.+)\\);.*"
-//
-//                var jsonString = dataString!.stringByReplacingOccurrencesOfString(pattern, withString: "$1", options: NSStringCompareOptions.RegularExpressionSearch, range: NSMakeRange(0, dataString!.length))
-//                var jsonData = jsonString.dataUsingEncoding(NSASCIIStringEncoding, allowLossyConversion: false)
+                            @Override
+                            public void onCompletion(List<ModelMessage> messages) {
+                                completion.onCompletion(messages);
+                            }
 
-                completion.onCompletion(new ModelMessage());
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 

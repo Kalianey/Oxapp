@@ -335,10 +335,9 @@ public class MessageFragment extends Fragment {
                         File imgFile = new File(realPath);
                         String lastMessage = messages.get(messages.size() - 1).getId();
 
-                        query.messageSendWithMedia(conversation.getId(), conversation.getOpponentId(),lastMessage, imgFile, new QueryAPI.ApiResponse<ModelMessage>() {
+                        query.messageSendWithMedia(conversation.getId(), conversation.getOpponentId(), lastMessage, imgFile, new QueryAPI.ApiResponse<List<ModelMessage>>() {
                             @Override
-                            public void onCompletion(ModelMessage result) {
-
+                            public void onCompletion(List<ModelMessage> result) {
                                 Log.d("Result media", result.toString());
                             }
                         });

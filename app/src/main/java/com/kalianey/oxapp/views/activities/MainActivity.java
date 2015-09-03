@@ -102,9 +102,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
 
-        //TODO remove me
-        test();
-
         showActionBar();
 
         if(Build.VERSION.SDK_INT >= 21){
@@ -574,14 +571,5 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         editor.commit();
     }
 
-    private void test(){
-        String string = "<script>if(parent.window.owFileAttachments['mailbox_dialog_1_4_3333']){parent.window.owFileAttachments['mailbox_dialog_1_4_3333'].updateItems({\"noData\":false,\"items\":{\"\":{\"result\":true,\"dbId\":101}},\"result\":true});}</script>";
-        String pattern = ".*updateItems\\((.+)\\);.*";
-        String replacement = "$1";
 
-
-        String processedStr = string.replaceAll(pattern, replacement);
-        Log.d("ProcessedStr", processedStr);
-
-    }
 }
