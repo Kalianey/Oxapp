@@ -324,8 +324,15 @@ public class MessageFragment extends Fragment {
 
                         query.messageSendWithMedia(conversation.getId(), conversation.getOpponentId(), lastMessage, imgFile, new QueryAPI.ApiResponse<List<ModelMessage>>() {
                             @Override
-                            public void onCompletion(List<ModelMessage> result) {
-                                Log.d("Result media", result.toString());
+                            public void onCompletion(List<ModelMessage> newMessages) {
+                                Log.d("Result media", messages.toString());
+
+                                for(int i = 0; i < newMessages.size(); i++ ){
+                                    ModelMessage mess = newMessages.get(i);
+                                    //mess.setIsMediaMessage(true); //TODO : set attachment url in backend
+                                    messages.add(mess);
+                                }
+                                adapter.notifyDataSetChanged();
                             }
                         });
 

@@ -136,15 +136,37 @@
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
             android:layout_width="0dp"
-            android:layout_height="fill_parent"
+            android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:background="#364d8c" />
 
-        <com.google.android.gms.common.SignInButton
+        <!--<com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5" />
+
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:layout_margin="0dp"
+            android:background="#364d8c"
+            android:text="Sign in with Facebook"
+            android:textColor="#ffffff" />-->
+        <Button
+            android:id="@+id/sign_in_button"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:background="#f25e5e"
+            android:textColor="#ffffff"
+            android:text="Sign in with google"
+            android:layout_marginBottom="0dp" />
 
     </LinearLayout>
 

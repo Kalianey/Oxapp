@@ -7,17 +7,8 @@
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
-    <ImageButton android:src="@drawable/titlebar_menu_selector"
-        android:background="?attr/actionBarItemBackground"
-        android:layout_width="?attr/actionBarSize"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside"
-        android:id="@+id/menu"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="-15dp" />
 
-    <TextView
+        <TextView
         android:id="@+id/title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,15 +19,27 @@
         android:textColor="@android:color/white"
         android:layout_gravity="center"/>
 
-    <ImageButton android:src="@drawable/com_facebook_button_like_icon_selected"
-        android:background="?attr/actionBarItemBackground"
-        android:layout_width="?attr/actionBarSize"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside"
-        android:id="@+id/map"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="right" />
+        <ImageButton android:src="@drawable/earth"
+            android:background="?attr/actionBarItemBackground"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="20dp"
+            android:scaleType="centerInside"
+            android:id="@+id/map"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="-15dp" />
+
+        <ImageButton android:src="@drawable/titlebar_menu_selector"
+            android:background="?attr/actionBarItemBackground"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:id="@+id/menu"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="-15dp"
+            android:layout_gravity="left|center_vertical" />
     </FrameLayout>
 
 </RelativeLayout>

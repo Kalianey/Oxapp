@@ -70,7 +70,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     private ResideMenuItem itemConversations;
     private ResideMenuItem itemProfile;
     private ResideMenuItem itemFriends;
-    private ResideMenuItem itemMap;
     private ResideMenuItem itemFav;
     private ResideMenuItem itemLogout;
 
@@ -201,15 +200,13 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         itemConversations  = new ResideMenuItem(this, R.drawable.icons_chat,  "Messages");
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
-        itemMap = new ResideMenuItem(this, R.drawable.icons_filter, "Map");
         itemFav = new ResideMenuItem(this, R.drawable.icons_star, "Favorites");
-        itemLogout = new ResideMenuItem(this, R.drawable.ic_calendar, "LOGOUT");
+        itemLogout = new ResideMenuItem(this, R.drawable.exit, "LOGOUT");
 
         itemHome.setOnClickListener(this);
         itemConversations.setOnClickListener(this);
         itemProfile.setOnClickListener(this);
         itemFriends.setOnClickListener(this);
-        itemMap.setOnClickListener(this);
         itemFav.setOnClickListener(this);
         itemLogout.setOnClickListener(this);
 
@@ -217,7 +214,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         resideMenu.addMenuItem(itemConversations);
         resideMenu.addMenuItem(itemProfile);
         resideMenu.addMenuItem(itemFriends);
-        resideMenu.addMenuItem(itemMap);
         resideMenu.addMenuItem(itemFav);
         resideMenu.addMenuItem(itemLogout);
 
@@ -233,10 +229,11 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
         if (view == itemHome){
             changeFragment(new PeopleFragment());
+            mTitleTextView.setText("Bonnie&Clit");
         }
         else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
-            mTitleTextView.setText("Conversations");
+            mTitleTextView.setText("Messages");
         }
         else if (view == itemProfile){
             ProfileFragment profile = new ProfileFragment();
@@ -247,9 +244,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         else if (view == itemFriends){
             changeFragment(new FriendsListFragment());
             mTitleTextView.setText("Friends");
-        }
-        else if (view == itemMap){
-
         }
         else if (view == itemFav){
             changeFragment(new FavoriteActivityFragment());

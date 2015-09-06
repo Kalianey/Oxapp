@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelUser;
@@ -32,6 +33,7 @@ import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
+import com.kalianey.oxapp.views.activities.MainActivity;
 import com.kalianey.oxapp.views.activities.Message;
 import com.kalianey.oxapp.views.adapters.ProfileFriendListViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfilePhotoRecyclerViewAdapter;
@@ -265,6 +267,18 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onClick(View arg0) {
+//                if (isLoggedInUser){
+//                    MainActivity mainActivity = new MainActivity();
+//                    ResideMenu resideMenu = mainActivity.getResideMenu();
+//                    if (resideMenu.isOpened()){
+//                        resideMenu.closeMenu();
+//                    } else {
+//                        resideMenu.openMenu();
+//                    }
+//
+//                } else {
+//                    onBackPressed();
+//                }
                 onBackPressed();
             }
 

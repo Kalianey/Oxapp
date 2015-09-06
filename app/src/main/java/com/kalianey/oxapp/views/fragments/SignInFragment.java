@@ -24,6 +24,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -43,6 +44,7 @@ import com.kalianey.oxapp.views.activities.MainActivity;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 //import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 //import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -127,9 +129,6 @@ public class SignInFragment extends Fragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);
 
-
-
-
         signInButton = (Button) view.findViewById(R.id.signInButton);
         email = (EditText) view.findViewById(R.id.emailInput);
         password = (EditText) view.findViewById(R.id.passwordInput);
@@ -206,14 +205,26 @@ public class SignInFragment extends Fragment implements
         super.onViewCreated(view, savedInstanceState);
         //FB
         LoginButton loginButton = (LoginButton) view.findViewById(R.id.login_button);
+        //Button loginButton = (Button) view.findViewById(R.id.login_button);
 
         //Google
-        SignInButton signInButton = (SignInButton) view.findViewById(R.id.sign_in_button);
+        //SignInButton signInButton = (SignInButton) view.findViewById(R.id.sign_in_button);
+        Button signInButton = (Button) view.findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(this);
 
         loginButton.setReadPermissions("user_friends");
         loginButton.setFragment(this);
         loginButton.registerCallback(callbackManager, callback);
+
+
+
+//        loginButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends"));
+//                LoginManager.getInstance().registerCallback(callbackManager, callback);
+//            }
+//        });
 
     }
 
