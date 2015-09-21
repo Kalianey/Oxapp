@@ -9,6 +9,10 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -80,16 +84,37 @@ public class ProfilePhotosFragment extends Fragment {
         @Override
         public Object instantiateItem(ViewGroup collection, int position) {
             LayoutInflater inflater = (LayoutInflater) cxt.getSystemService(cxt.LAYOUT_INFLATER_SERVICE);
+//
+//            // button height/width *pixels*
+//            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//            lp.height = 60;
+//            lp.width = 60;
+//
+//            mImageView = new NetworkImageView(cxt);
+//
+//            mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
+//            mImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//
+//            collection.addView(mImageView);
+//
+//            ImageButton btnClose = new ImageButton(getActivity());
+//            btnClose.setImageResource(R.drawable.close_thin);
+//            btnClose.setLayoutParams(lp);
+//            btnClose.setBackgroundColor(getResources().getColor(R.color.red));
+//            btnClose.bringToFront();
+//
+//            return mImageView;
 
-            mImageView = new NetworkImageView(cxt);
+            //test with external layout
+           // LayoutInflater inflater = LayoutInflater.from(cxt);
+            View parentView = inflater.inflate(R.layout.fragment_profile_photos_item, collection, false) ; //resource, viewGroup, attachToGroup
+
+            NetworkImageView mImageView  = (NetworkImageView) parentView.findViewById(R.id.imageView);
+            ImageButton closeBtn = (ImageButton) parentView.findViewById(R.id.closeBtn);
 
             mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
-            mImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-            collection.addView(mImageView);
-
-            return mImageView;
-
+            return parentView;
         }
 
         /**

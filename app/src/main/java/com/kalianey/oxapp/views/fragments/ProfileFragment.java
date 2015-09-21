@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -120,6 +121,8 @@ public class ProfileFragment extends Fragment {
 
         initializeRecyclerView();
 
+        view.scrollTo(0, 10);
+
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
 
         friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
@@ -208,7 +211,6 @@ public class ProfileFragment extends Fragment {
 
         mImageView.bringToFront();
 
-
         title = user.getName();
         String sum = user.getAddress();
 
@@ -245,10 +247,14 @@ public class ProfileFragment extends Fragment {
                     return true;
                 }
             });
+        } else {
+            mNavigationBackBtn.setBackgroundResource(R.drawable.titlebar_menu_selector);
         }
 
-
         cImageView.setImageUrl(user.getCover_url(), imageLoader);
+        if (user.getCover_url() != null) {
+            mLayoutContainer.setBackground(cImageView.getDrawable());
+        }
 
         mTitleView.setText(title);
         mSum.setText(sum);
@@ -267,19 +273,18 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-//                if (isLoggedInUser){
-//                    MainActivity mainActivity = new MainActivity();
-//                    ResideMenu resideMenu = mainActivity.getResideMenu();
-//                    if (resideMenu.isOpened()){
-//                        resideMenu.closeMenu();
-//                    } else {
-//                        resideMenu.openMenu();
-//                    }
-//
-//                } else {
-//                    onBackPressed();
-//                }
-                onBackPressed();
+                if (isLoggedInUser){
+                    ResideMenu resideMenu =  ((MainActivity)getActivity()).getResideMenu();
+                    if (resideMenu.isOpened()){
+                        resideMenu.closeMenu();
+                    } else {
+                        resideMenu.openMenu();
+                    }
+
+                } else {
+                    onBackPressed();
+                }
+                //onBackPressed();
             }
 
         });
@@ -327,22 +332,6 @@ public class ProfileFragment extends Fragment {
                     }
                 });
 
-                /*   else {
-
-                        //if not we create a new one //TODO: check why the conversation is displayed but not created (cannot send messages)
-                        let query = queryAPI()
-                        query.conversationCreate(KYController.sharedInstance.getUser()!.userId!, interlocutorId: self.currentUser.userId, completion: { (conv: ModelConversation) -> () in
-
-                            //pass the returned conversation model to var conversation
-                            self.openConversation = conv
-                            self.openConversation!.displayName = self.currentUser.name
-                            self.performSegueWithIdentifier("profileToMessage", sender: nil)
-                        })
-
-                    }
-
-                })
-                */
             }
         });
 

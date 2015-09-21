@@ -11,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -230,24 +231,30 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         if (view == itemHome){
             changeFragment(new PeopleFragment());
             mTitleTextView.setText("Bonnie&Clit");
+            mActionBar.show();
         }
         else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
             mTitleTextView.setText("Messages");
+            mActionBar.show();
         }
         else if (view == itemProfile){
             ProfileFragment profile = new ProfileFragment();
             profile.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(profile);
             mActionBar.hide();
+//            mActionBar.setDisplayShowTitleEnabled(false);
+//            mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         }
         else if (view == itemFriends){
             changeFragment(new FriendsListFragment());
             mTitleTextView.setText("Friends");
+            mActionBar.show();
         }
         else if (view == itemFav){
             changeFragment(new FavoriteActivityFragment());
             mTitleTextView.setText("Favorites");
+            mActionBar.show();
         }
         else if (view == itemLogout){
 
@@ -392,6 +399,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayShowHomeEnabled(false);
         mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         LayoutInflater mInflater = LayoutInflater.from(this);
 
         View mCustomView = mInflater.inflate(R.layout.custom_actionbar, null);
