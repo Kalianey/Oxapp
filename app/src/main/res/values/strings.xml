@@ -19,7 +19,7 @@
     <string name="title_activity_sign_in">SignIn</string>
     <string name="Sign_in_label">Sign In</string>
     <string name="Sign_in_forgot_password_label">Forgot password?</string>
-    <string name="sign_in_btn">Login</string>
+    <string name="sign_in_btn">Sign In</string>
     <string name="sign_in_register_label">Don\'t have an account? Sign up</string>
     <string name="closeDrawer">Open</string>
     <string name="openDrawer">Close</string>
@@ -108,5 +108,6 @@
 
     <!-- FB -->
     <string name="facebook_app_id">344271245710270</string>
+    <string name="title_activity_account">Account</string>
 
 </resources>

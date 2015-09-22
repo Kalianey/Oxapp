@@ -1,0 +1,90 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.kalianey.oxapp.views.activities.AccountFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_alignParentStart="true"
+        android:id="@+id/bg_layout"
+        android:fitsSystemWindows="false"
+        android:background="@drawable/detail_background"
+        android:layout_alignParentTop="true">
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:layout_width="fill_parent"
+            android:layout_height="120dp"
+            android:id="@+id/backgroundImg"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="false"
+            android:background="#5600ff"
+            android:scaleType="fitXY"/>
+
+        <com.kalianey.oxapp.utils.UICircularImage
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/avatarImg"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentTop="false"
+            android:focusable="true"
+            android:layout_centerInParent="true"
+            android:background="#ff5e6d"
+            android:layout_centerHorizontal="true"
+            app:line_color="@android:color/white"
+            app:line_color_press="@color/theme_color"
+            app:line_width="1dp"
+            app:padding="0dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EDIT AVATAR"
+            android:id="@+id/editAvatar"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="false"
+            android:layout_marginRight="10dp"
+            android:longClickable="false"
+            android:background="@drawable/button_bg_rounded_corners"
+            android:textColor="@color/white"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView2"
+        android:layout_below="@+id/bg_layout"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/relativeLayout2" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/relativeLayout2">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LOGOUT"
+            android:id="@+id/button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SAVE"
+            android:id="@+id/button5"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+</RelativeLayout>

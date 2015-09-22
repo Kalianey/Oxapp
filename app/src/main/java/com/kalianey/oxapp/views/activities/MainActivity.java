@@ -11,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -55,6 +56,8 @@ import com.kalianey.oxapp.views.fragments.PeopleFragment;
 import com.kalianey.oxapp.views.fragments.ProfileFragment;
 
 import java.io.IOException;
+
+import br.com.goncalves.pugnotification.notification.PugNotification;
 
 public class MainActivity  extends AppCompatActivity implements View.OnClickListener {
 
