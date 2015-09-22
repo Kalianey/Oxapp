@@ -128,6 +128,7 @@ public class QueryAPI {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            res.success = false;
                         }
                         completion.onCompletion(res);
                     }
@@ -507,6 +508,75 @@ public class QueryAPI {
         });
 
     }
+
+    public void friendRequestList(final ApiResponse<List<ModelUser>> completion)
+    {
+
+        String url = "owapi/user/friend/requestList";
+        final List<ModelUser> users = new ArrayList<ModelUser>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                if (res.success && res.dataIsObject() ) {
+                    JSONObject data = res.getDataAsObject();
+                    JSONArray friendList = null;
+                    try {
+                        friendList = data.getJSONArray("friendsRequest");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (int i = 0; i < friendList.length(); i++) {
+                        try {
+                            JSONObject jsonObject = friendList.getJSONObject(i);
+                            ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
+                            users.add(user);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    completion.onCompletion(users);
+                }
+                else {
+                    completion.onCompletion(users);
+                }
+                //completion.onCompletion(users);
+            }
+        });
+
+    }
+
+
+//    func friendRequestList(completion: ([ModelUser]) -> ()) -> NSURLSessionDataTask {
+//
+//        let url = "owapi/user/friend/requestList"
+//        var task = self.requestAPI(url, params: "") { (res: ApiResponse) -> () in
+//
+//            var items = [ModelUser]() //TODO error checking
+//
+//            if(res.success)
+//            {
+//                if let data = res.data as? NSDictionary {
+//                if let friendsRequest = data["friendsRequest"] as? NSArray {
+//                    println(friendsRequest)
+//
+//                    for item in friendsRequest {
+//
+//                        let item = ModelUser(data: item as! NSDictionary)
+//                        items.append(item)
+//
+//                    }
+//                }
+//            }
+//
+//            }
+//            completion(items)
+//
+//        }
+//        return task
+//    }
 
 
     public void favorite(final ApiResponse<ModelFavorite> completion)

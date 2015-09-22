@@ -7,39 +7,6 @@
         android:orientation="vertical"
     android:background="#ffffff">
 
-    <com.kalianey.oxapp.utils.UITabs
-        android:id="@+id/toggle"
-        android:layout_gravity="center"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="-5dp"
-        android:layout_marginRight="-5dp"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/toggle1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:checked="true"
-            android:text="@string/description_tab_1"
-            style="@style/UITabs" />
-
-        <RadioButton
-            android:id="@+id/toggle2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:text="@string/description_tab_2"
-            android:layout_gravity="bottom"
-            style="@style/UITabs" />
-
-    </com.kalianey.oxapp.utils.UITabs>
-
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

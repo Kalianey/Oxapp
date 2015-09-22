@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.kalianey.oxapp.views.fragments.FavoriteFragment;
+import com.kalianey.oxapp.views.fragments.FriendsListFragment;
 
 /**
  * Created by kalianey on 28/08/2015.
@@ -26,9 +27,9 @@ public class FriendsTabsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        FavoriteFragment favoriteFragment = FavoriteFragment.getInstance(position);
+        FriendsListFragment friendFragment = FriendsListFragment.getInstance(position);
 
-        return favoriteFragment;
+        return friendFragment;
     }
 
     @Override

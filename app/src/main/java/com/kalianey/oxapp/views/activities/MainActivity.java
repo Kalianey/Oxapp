@@ -157,7 +157,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                     }
 
 
-
                 }
             }
 
@@ -250,7 +249,8 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 //            mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         }
         else if (view == itemFriends){
-            changeFragment(new FriendsListFragment());
+            //changeFragment(new FriendsListFragment());
+            changeFragment(new FriendActivityFragment());
             mTitleTextView.setText("Friends");
             mActionBar.show();
         }
