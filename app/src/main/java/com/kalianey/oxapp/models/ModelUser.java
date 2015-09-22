@@ -1,7 +1,5 @@
 package com.kalianey.oxapp.models;
 
-import android.graphics.AvoidXfermode;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -10,7 +8,6 @@ import org.json.JSONArray;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by kalianey on 11/08/2015.

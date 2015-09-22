@@ -7,11 +7,26 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
         classpath 'com.google.gms:google-services:1.3.0-beta1'
+        //classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.2.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
+
+/*
+configuration {
+    dexcount {
+        includeClasses = false
+        includeFieldCount = false
+        printAsTree = false
+        orderByMethodCount = false
+        verbose = false
+    }
+}
+
+apply plugin: 'com.getkeepsafe.dexcount'
+*/
 
 allprojects {
     repositories {

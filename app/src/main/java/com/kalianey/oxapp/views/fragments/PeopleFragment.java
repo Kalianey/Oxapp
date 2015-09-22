@@ -1,25 +1,25 @@
 package com.kalianey.oxapp.views.fragments;
 
-import android.support.v4.app.Fragment;
-import android.app.Activity;
-import android.os.Build;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.utils.EndlessScrollListener;
-import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.utils.EndlessScrollListener;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.adapters.PeopleGridViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import br.com.goncalves.pugnotification.notification.PugNotification;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -40,6 +40,17 @@ public class PeopleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_people, container, false);
+
+        PugNotification.with(getActivity().getApplicationContext())
+                .load()
+                .smallIcon(R.drawable.pugnotification_ic_launcher)
+                .autoCancel(true)
+                .largeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.pugnotification_ic_launcher))
+                .title("title of my notif")
+                .message("Message of my notif")
+                        //.bigTextStyle(bigtext)
+                .simple()
+                .build();
 
         gridView = (GridView) view.findViewById(R.id.people_gridView);
         gridView.setClipToPadding(false);

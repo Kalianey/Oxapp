@@ -18,6 +18,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
 }
 
 repositories {
@@ -30,17 +34,28 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.etsy.android.grid:library:1.0.5' // To remove if manage to use RecyclerView
     compile 'org.lucasr.twowayview:twowayview:0.1.4' //Horizontal scroll view
     compile 'com.android.support:recyclerview-v7:22.2.+'
-    //compile 'com.google.android.gms:play-services-gcm:7.8.0' //maybe replace just by com.google.android.gms:play-services-gcm:7.8.0
-    compile 'com.google.android.gms:play-services:7.8.0'
+    compile 'com.google.android.gms:play-services-plus:7.8.0'
+    compile 'com.google.android.gms:play-services-identity:7.8.0'
+    compile 'com.google.android.gms:play-services-gcm:7.8.0'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile 'com.google.maps.android:android-maps-utils:0.4+'
     compile 'com.facebook.android:facebook-android-sdk:4.1.0'
 
+    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'com.github.halysongoncalves:pugnotification:1.7.0'
+
+    //HTTP Client for multipart
+    compile ('org.apache.httpcomponents:httpmime:4.3.5') {
+        // avoid "is ignored for the default configuration X" warnings
+        // since httpclient is included in the android SDK.
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+
     //ClearUI
-    //compile files('libs/android-support-v4.jar')
     compile files('libs/nineoldandroids-library-2.4.0.jar')
     compile files('libs/renderscript-v8.jar')
 }

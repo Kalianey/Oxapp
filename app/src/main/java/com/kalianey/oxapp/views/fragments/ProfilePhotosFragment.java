@@ -1,24 +1,26 @@
 package com.kalianey.oxapp.views.fragments;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
-import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -83,6 +85,11 @@ public class ProfilePhotosFragment extends Fragment {
         public Object instantiateItem(ViewGroup collection, int position) {
             LayoutInflater inflater = (LayoutInflater) cxt.getSystemService(cxt.LAYOUT_INFLATER_SERVICE);
 
+            // button height/width *pixels*
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
+            lp.height = 60;
+            lp.width = 60;
+
             mImageView = new NetworkImageView(cxt);
 
             mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
@@ -90,8 +97,25 @@ public class ProfilePhotosFragment extends Fragment {
 
             collection.addView(mImageView);
 
+            ImageButton btnClose = new ImageButton(getActivity());
+            btnClose.setImageResource(R.drawable.close_thin);
+            btnClose.setLayoutParams(lp);
+            btnClose.setBackgroundColor(getResources().getColor(R.color.red));
+            collection.addView(btnClose);
+            btnClose.bringToFront();
+
             return mImageView;
 
+            //test with external layout
+           // LayoutInflater inflater = LayoutInflater.from(cxt);
+//            View parentView = inflater.inflate(R.layout.fragment_profile_photos_item, collection, false) ; //resource, viewGroup, attachToGroup
+//
+//            NetworkImageView mImageView  = (NetworkImageView) parentView.findViewById(R.id.imageView);
+//            ImageButton closeBtn = (ImageButton) parentView.findViewById(R.id.closeBtn);
+//
+//            mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
+//
+//            return parentView;
         }
 
         /**

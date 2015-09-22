@@ -11,36 +11,45 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.plus.Plus;
+import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.menu.ResideMenuItem;
-
-import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
-import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.QueryAPI;
+import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.fragments.ConversationListFragment;
 import com.kalianey.oxapp.views.fragments.FriendsListFragment;
 import com.kalianey.oxapp.views.fragments.PeopleFragment;
@@ -48,7 +57,9 @@ import com.kalianey.oxapp.views.fragments.ProfileFragment;
 
 import java.io.IOException;
 
-public class MainActivity  extends FragmentActivity implements View.OnClickListener {
+import br.com.goncalves.pugnotification.notification.PugNotification;
+
+public class MainActivity  extends AppCompatActivity implements View.OnClickListener {
 
     private SessionManager session;
     private DrawerLayout drawerLayout;
@@ -63,9 +74,12 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
     private ResideMenuItem itemConversations;
     private ResideMenuItem itemProfile;
     private ResideMenuItem itemFriends;
-    private ResideMenuItem itemMap;
     private ResideMenuItem itemFav;
     private ResideMenuItem itemLogout;
+
+    //Action Bar
+    android.support.v7.app.ActionBar mActionBar;
+    private TextView mTitleTextView;
 
     // GCM
     private final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -79,11 +93,18 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
     public static final String PROJECT_NUMBER = "645184786563";
     private GoogleCloudMessaging mGcm;
 
+    //GOOGLE SIGN IN
+    private GoogleApiClient mGoogleApiClient;
+
 
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
+
+        showActionBar();
 
         if(Build.VERSION.SDK_INT >= 21){
             getWindow().getDecorView().setSystemUiVisibility(
@@ -183,15 +204,13 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         itemConversations  = new ResideMenuItem(this, R.drawable.icons_chat,  "Messages");
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
-        itemMap = new ResideMenuItem(this, R.drawable.icons_filter, "Map");
         itemFav = new ResideMenuItem(this, R.drawable.icons_star, "Favorites");
-        itemLogout = new ResideMenuItem(this, R.drawable.ic_cast_off_light, "LOGOUT");
+        itemLogout = new ResideMenuItem(this, R.drawable.exit, "LOGOUT");
 
         itemHome.setOnClickListener(this);
         itemConversations.setOnClickListener(this);
         itemProfile.setOnClickListener(this);
         itemFriends.setOnClickListener(this);
-        itemMap.setOnClickListener(this);
         itemFav.setOnClickListener(this);
         itemLogout.setOnClickListener(this);
 
@@ -199,16 +218,8 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         resideMenu.addMenuItem(itemConversations);
         resideMenu.addMenuItem(itemProfile);
         resideMenu.addMenuItem(itemFriends);
-        resideMenu.addMenuItem(itemMap);
         resideMenu.addMenuItem(itemFav);
         resideMenu.addMenuItem(itemLogout);
-
-        findViewById(R.id.title_bar_left_menu).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resideMenu.openMenu();
-            }
-        });
 
     }
 
@@ -222,30 +233,36 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
 
         if (view == itemHome){
             changeFragment(new PeopleFragment());
+            mTitleTextView.setText("Bonnie&Clit");
+            mActionBar.show();
         }
         else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
+            mTitleTextView.setText("Messages");
+            mActionBar.show();
         }
         else if (view == itemProfile){
             ProfileFragment profile = new ProfileFragment();
             profile.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(profile);
-
+            mActionBar.hide();
+//            mActionBar.setDisplayShowTitleEnabled(false);
+//            mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         }
         else if (view == itemFriends){
             changeFragment(new FriendsListFragment());
-        }
-        else if (view == itemMap){
-            Intent i = new Intent(this, MapsActivity.class);
-            startActivity(i);
+            mTitleTextView.setText("Friends");
+            mActionBar.show();
         }
         else if (view == itemFav){
-            Intent i = new Intent(this, Favorite.class);
-            startActivity(i);
+            changeFragment(new FavoriteActivityFragment());
+            mTitleTextView.setText("Favorites");
+            mActionBar.show();
         }
         else if (view == itemLogout){
-            Intent i = new Intent(this, SignIn.class);
-            startActivity(i);
+
+            logout();
+
         }
 
         resideMenu.closeMenu();
@@ -377,6 +394,52 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         }
         return result;
     }
+
+
+    //Custom action bar
+
+    private void showActionBar() {
+        mActionBar = getSupportActionBar();
+        mActionBar.setDisplayShowHomeEnabled(false);
+        mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        LayoutInflater mInflater = LayoutInflater.from(this);
+
+        View mCustomView = mInflater.inflate(R.layout.custom_actionbar, null);
+        mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
+        mTitleTextView.setText("Bonnie&Clit");
+
+        ImageButton menuButton = (ImageButton) mCustomView
+                .findViewById(R.id.menu);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (resideMenu.isOpened()) {
+                    resideMenu.closeMenu();
+                } else {
+                    resideMenu.openMenu();
+                }
+            }
+        });
+
+        ImageButton mapButton = (ImageButton) mCustomView
+                .findViewById(R.id.map);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(i);
+            }
+        });
+
+
+        mActionBar.setCustomView(mCustomView);
+        mActionBar.setDisplayShowCustomEnabled(true);
+
+    }
+
 
 
     /************************** GCM ********************************************************************************************/
@@ -512,4 +575,35 @@ public class MainActivity  extends FragmentActivity implements View.OnClickListe
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
+
+    private void logout(){
+
+        //Google
+        mGoogleApiClient = AppController.getInstance().getmGoogleApiClient();
+        mGoogleApiClient.connect();
+
+        if (mGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
+        }
+
+        //Facebook
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        LoginManager.getInstance().logOut();
+
+        //Oxwall
+        query.logout(new QueryAPI.ApiResponse<Boolean>() {
+            @Override
+            public void onCompletion(Boolean result) {
+                Intent i = new Intent(getApplicationContext(), SignIn.class);
+                startActivity(i);
+            }
+        });
+
+//        Intent i = new Intent(getApplicationContext(), SignIn.class);
+//        startActivity(i);
+
+    }
+
+
 }

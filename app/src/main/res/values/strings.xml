@@ -2,6 +2,7 @@
     <string name="app_name">Oxapp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_menu">Menu</string>
     <string name="title_activity_message">Message</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
@@ -18,7 +19,7 @@
     <string name="title_activity_sign_in">SignIn</string>
     <string name="Sign_in_label">Sign In</string>
     <string name="Sign_in_forgot_password_label">Forgot password?</string>
-    <string name="sign_in_btn">Login</string>
+    <string name="sign_in_btn">Sign In</string>
     <string name="sign_in_register_label">Don\'t have an account? Sign up</string>
     <string name="closeDrawer">Open</string>
     <string name="openDrawer">Close</string>
@@ -89,6 +90,7 @@
     <string name="followers">Friend</string>
     <string name="extra_info">delivered</string>
     <string name="coverImage">coverImage</string>
+    <string name="add_ambaj_select_source">Select source</string>
 
 
     <!-- End Clear -->
@@ -106,5 +108,6 @@
 
     <!-- FB -->
     <string name="facebook_app_id">344271245710270</string>
+    <string name="title_activity_account">Account</string>
 
 </resources>

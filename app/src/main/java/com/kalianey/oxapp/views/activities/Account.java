@@ -1,41 +1,25 @@
 package com.kalianey.oxapp.views.activities;
 
-import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.kalianey.oxapp.R;
-import com.kalianey.oxapp.utils.SlidingTabLayout;
-import com.kalianey.oxapp.views.adapters.FavoriteTabsPagerAdapter;
 
-public class Favorite extends AppCompatActivity {
-
-    private ViewPager mPager;
-    private SlidingTabLayout mTabs;
-
+public class Account extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favorite);
-
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter(new FavoriteTabsPagerAdapter(getSupportFragmentManager()));
-        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        mTabs.setDistributeEvenly(true);
-        mTabs.setSelectedIndicatorColors(getResources().getColor(R.color.red));
-        mTabs.setBackgroundColor(getResources().getColor(R.color.theme_color));
-        mTabs.setViewPager(mPager);
-
+        setContentView(R.layout.activity_account);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_favorite, menu);
+        getMenuInflater().inflate(R.menu.menu_account, menu);
         return true;
     }
 
@@ -53,6 +37,4 @@ public class Favorite extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }

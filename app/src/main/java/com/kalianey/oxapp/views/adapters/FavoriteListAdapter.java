@@ -16,7 +16,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
-import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.views.activities.Profile;
 import com.squareup.picasso.Picasso;

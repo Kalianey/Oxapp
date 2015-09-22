@@ -2,8 +2,8 @@ package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelUser;
@@ -32,6 +34,7 @@ import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
+import com.kalianey.oxapp.views.activities.MainActivity;
 import com.kalianey.oxapp.views.activities.Message;
 import com.kalianey.oxapp.views.adapters.ProfileFriendListViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfilePhotoRecyclerViewAdapter;
@@ -43,15 +46,15 @@ import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
 
 import org.lucasr.twowayview.TwoWayView;
-//import org.lucasr.twowayview.ItemClickSupport.OnItemClickListener;
-//import org.lucasr.twowayview.ItemClickSupport.OnItemLongClickListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+
+//import org.lucasr.twowayview.ItemClickSupport.OnItemClickListener;
+//import org.lucasr.twowayview.ItemClickSupport.OnItemLongClickListener;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -117,6 +120,8 @@ public class ProfileFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         initializeRecyclerView();
+
+        view.scrollTo(0, 10);
 
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
 
@@ -206,7 +211,6 @@ public class ProfileFragment extends Fragment {
 
         mImageView.bringToFront();
 
-
         title = user.getName();
         String sum = user.getAddress();
 
@@ -243,10 +247,14 @@ public class ProfileFragment extends Fragment {
                     return true;
                 }
             });
+        } else {
+            mNavigationBackBtn.setBackgroundResource(R.drawable.titlebar_menu_selector);
         }
 
-
         cImageView.setImageUrl(user.getCover_url(), imageLoader);
+        if (user.getCover_url() != null) {
+            mLayoutContainer.setBackground(cImageView.getDrawable());
+        }
 
         mTitleView.setText(title);
         mSum.setText(sum);
@@ -261,11 +269,22 @@ public class ProfileFragment extends Fragment {
 
         mNavigationTitle.setText(title);
 
-        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
+        mNavigationBackBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                onBackPressed();
+                if (isLoggedInUser){
+                    ResideMenu resideMenu =  ((MainActivity)getActivity()).getResideMenu();
+                    if (resideMenu.isOpened()){
+                        resideMenu.closeMenu();
+                    } else {
+                        resideMenu.openMenu();
+                    }
+
+                } else {
+                    onBackPressed();
+                }
+                //onBackPressed();
             }
 
         });
@@ -281,45 +300,42 @@ public class ProfileFragment extends Fragment {
                         //Conv doesn't exist
                         if (result.equals("") || result.equals("0")) {
 
+                            query.conversationCreate(AppController.getInstance().getLoggedInUser().getUserId(), user.getUserId(), new QueryAPI.ApiResponse<ModelConversation>() {
+                                @Override
+                                public void onCompletion(ModelConversation conversation) {
+
+                                    conversation.setAvatarUrl(user.getAvatar_url());
+                                    conversation.setName(user.getName());
+                                    Intent i = new Intent(getActivity(), Message.class);
+                                    Bundle mBundle = new Bundle();
+                                    mBundle.putSerializable("convObj", conversation);
+                                    i.putExtras(mBundle);
+                                    startActivity(i);
+
+                                }
+                            });
                         }
                         //Conv already exist
                         else {
-                            ModelConversation conv = new ModelConversation();
-                            conv.setId(result);
-                            conv.setName(user.getName());
-                            conv.setOpponentId(user.getUserId());
+                            ModelConversation conversation = new ModelConversation();
+                            conversation.setId(result);
+                            conversation.setName(user.getName());
+                            conversation.setOpponentId(user.getUserId());
                             //conv.setAvatarUrl(user.getAvatar_url());
 
                             Intent i = new Intent(getActivity(), Message.class);
                             Bundle mBundle = new Bundle();
-                            mBundle.putSerializable("convObj", conv);
+                            mBundle.putSerializable("convObj", conversation);
                             i.putExtras(mBundle);
                             startActivity(i);
                         }
                     }
                 });
 
-                /*   else {
-
-                        //if not we create a new one //TODO: check why the conversation is displayed but not created (cannot send messages)
-                        let query = queryAPI()
-                        query.conversationCreate(KYController.sharedInstance.getUser()!.userId!, interlocutorId: self.currentUser.userId, completion: { (conv: ModelConversation) -> () in
-
-                            //pass the returned conversation model to var conversation
-                            self.openConversation = conv
-                            self.openConversation!.displayName = self.currentUser.name
-                            self.performSegueWithIdentifier("profileToMessage", sender: nil)
-                        })
-
-                    }
-
-                })
-                */
             }
         });
 
-        tab.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        tab.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
 
@@ -332,7 +348,7 @@ public class ProfileFragment extends Fragment {
                         stickyList.setVisibility(View.GONE);
                         return;
                     case R.id.toggle2:
-                       // mTextView.setVisibility(View.VISIBLE);
+                        // mTextView.setVisibility(View.VISIBLE);
                         stickyList.setVisibility(View.VISIBLE);
                         gridView.setVisibility(LinearLayout.GONE);
                         friendsListView.setVisibility(LinearLayout.GONE);

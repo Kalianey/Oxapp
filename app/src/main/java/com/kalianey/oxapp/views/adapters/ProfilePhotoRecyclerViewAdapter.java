@@ -1,7 +1,6 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +14,9 @@ import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
-import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.views.activities.ProfilePhotos;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by kalianey on 18/08/2015.

@@ -1,16 +1,12 @@
 package com.kalianey.oxapp.utils;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
@@ -27,14 +23,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.URLEncoder;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by kalianey on 11/08/2015.
@@ -44,7 +39,9 @@ import java.util.Map;
 
 public class QueryAPI {
 
-    private String hostname = "http://bonnieandclit.com/";
+//    private String hostname = "http://bonnieandclit.com/";
+    private String hostname = "http://192.168.123.1/bonnieandclit/";
+//    private String hostname = "http://localhost/bonnieandclit/";
 
     private SessionManager session;
 
@@ -143,6 +140,10 @@ public class QueryAPI {
             }
         }
         );
+
+        //Added because of Login ERROR﹕ error => com.android.volley.TimeoutError
+        //jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 1, 1.0f));
+
         AppController.getInstance().addToRequestQueue(jsonRequest);
 
     }
@@ -163,10 +164,6 @@ public class QueryAPI {
 //        } catch (UnsupportedEncodingException uee) {
 //            Log.v("RequestApiPost ", "error encoding UTF8");
 //        }
-//
-//
-//
-//
 //
 //
 //        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, hostname + url, body,
@@ -203,6 +200,9 @@ public class QueryAPI {
                     @Override
                     public void onResponse(String responseString)
                     {
+                        if (responseString != null) {
+                            Log.d("POSTResponse", responseString);
+                        }
                         JSONObject response = null;
                         ApiResult res = new ApiResult();
                         try {
@@ -264,6 +264,36 @@ public class QueryAPI {
 
         AppController.getInstance().addToRequestQueue(strRequest);
     }
+
+
+    public void RequestMultiPart(File file, String filename, String boundary, String url, Map<String,String> params, final ApiResponse<String> completion ) {
+
+        MultipartRequest imageUploadReq = new MultipartRequest(url,params,file,filename,"ow_file_attachment[]",
+            new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("Login ERROR","error => "+error.toString());
+                    }
+                },
+            new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        //<script>if(parent.window.owFileAttachments['mailbox_dialog_1_4_3333']){parent.window.owFileAttachments['mailbox_dialog_1_4_3333'].updateItems({"noData":false,"items":{"":{"result":true,"dbId":101}},"result":true});}</script>
+                        Log.d("MediaSent Response", response);
+                        completion.onCompletion(response);
+
+                    }
+                }
+            );
+
+        //imageUploadReq.setBoundary(boundary);
+        AppController.getInstance().addToRequestQueue(imageUploadReq);
+    }
+
+    /*** END REQUESTS METHODS ***/
 
 
     public void currentUser(final ApiResponse<ModelUser> completion) {
@@ -600,7 +630,7 @@ public class QueryAPI {
 
                 if (res.success && res.dataIsObject()) {
                     JSONObject conversation = res.getDataAsObject();
-                    JSONArray messageList = null;
+                    JSONArray messageList = new JSONArray();
                     try {
                         messageList = conversation.getJSONArray("messages");
                     } catch (JSONException e) {
@@ -642,69 +672,26 @@ public class QueryAPI {
         });
     };
 
-
-
-    public void conversationGet(String opponentId, final ApiResponse<String> completion) {
-        String url = "owapi/messenger/conversation/get/" + opponentId;
-
-        this.RequestApi(url, new ApiResponse<ApiResult>() {
-            @Override
-            public void onCompletion(ApiResult res) {
-
-                String convId = "";
-                if (res.success && res.dataIsInteger()) {
-                    Integer result = res.getDataAsInteger();
-                    convId = result.toString();
-                }
-                completion.onCompletion(convId);
-            }
-        });
-    }
-
-
-    public void conversationCreate(String opponentId, final ApiResponse<ModelConversation> completion) {
-        String url = "owapi/messenger/conversation/create";
-        //here need to pass post params
-        Log.v("url", url);
-
-//        this.RequestApi(url, new ApiResponse<ApiResult>() {
-//            @Override
-//            public void onCompletion(ApiResult res) {
-//
-//                String convId = "";
-//                if (res.success && res.dataIsInteger()) {
-//                    Integer result = res.getDataAsInteger();
-//                    convId = result.toString();
-//                    Log.v("My convid", convId);
-//                }
-//                completion.onCompletion(convId);
-//            }
-//        });
-    }
-
-
-    public void conversationHistory(String conversationId, String lastMessageId, final ApiResponse<List<ModelMessage>> completion) {
-
-        String url = "owapi/messenger/conversation/"+conversationId+"/history/"+lastMessageId;
+    public void messageUnread(String convId, String lastMessage, final ApiResponse<List<ModelMessage>> completion) {
+        String url = "owapi/messenger/conversation/"+convId+"/unread/"+lastMessage;
 
         final List<ModelMessage> messages = new ArrayList<ModelMessage>();
 
         this.RequestApi(url, new ApiResponse<ApiResult>() {
             @Override
             public void onCompletion(ApiResult res) {
-                Log.d("Success MessHist",res.data.toString() );
+
+                Log.d("messageUnread ", res.data.toString());
 
                 if (res.success && res.dataIsArray()) {
                     JSONArray messageList = res.getDataAsArray();
-
-                    Log.d("MessageList",messageList.toString() );
                     for (int i = 0; i < messageList.length(); i++) {
 
                         try {
                             JSONObject jsonObject = messageList.getJSONObject(i);
                             try {
                                 ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
-                                if (!message.getAttachment().equals("")){
+                                if (message.getAttachment() != null){
                                     Log.v("Message", message.getAttachment().toString());
                                     LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
                                     String downloadUrl = (String) attachment.get("downloadUrl");
@@ -729,37 +716,118 @@ public class QueryAPI {
                 }
                 //Log.d("ConvList Completion", res.data.toString());
                 completion.onCompletion(messages);
+
             }
+
         });
 
     }
 
-//    func conversationHistory(conversationId: String, lastMessageId: String, completion: ([ModelMessage]) -> ()) -> NSURLSessionDataTask {
-//
-//        let url = "owapi/messenger/conversation/"+conversationId+"/history/"+lastMessageId
-//        println(url)
-//
-//        var task = self.requestAPI(url, params: "") { (res: ApiResponse) -> () in
-//            var items = [ModelMessage]() //TODO error checking
-//
-//            if(res.success)
-//            {
-//                var data = res.data as! NSArray
-//                //println(data)
-//                for item in data{
-//
-//                let msg = ModelMessage(data: item as! NSDictionary)
-//                items.append(msg)
-//
-//            }
-//
-//            }
-//
-//            completion(items)
-//
-//        }
-//        return task
-//    }
+
+    public void conversationGet(String opponentId, final ApiResponse<String> completion) {
+        String url = "owapi/messenger/conversation/get/" + opponentId;
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                String convId = "";
+                if (res.success && res.dataIsInteger()) {
+                    Integer result = res.getDataAsInteger();
+                    convId = result.toString();
+                }
+                completion.onCompletion(convId);
+            }
+        });
+    }
+
+
+    public void conversationCreate(final String initiatorId, String interlocutorId, final ApiResponse<ModelConversation> completion) {
+        String url = "owapi/messenger/conversation/create";
+        //here need to pass post params
+        Log.v("url", url);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("initiatorId", initiatorId);
+        params.put("interlocutorId", interlocutorId);
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.v("GoogleRes", res.toString());
+                ModelConversation conversation = new ModelConversation();
+                if (res.success && res.dataIsObject()) {
+
+                    JSONObject data = res.getDataAsObject();
+                    conversation = new Gson().fromJson(data.toString(), ModelConversation.class);
+                    try {
+                        conversation.setId(data.getString("id"));
+                        conversation.setOpponentId(data.getString("interlocutorId"));
+                        conversation.setInitiatorId(data.getString("initiatorId"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                completion.onCompletion(conversation);
+            }
+
+        });
+
+
+    }
+
+
+    public void conversationHistory(String conversationId, String lastMessageId, final ApiResponse<List<ModelMessage>> completion) {
+
+        String url = "owapi/messenger/conversation/"+conversationId+"/history/"+lastMessageId;
+
+        final List<ModelMessage> messages = new ArrayList<ModelMessage>();
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+                Log.d("Success MessHist", res.data.toString());
+
+                if (res.success && res.dataIsArray()) {
+                    JSONArray messageList = res.getDataAsArray();
+
+                    Log.d("MessageList", messageList.toString());
+                    for (int i = 0; i < messageList.length(); i++) {
+
+                        try {
+                            JSONObject jsonObject = messageList.getJSONObject(i);
+                            try {
+                                ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
+                                if (!message.getAttachment().equals("")) {
+                                    Log.v("Message", message.getAttachment().toString());
+                                    LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
+                                    String downloadUrl = (String) attachment.get("downloadUrl");
+                                    String attachmentId = (String) attachment.get("id");
+                                    message.setDownloadUrl(downloadUrl);
+                                    message.setAttachmentId(attachmentId);
+                                    message.setIsMediaMessage(true);
+                                } else {
+                                    message.setIsMediaMessage(false);
+                                }
+
+                                messages.add(message);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                //Log.d("ConvList Completion", res.data.toString());
+                completion.onCompletion(messages);
+            }
+        });
+
+    }
 
 
 
@@ -787,6 +855,58 @@ public class QueryAPI {
 
     }
 
+    public void messageSendWithMedia(final String convId, String opponentId, final String lastMessage, File media, final ApiResponse<List<ModelMessage>> completion) {
+
+        String bundle = "mailbox_dialog_"+convId+"_"+opponentId+"_3333";
+        String url = hostname+"base/attachment/add-file/?flUid="+bundle;
+
+        String uuid = UUID.randomUUID().toString();
+        String boundary = "----------------------------"+uuid;
+        String fileName = uuid+".jpg";
+        String mediaName = "{"+fileName+":1}";//Utils.urlEncode( "{\"\(uuid).jpg\":1}" )
+        Map<String,String> params = new HashMap<>();
+        params.put("flData", mediaName);
+        params.put("flUid", bundle);
+        params.put("pluginKey", "mailbox");
+
+        this.RequestMultiPart(media, fileName, boundary, url, params, new ApiResponse<String>() {
+            @Override
+            public void onCompletion(String result) {
+
+                //Parse result
+                String pattern = ".*updateItems\\((.+)\\);.*";
+                String replacement = "$1";
+                String processedStr = result.replaceAll(pattern, replacement);
+                Log.d("ProcessedStr", processedStr);
+
+                List<ModelMessage> messages = new ArrayList<ModelMessage>();
+
+                try {
+
+                    JSONObject data = new JSONObject(processedStr);
+                    Boolean success = data.getBoolean("result");
+                    if (success) {
+
+                        //Here query unread messages and return it in completion res
+                        messageUnread(convId, lastMessage, new ApiResponse<List<ModelMessage>>() {
+
+                            @Override
+                            public void onCompletion(List<ModelMessage> messages) {
+                                completion.onCompletion(messages);
+                            }
+
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
+
 
     /* LOCATION */
 
@@ -797,29 +917,29 @@ public class QueryAPI {
         final List<ModelUser> users = new ArrayList<ModelUser>();
 
         this.RequestApi(url, new ApiResponse<ApiResult>() {
-                    @Override
-                    public void onCompletion(ApiResult res) {
-                        Log.d("Success NearUsers", res.data.toString());
+            @Override
+            public void onCompletion(ApiResult res) {
+                Log.d("Success NearUsers", res.data.toString());
 
-                        if (res.success && res.dataIsArray()) {
+                if (res.success && res.dataIsArray()) {
 
-                            JSONArray usersList = res.getDataAsArray();
-                            for (int i = 0; i < usersList.length(); i++) {
+                    JSONArray usersList = res.getDataAsArray();
+                    for (int i = 0; i < usersList.length(); i++) {
 
-                                try {
-                                    JSONObject jsonObject = usersList.getJSONObject(i);
-                                    ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
-                                    users.add(user);
+                        try {
+                            JSONObject jsonObject = usersList.getJSONObject(i);
+                            ModelUser user = new Gson().fromJson(jsonObject.toString(), ModelUser.class);
+                            users.add(user);
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        completion.onCompletion(users);
                     }
-                });
+
+                }
+                completion.onCompletion(users);
+            }
+        });
     }
 
 
@@ -838,7 +958,7 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                if (res.success != null && res.success){
+                if (res.success != null && res.success) {
                     Log.v("GCM registration:", res.success.toString());
                     res.message = "GCM registration successful";
                 }
@@ -965,6 +1085,50 @@ public class QueryAPI {
 
     }
 
+
+
+    public void logout( final ApiResponse<Boolean> completion) {
+
+        String url = hostname+"sign-out";
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        completion.onCompletion(true);
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("Login ERROR","error => "+error.toString());
+                        completion.onCompletion(false);
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("User-Agent", "Oxapp");
+                params.put("X-Requested-With", "XMLHTTPRequest");
+
+                return params;
+            }
+        };
+
+        Log.v("Login Request", postRequest.toString());
+        AppController.getInstance().addToRequestQueue(postRequest);
+
+    }
+
+
+
     /* FB CONNECT */
 
     public void fbConnect(String token, final ApiResponse<Boolean> completion) {
@@ -994,6 +1158,35 @@ public class QueryAPI {
 
     }
 
+
+    /* GOOGLE CONNECT */
+    public void googleConnect(String token, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/site/glconnect/";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("token", token);
+        params.put("kind", "android");
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                Log.v("GoogleRes", res.toString());
+                if (res.success) {
+                    setSession(new ApiResponse<Boolean>() {
+                        @Override
+                        public void onCompletion(Boolean result) {
+                            completion.onCompletion(result);
+                        }
+                    });
+
+                } else {
+                    completion.onCompletion(false);
+                }
+            }
+        });
+
+    }
 
 
 

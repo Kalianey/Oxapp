@@ -2,6 +2,7 @@ package com.kalianey.oxapp.utils;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -9,9 +10,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.facebook.FacebookSdk;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelUser;
-
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -20,7 +25,9 @@ import java.net.CookiePolicy;
 /**
  * Created by kalianey on 10/08/2015.
  */
-public class AppController extends Application {
+public class AppController extends Application implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = AppController.class
             .getSimpleName();
@@ -36,6 +43,9 @@ public class AppController extends Application {
 
     private ModelUser loggedInUser;
 
+    /* Client used to interact with Google APIs. */
+    private GoogleApiClient mGoogleApiClient;
+
     @Override
     public void onCreate() {
 
@@ -49,10 +59,24 @@ public class AppController extends Application {
         //FBK
         FacebookSdk.sdkInitialize(getApplicationContext());
 
+        //GOOGLE
+        // Build GoogleApiClient with access to basic profile
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
+                .addScope(new Scope(Scopes.PROFILE))
+                .build();
+
+
     }
 
     public ModelUser getLoggedInUser() {
         return loggedInUser;
+    }
+
+    public GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
     }
 
     public void setLoggedInUser(ModelUser user) {
@@ -111,5 +135,22 @@ public class AppController extends Application {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);
         }
+    }
+
+
+    // GOOGLE SIGN IN
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

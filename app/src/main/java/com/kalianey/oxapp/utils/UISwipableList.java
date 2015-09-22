@@ -28,11 +28,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import com.kalianey.oxapp.menu.ResideMenu;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
-import com.kalianey.oxapp.menu.ResideMenu;
 
 public class UISwipableList extends ListView {
 

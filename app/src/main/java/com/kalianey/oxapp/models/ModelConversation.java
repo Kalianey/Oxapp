@@ -17,6 +17,7 @@ public class ModelConversation implements Serializable {
     @SerializedName("conversationId")
     private String id;
     private String opponentId;
+    private String initiatorId;
     @SerializedName("displayName")
     private String name;
     private String avatarUrl;
@@ -37,6 +38,15 @@ public class ModelConversation implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
+
+    public String getInitiatorId() {
+        return initiatorId;
+    }
+
+    public void setInitiatorId(String initiatorId) {
+        this.initiatorId = initiatorId;
+    }
+
 
     public String getOpponentId() {
         return opponentId;
