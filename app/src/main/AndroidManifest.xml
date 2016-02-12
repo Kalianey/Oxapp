@@ -125,10 +125,6 @@
             android:label="@string/title_activity_profile_photos" >
         </activity>
         <activity
-            android:name=".views.activities.Favorite"
-            android:label="@string/title_activity_favorite" >
-        </activity>
-        <activity
             android:name=".views.activities.Account"
             android:label="@string/title_activity_account" >
         </activity>

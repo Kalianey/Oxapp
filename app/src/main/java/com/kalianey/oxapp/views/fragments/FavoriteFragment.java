@@ -62,7 +62,6 @@ public class FavoriteFragment extends Fragment {
                     final int pos = bundle.getInt("position");
 
                     if (bundle != null) {
-                        Log.d("Favorite fragment n:", String.valueOf(pos));
                         switch (pos) {
                             case 0:
                                 // My fav fragment activity

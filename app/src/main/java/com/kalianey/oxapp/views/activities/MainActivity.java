@@ -57,8 +57,6 @@ import com.kalianey.oxapp.views.fragments.ProfileFragment;
 
 import java.io.IOException;
 
-import br.com.goncalves.pugnotification.notification.PugNotification;
-
 public class MainActivity  extends AppCompatActivity implements View.OnClickListener {
 
     private SessionManager session;

@@ -44,13 +44,14 @@ public class PeopleFragment extends Fragment {
         PugNotification.with(getActivity().getApplicationContext())
                 .load()
                 .smallIcon(R.drawable.pugnotification_ic_launcher)
-                .autoCancel(true)
+                .autoCancel(false)
                 .largeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.pugnotification_ic_launcher))
                 .title("title of my notif")
                 .message("Message of my notif")
-                        //.bigTextStyle(bigtext)
+                .bigTextStyle("e")
                 .simple()
                 .build();
+
 
         gridView = (GridView) view.findViewById(R.id.people_gridView);
         gridView.setClipToPadding(false);

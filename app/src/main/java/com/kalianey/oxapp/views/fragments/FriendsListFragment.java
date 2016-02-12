@@ -67,7 +67,6 @@ public class FriendsListFragment extends Fragment {
         final int pos = bundle.getInt("position");
 
         if (bundle != null) {
-            Log.d("Favorite fragment n:", String.valueOf(pos));
             switch (pos) {
                 case 0:
                     // Friend List
