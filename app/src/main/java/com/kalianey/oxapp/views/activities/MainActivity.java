@@ -11,7 +11,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -39,9 +38,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.plus.Plus;
 import com.kalianey.oxapp.R;
@@ -50,8 +47,8 @@ import com.kalianey.oxapp.menu.ResideMenuItem;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
+import com.kalianey.oxapp.views.fragments.AccountFragment;
 import com.kalianey.oxapp.views.fragments.ConversationListFragment;
-import com.kalianey.oxapp.views.fragments.FriendsListFragment;
 import com.kalianey.oxapp.views.fragments.PeopleFragment;
 import com.kalianey.oxapp.views.fragments.ProfileFragment;
 
@@ -73,6 +70,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     private ResideMenuItem itemProfile;
     private ResideMenuItem itemFriends;
     private ResideMenuItem itemFav;
+    private ResideMenuItem itemAccount;
     private ResideMenuItem itemLogout;
 
     //Action Bar
@@ -202,6 +200,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
         itemFav = new ResideMenuItem(this, R.drawable.icons_star, "Favorites");
+        itemAccount = new ResideMenuItem(this, R.drawable.icons_star, "Account");
         itemLogout = new ResideMenuItem(this, R.drawable.exit, "LOGOUT");
 
         itemHome.setOnClickListener(this);
@@ -209,6 +208,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         itemProfile.setOnClickListener(this);
         itemFriends.setOnClickListener(this);
         itemFav.setOnClickListener(this);
+        itemAccount.setOnClickListener(this);
         itemLogout.setOnClickListener(this);
 
         resideMenu.addMenuItem(itemHome);
@@ -216,6 +216,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         resideMenu.addMenuItem(itemProfile);
         resideMenu.addMenuItem(itemFriends);
         resideMenu.addMenuItem(itemFav);
+        resideMenu.addMenuItem(itemAccount);
         resideMenu.addMenuItem(itemLogout);
 
     }
@@ -257,10 +258,14 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             mTitleTextView.setText("Favorites");
             mActionBar.show();
         }
+        else if (view == itemAccount){
+            AccountFragment account = new AccountFragment();
+            account.setUser(AppController.getInstance().getLoggedInUser());
+            changeFragment(account);
+            mActionBar.hide();
+        }
         else if (view == itemLogout){
-
             logout();
-
         }
 
         resideMenu.closeMenu();

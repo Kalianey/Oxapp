@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -150,6 +152,12 @@ public class ProfileFragment extends Fragment {
                 //Horizontal ListView for friends
                 friendsAdapter = new ProfileFriendListViewAdapter(getActivity(), R.layout.profile_friend_list_item, user.getFriends());
                 friendsListView.setAdapter(friendsAdapter);
+//                friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        Log.v("friend clicked: ", Integer.toString(position));
+//                    }
+//                });
 
                 //Profile Questions
 
@@ -273,9 +281,9 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                if (isLoggedInUser){
-                    ResideMenu resideMenu =  ((MainActivity)getActivity()).getResideMenu();
-                    if (resideMenu.isOpened()){
+                if (isLoggedInUser) {
+                    ResideMenu resideMenu = ((MainActivity) getActivity()).getResideMenu();
+                    if (resideMenu.isOpened()) {
                         resideMenu.closeMenu();
                     } else {
                         resideMenu.openMenu();
@@ -288,6 +296,7 @@ public class ProfileFragment extends Fragment {
             }
 
         });
+
 
         mShare.setOnClickListener(new View.OnClickListener() {
             @Override

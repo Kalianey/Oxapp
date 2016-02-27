@@ -39,10 +39,10 @@ import java.util.UUID;
 
 public class QueryAPI {
 
-//    private String hostname = "http://bonnieandclit.com/";
+    private String hostname = "http://bonnieandclit.com/";
 //    private String hostname = "http://192.168.123.1/bonnieandclit/";
 //    private String hostname = "http://10.0.3.2/bonnieandclit/";
-    private String hostname = "http://192.168.57.1/bonnieandclit/";
+//    private String hostname = "http://192.168.57.1/bonnieandclit/";
 
     private SessionManager session;
 
