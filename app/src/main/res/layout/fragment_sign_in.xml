@@ -48,7 +48,8 @@
             android:ems="10"
             android:id="@+id/emailInput"
             android:layout_weight="1"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:text="demogirl" />
     </LinearLayout>
 
     <LinearLayout
@@ -76,7 +77,8 @@
             android:ems="10"
             android:id="@+id/passwordInput"
             android:layout_weight="1"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:text="demogirl" />
     </LinearLayout>
 
     <TextView

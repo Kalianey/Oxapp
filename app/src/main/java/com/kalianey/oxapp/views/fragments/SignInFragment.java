@@ -86,6 +86,7 @@ public class SignInFragment extends Fragment implements
     private boolean mShouldResolve = false;
     private String mAccountName;
     private static final String CLIENT_ID = "645184786563-95fhqa4mqa2m2s8bdq36ki1edr7ij192.apps.googleusercontent.com";
+    private static final int REQ_SIGN_IN_REQUIRED = 55664;
     private String accessToken;
 
     public SignInFragment() {
@@ -121,10 +122,10 @@ public class SignInFragment extends Fragment implements
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(Plus.API)
+                //.addApi(Plus.API)
+                .addApi(Plus.API, Plus.PlusOptions.builder().build())
                 .addScope(new Scope(Scopes.PROFILE))
                 .build();
-
 
     }
 
@@ -206,25 +207,26 @@ public class SignInFragment extends Fragment implements
         super.onViewCreated(view, savedInstanceState);
 
         //FB
-        LoginButton loginButton = (LoginButton) view.findViewById(R.id.login_button);
+        LoginButton fbLoginButton = (LoginButton) view.findViewById(R.id.login_button);
         //Button loginButton = (Button) view.findViewById(R.id.login_button);
 
-        //Google
-        //SignInButton signInButton = (SignInButton) view.findViewById(R.id.sign_in_button);
-        Button signInButton = (Button) view.findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(this);
+        fbLoginButton.setReadPermissions("user_friends");
+        fbLoginButton.setFragment(this);
+        fbLoginButton.registerCallback(callbackManager, callback);
 
-        loginButton.setReadPermissions("user_friends");
-        loginButton.setFragment(this);
-        loginButton.registerCallback(callbackManager, callback);
-
-//        loginButton.setOnClickListener(new View.OnClickListener() {
+//        fbLoginButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
 //                LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends"));
 //                LoginManager.getInstance().registerCallback(callbackManager, callback);
 //            }
 //        });
+
+        //Google
+        //SignInButton glSignInButton = (SignInButton) view.findViewById(R.id.sign_in_button);
+        Button glSignInButton = (Button) view.findViewById(R.id.sign_in_button);
+        glSignInButton.setOnClickListener(this);
+
 
     }
 
@@ -323,6 +325,7 @@ public class SignInFragment extends Fragment implements
         // onConnected indicates that an account was selected on the device, that the selected
         // account has granted any requested permissions to our app and that we were able to
         // establish a service connection to Google Play services.
+
         Log.d(TAG, "onConnected:" + bundle);
         mShouldResolve = false;
 
@@ -330,9 +333,6 @@ public class SignInFragment extends Fragment implements
 
         new RetrieveTokenTask().execute(mAccountName);
 
-        // Show the signed-in UI
-//        Intent intent = new Intent(getActivity(), MainActivity.class);
-//        startActivity(intent);
     }
 
     @Override
@@ -352,6 +352,16 @@ public class SignInFragment extends Fragment implements
         // User clicked the sign-in button, so begin the sign-in process and automatically
         // attempt to resolve any errors that occur.
         mShouldResolve = true;
+
+        // Build GoogleApiClient with access to basic profile
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                //.addApi(Plus.API)
+                .addApi(Plus.API, Plus.PlusOptions.builder().build())
+                .addScope(new Scope(Scopes.PROFILE))
+                .build();
+
         mGoogleApiClient.connect();
 
         // Show a message to the user that we are signing in.
@@ -372,7 +382,7 @@ public class SignInFragment extends Fragment implements
                     connectionResult.startResolutionForResult(getActivity(), RC_SIGN_IN);
                     mIsResolving = true;
                 } catch (IntentSender.SendIntentException e) {
-                    Log.e(TAG, "Could not resolve ConnectionResult.", e);
+                    //Log.e(TAG, "Could not resolve ConnectionResult.", e);
                     mIsResolving = false;
                     mGoogleApiClient.connect();
                 }
@@ -402,8 +412,11 @@ public class SignInFragment extends Fragment implements
             } catch (IOException e) {
                 Log.e(TAG, e.getMessage());
             } catch (UserRecoverableAuthException e) {
-                //startActivityForResult(e.getIntent(), REQ_SIGN_IN_REQUIRED);
+                startActivityForResult(e.getIntent(), REQ_SIGN_IN_REQUIRED);
+                Log.e(TAG, e.getMessage());
             } catch (GoogleAuthException e) {
+                Log.e(TAG, e.getMessage());
+            } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
             return token;
@@ -412,20 +425,15 @@ public class SignInFragment extends Fragment implements
         @Override
         protected void onPostExecute(String token) {
             super.onPostExecute(token);
-            Log.i("Token Value: ", token);
+
+
             //TODO : access token verifier https://developers.google.com/identity/sign-in/android/backend-auth
             //http://android-developers.blogspot.ca/2013/01/verifying-back-end-calls-from-android.html
-
-            accessToken = token;
-
 //            Log.i("Token JWT", accessToken);
-
 //            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
 //                    .setAudience(Arrays.asList(CLIENT_ID))
 //                    .build();
-//
 //            // (Receive idTokenString by HTTPS POST)
-//
 //            GoogleIdToken idToken = null;
 //            try {
 //                idToken = verifier.verify(accessToken);
@@ -447,17 +455,23 @@ public class SignInFragment extends Fragment implements
 //                System.out.println("Invalid ID token.");
 //            }
 
-
-            //Make the app crash because of debug answer from API
-            query.googleConnect(accessToken, new QueryAPI.ApiResponse<Boolean>() {
-                @Override
-                public void onCompletion(Boolean result) {
-                    if (result) {
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        startActivity(intent);
+            if (token != "" && token != null) {
+                Log.i("Token Value: ", token);
+                accessToken = token;
+                //Make the app crash because of debug answer from API
+                query.googleConnect(accessToken, new QueryAPI.ApiResponse<Boolean>() {
+                    @Override
+                    public void onCompletion(Boolean result) {
+                        if (result) {
+                            session.setLoginType(3);
+                            session.setToken(accessToken);
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            startActivity(intent);
+                        }
                     }
-                }
-            });
+                });
+
+            }
 
         }
     }

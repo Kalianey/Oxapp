@@ -115,8 +115,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
         session = AppController.getSession();
 
-        error = false;
-
         // Check if user is already logged in or not
         if (!session.isLoggedIn()) {
             silentLogin();
@@ -176,89 +174,89 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
     private void silentLogin() {
 
+        error = false;
 
-            //we check if there are some silent login info stored
-            if (session.getLoginType() != 0) {
+        //we check if there are some silent login info stored
+        if (session.getLoginType() != 0) {
 
-                String token = session.getToken();
+            String token = session.getToken();
 
-                switch(session.getLoginType()) {
+            switch(session.getLoginType()) {
 
-                    //Fb SignIn
-                    case 2:
-                        if (token != "") {
-                            query.fbConnect(token, new QueryAPI.ApiResponse<Boolean>() {
-                                @Override
-                                public void onCompletion(Boolean result) {
-                                    if (result) {
-                                        Log.v("Silent FB Login: ", result.toString());
-                                        //Load first menu item by default
-                                        changeFragment(new PeopleFragment());
-                                    } else {
-                                        error = true;
-                                    }
+                //Fb SignIn
+                case 2:
+                    if (token != "") {
+                        query.fbConnect(token, new QueryAPI.ApiResponse<Boolean>() {
+                            @Override
+                            public void onCompletion(Boolean result) {
+                                if (result) {
+                                    Log.v("Silent FB Login: ", result.toString());
+                                    //Load first menu item by default
+                                    changeFragment(new PeopleFragment());
+                                } else {
+                                    error = true;
                                 }
-                            });
-                        } else {
-                            error = true;
-                        }
-                        break;
+                            }
+                        });
+                    } else {
+                        error = true;
+                    }
+                    break;
 
-                    //Google SignIn
-                    case 3:
-                        if (token != "") {
-                            query.googleConnect(token, new QueryAPI.ApiResponse<Boolean>() {
-                                @Override
-                                public void onCompletion(Boolean result) {
-                                    if (result) {
-                                        Log.v("Silent Google Login: ", result.toString());
-                                        //Load first menu item by default
-                                        changeFragment(new PeopleFragment());
-                                    } else {
-                                        error = true;
-                                    }
+                //Google SignIn
+                case 3:
+                    if (token != "") {
+                        query.googleConnect(token, new QueryAPI.ApiResponse<Boolean>() {
+                            @Override
+                            public void onCompletion(Boolean result) {
+                                if (result) {
+                                    Log.v("Silent Google Login: ", result.toString());
+                                    //Load first menu item by default
+                                    changeFragment(new PeopleFragment());
+                                } else {
+                                    error = true;
                                 }
-                            });
-                        } else {
-                            error = true;
-                        }
-                        break;
+                            }
+                        });
+                    } else {
+                        error = true;
+                    }
+                    break;
 
-                    //Normal Sign In
-                    default:
-                        if (session.getUsername() != "" && session.getPassword() != "") {
-                            query.login(session.getUsername(), session.getPassword(), new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
-                                @Override
-                                public void onCompletion(QueryAPI.ApiResult res) {
+                //Normal Sign In
+                default:
+                    if (session.getUsername() != "" && session.getPassword() != "") {
+                        query.login(session.getUsername(), session.getPassword(), new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
+                            @Override
+                            public void onCompletion(QueryAPI.ApiResult res) {
 
-                                    if (res.success) {
-                                        Log.v("Silent Normal Login: ", res.success.toString());
-                                        //Load first menu item by default
-                                        changeFragment(new PeopleFragment());
-                                    }
+                                if (res.success) {
+                                    Log.v("Silent Normal Login: ", res.success.toString());
+                                    //Load first menu item by default
+                                    changeFragment(new PeopleFragment());
                                 }
-                            });
-                        } else {
-                            error = true;
-                        }
-                }
-
-                //if an error occurred, , we redirect the user to the sign in page
-                if (error == true) {
-                    Log.d("Silent logged In failed", "");
-                    Intent intent = new Intent(getApplicationContext(), SignIn.class);
-                    startActivity(intent);
-                }
-
+                            }
+                        });
+                    } else {
+                        error = true;
+                    }
             }
 
-            //if no user info are stored, we redirect the user to the sign in page
-            else {
-                Log.d("PeopleUserLoggedIn", "false");
-                Intent intent = new Intent(MainActivity.this, SignIn.class);
+            //if an error occurred, , we redirect the user to the sign in page
+            if (error == true) {
+                Log.d("Silent logged In failed", "");
+                Intent intent = new Intent(getApplicationContext(), SignIn.class);
                 startActivity(intent);
             }
 
+        }
+
+        //if no user info are stored, we redirect the user to the sign in page
+        else {
+            Log.d("PeopleUserLoggedIn", "false");
+            Intent intent = new Intent(MainActivity.this, SignIn.class);
+            startActivity(intent);
+        }
 
     }
 
@@ -666,6 +664,9 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         if (mGoogleApiClient.isConnected()) {
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             mGoogleApiClient.disconnect();
+
+            //set timer to delay of 1sec the continuity of the script and allow the disconnect to happen
+            //mGoogleApiClient.connect();
         }
 
         //Facebook
