@@ -1,11 +1,18 @@
 package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -46,8 +53,12 @@ public class AccountFragment extends Fragment {
     private EditText mEditEmail;
     private TextView mLabelPassword;
     private EditText mEditPassword;
+    private TextView mTermsTextView;
     private Button mLogoutButton;
     private Button mSaveButton;
+
+    //Var
+    private String newPassword;
 
     public AccountFragment() {
     }
@@ -79,6 +90,7 @@ public class AccountFragment extends Fragment {
         mEditEmail = (EditText) view.findViewById(R.id.emailEditText);
         mLabelPassword = (TextView) view.findViewById(R.id.passwordTextView);
         mEditPassword = (EditText) view.findViewById(R.id.passwordEditText);
+        mTermsTextView = (TextView) view.findViewById(R.id.termsTextView);
         mLogoutButton = (Button) view.findViewById(R.id.logoutButton);
         mSaveButton = (Button) view.findViewById(R.id.saveButton);
 
@@ -90,7 +102,12 @@ public class AccountFragment extends Fragment {
         mNavigationBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                getActivity().finish();
+                ResideMenu resideMenu = ((MainActivity) getActivity()).getResideMenu();
+                if (resideMenu.isOpened()) {
+                    resideMenu.closeMenu();
+                } else {
+                    resideMenu.openMenu();
+                }
             }
         });
 
@@ -103,6 +120,95 @@ public class AccountFragment extends Fragment {
                 .load(user.getAvatar_url())
                 .noFade()
                 .into(mAvatarView);
+
+        mEditName.setText(user.getName());
+
+        mEditEmail.setText(user.getEmail());
+
+        mEditPassword.setText("samplePass");
+
+//        mEditPassword.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mEditPassword.setText("");
+//            }
+//        });
+
+        mEditPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                    newPassword = mEditPassword.getText().toString();
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        mEditPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    newPassword = mEditPassword.getText().toString();
+            }
+        });
+
+
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newName = mEditName.getText().toString();
+
+                final String[] oldPassword = {""};
+
+                //Get old password
+                if (newPassword != null && newPassword != "samplePass") {
+
+                    final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    final TextView label = new TextView(getActivity());
+                    label.setText("Please enter your old password");
+                    alert.setView(label);
+                    final EditText input = new EditText(getActivity());
+                    alert.setView(input);
+                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            oldPassword[0] = input.getText().toString().trim();
+                            Log.v("oldPass", oldPassword.toString());
+                        }
+                    });
+
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.cancel();
+                        }
+                    });
+                    alert.show();
+                }
+
+
+//                if ( ((newName != "") && (newName != user.getName()))  ){
+//
+//                    query.updateProfile(newPassword, newName, oldPassword, new QueryAPI.ApiResponse<Boolean>() {
+//                        @Override
+//                        public void onCompletion(Boolean result) {
+//
+//                        }
+//                    });
+//                }
+
+            }
+        });
+
+
+        String str_links = "Read the <a href='"+AppController.getHostname()+"conditions-d-utilisation'>Terms & Conditions</a>";
+        mTermsTextView.setLinksClickable(true);
+        mTermsTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        mTermsTextView.setText(Html.fromHtml(str_links));
+
+
+
 
         return view;
     }

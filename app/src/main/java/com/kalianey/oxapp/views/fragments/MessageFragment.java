@@ -100,7 +100,6 @@ public class MessageFragment extends Fragment {
 
         mNavigationTitle.setText(conversation.getName());
 
-
         query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
             @Override
             public void onCompletion(List<ModelMessage> result) {

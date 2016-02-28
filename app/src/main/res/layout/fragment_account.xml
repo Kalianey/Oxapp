@@ -13,7 +13,7 @@
 
         <com.android.volley.toolbox.NetworkImageView
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="160dp"
             android:id="@+id/mBackgroundImageView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="false"
@@ -63,131 +63,187 @@
         android:layout_marginTop="10dp">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:weightSum="1"
-        android:id="@+id/linearLayout1"
-        android:background="@drawable/border_bottom"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="Name"
-            android:id="@+id/nameTextView"
-            android:layout_weight="0.2"
-            android:textStyle="bold"
-            android:textSize="18dp"
-            android:layout_gravity="center_vertical"
-            android:editable="true"
-            android:paddingRight="10dp" />
-
-        <EditText
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:text="Name"
-            android:id="@+id/nameEditText"
-            android:layout_weight="0.7"
-            android:layout_gravity="right" />
+            android:layout_alignParentEnd="true"
+            android:weightSum="1"
+            android:id="@+id/linearLayout1"
+            android:background="@drawable/border_bottom"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical|left"
+                android:text="Name"
+                android:id="@+id/nameTextView"
+                android:layout_weight="0.65"
+                android:textSize="15dp"
+                android:editable="true"
+                android:paddingRight="10dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textIsSelectable="false" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_alignParentEnd="true"
-        android:weightSum="1"
-        android:id="@+id/linearLayout2"
-        android:background="@drawable/border_bottom"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:inputType="textPersonName"
+                android:text="Name"
+                android:id="@+id/nameEditText"
+                android:layout_weight="0.35"
+                android:gravity="end"
+                android:theme="@style/editext_graybg"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="Email"
-            android:id="@+id/emailTextView"
-            android:layout_weight="0.2"
-            android:layout_gravity="left|bottom"
-            android:textStyle="bold"
-            android:textSize="18dp"
-            android:paddingRight="10dp"/>
+        </LinearLayout>
 
-        <EditText
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:text="example@gmail.com"
-            android:ems="10"
-            android:id="@+id/emailEditText"
-            android:layout_weight="0.7"
-            android:singleLine="true"
-            android:layout_gravity="right" />
+            android:layout_below="@+id/linearLayout1"
+            android:layout_alignParentEnd="true"
+            android:weightSum="1"
+            android:id="@+id/linearLayout2"
+            android:background="@drawable/border_bottom"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Email"
+                android:id="@+id/emailTextView"
+                android:layout_weight="0.65"
+                android:gravity="center_vertical|left"
+                android:textSize="15dp"
+                android:paddingRight="10dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textIsSelectable="false"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_alignParentEnd="true"
-        android:weightSum="1"
-        android:id="@+id/linearLayout3"
-        android:background="@drawable/border_bottom"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:inputType="textEmailAddress"
+                android:text="example@gmail.com"
+                android:ems="10"
+                android:id="@+id/emailEditText"
+                android:theme="@style/editext_graybg"
+                android:layout_weight="0.35"
+                android:singleLine="true"
+                android:layout_gravity="right"
+                android:gravity="end"
+                android:editable="false"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="Password"
-            android:id="@+id/passwordTextView"
-            android:layout_weight="0.2"
-            android:layout_gravity="left|bottom"
-            android:textStyle="bold"
-            android:textSize="18dp"
-            android:paddingRight="10dp"/>
+        </LinearLayout>
 
-        <EditText
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:text="Name"
-            android:ems="10"
-            android:id="@+id/passwordEditText"
-            android:layout_weight="0.7"
-            android:layout_gravity="right" />
+            android:layout_below="@+id/linearLayout2"
+            android:layout_alignParentEnd="true"
+            android:weightSum="1"
+            android:id="@+id/linearLayout3"
+            android:background="@drawable/border_bottom"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Password"
+                android:id="@+id/passwordTextView"
+                android:layout_weight="0.65"
+                android:gravity="center_vertical|left"
+                android:textSize="15dp"
+                android:paddingRight="10dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textIsSelectable="false" />
 
-    <LinearLayout
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:inputType="textPassword"
+                android:text="Name"
+                android:ems="10"
+                android:id="@+id/passwordEditText"
+                android:layout_weight="0.35"
+                android:layout_gravity="right"
+                android:gravity="end"
+                android:theme="@style/editext_graybg"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#F7F7F7"
+            android:id="@+id/linearLayout4"
+            android:layout_below="@+id/linearLayout3"
+            android:layout_above="@+id/linearLayout5">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout5"
+            android:layout_above="@+id/linearLayout6"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/border_bottom">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Read the Terms &amp; Conditions"
+                android:id="@+id/termsTextView"
+                android:gravity="center"
+                android:layout_gravity="bottom" />
+
+        </LinearLayout>
+
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="LOGOUT"
-        android:id="@+id/logoutButton"
-        android:layout_weight="0.5" />
+        android:layout_alignParentStart="true"
+            android:id="@+id/linearLayout6">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SAVE"
-        android:id="@+id/saveButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_weight="0.5" />
-    </LinearLayout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LOGOUT"
+                android:id="@+id/logoutButton"
+                android:layout_weight="0.5"
+                android:background="@drawable/button_bg_rounded_corners_red"
+                android:textColor="@color/red"
+                android:layout_margin="10dp" />
 
-</RelativeLayout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SAVE"
+                android:id="@+id/saveButton"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_weight="0.5"
+                android:background="@drawable/button_bg_rounded_corners_black"
+                android:textColor="@color/black"
+                android:layout_margin="10dp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
     <!-- "ActionBar"  -->
 
     <RelativeLayout

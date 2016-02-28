@@ -39,12 +39,17 @@ public class AppController extends Application implements
 
     private static Context mContext;
 
+    private static SessionManager mSession;
+
     private static String appName;
+
+    private static String hostname;
 
     private ModelUser loggedInUser;
 
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
+
 
     @Override
     public void onCreate() {
@@ -53,8 +58,11 @@ public class AppController extends Application implements
 
         mInstance = this;
         mContext = getApplicationContext();
+        mSession = new SessionManager(mContext);
+
         loggedInUser = new ModelUser();
         appName = mContext.getResources().getString(R.string.app_name);
+        hostname = "http://bonnieandclit.com/";
 
         //FBK
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -79,6 +87,8 @@ public class AppController extends Application implements
         return mGoogleApiClient;
     }
 
+    public static SessionManager getSession() { return mSession; };
+
     public void setLoggedInUser(ModelUser user) {
         this.loggedInUser = user;
     }
@@ -91,6 +101,10 @@ public class AppController extends Application implements
         AppController.appName = appName;
     }
 
+    public static String getHostname() {
+        return hostname;
+    }
+
     public static synchronized AppController getInstance() {
         return mInstance;
     }
@@ -99,6 +113,9 @@ public class AppController extends Application implements
         return mContext;
     }
 
+
+
+    /*** VOLLEY URL REQUEST MANAGER ***/
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
@@ -137,8 +154,10 @@ public class AppController extends Application implements
         }
     }
 
+    /*** FACEBOOK SIGN IN ***/
 
-    // GOOGLE SIGN IN
+
+    /*** GOOGLE SIGN IN ***/
     @Override
     public void onConnected(Bundle bundle) {
 
@@ -153,4 +172,8 @@ public class AppController extends Application implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
+
+
+
+
 }

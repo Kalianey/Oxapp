@@ -92,6 +92,8 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     //GOOGLE SIGN IN
     private GoogleApiClient mGoogleApiClient;
 
+    private Boolean error;
+
 
     @SuppressLint("NewApi")
     @Override
@@ -111,52 +113,121 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         setUpMenu();
         setPaddings();
 
-        session = new SessionManager(getApplicationContext().getApplicationContext());
+        session = AppController.getSession();
+
+        error = false;
 
         // Check if user is already logged in or not
         if (!session.isLoggedIn()) {
-            // User is not already logged in. Take him to signin
-            Log.d("PeopleUserLoggedIn", "false");
-            Intent intent = new Intent(getApplicationContext(), SignIn.class);
-            startActivity(intent);
-        }
 
-        query.login("kalianey", "Fxvcoar123@Sal", new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
-            @Override
-            public void onCompletion(QueryAPI.ApiResult res) {
+            //we check if there are some silent login info stored
+            if (session.getLoginType() != 0) {
 
-                if (res.success) {
-                    Log.v("Login Successful", res.success.toString());
+                String token = session.getToken();
 
-                    //Load first menu item by default
-                    changeFragment(new PeopleFragment());
+                switch(session.getLoginType()) {
 
-
-                    //In this function there was "this" instead of getApplicationContext()
-                    if (checkPlayServices()) {
-                        mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
-                        String regId = getRegistrationId(getApplicationContext());
-
-                        if (PROJECT_NUMBER.equals("Your Project Number")) {
-                            new AlertDialog.Builder(getApplicationContext())
-                                    .setTitle("Needs Project Number")
-                                    .setMessage("GCM will not function until you set the Project Number to the one from the Google Developers Console.")
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .create().show();
-                        } else if (regId.isEmpty()) {
-                            registerInBackground(getApplicationContext());
+                    //Fb SignIn
+                    case 2:
+                        if (token != "") {
+                            query.fbConnect(token, new QueryAPI.ApiResponse<Boolean>() {
+                                @Override
+                                public void onCompletion(Boolean result) {
+                                    if (result) {
+                                        Log.v("Silent FB Login: ", result.toString());
+                                        //Load first menu item by default
+                                        changeFragment(new PeopleFragment());
+                                    } else {
+                                        error = true;
+                                    }
+                                }
+                            });
+                        } else {
+                            error = true;
                         }
-                    } else {
-                        Log.i(LOG_TAG, "No valid Google Play Services APK. Weather alerts will be disabled.");
-                        // Store regID as null
-                        storeRegistrationId(getApplicationContext(), null);
-                    }
+                        break;
 
+                    //Google SignIn
+                    case 3:
+                        if (token != "") {
+                            query.googleConnect(token, new QueryAPI.ApiResponse<Boolean>() {
+                                @Override
+                                public void onCompletion(Boolean result) {
+                                    if (result) {
+                                        Log.v("Silent Google Login: ", result.toString());
+                                        //Load first menu item by default
+                                        changeFragment(new PeopleFragment());
+                                    } else {
+                                        error = true;
+                                    }
+                                }
+                            });
+                        } else {
+                            error = true;
+                        }
+                        break;
 
+                    //Normal Sign In
+                    default:
+                        if (session.getUsername() != "" && session.getPassword() != "") {
+                            query.login(session.getUsername(), session.getPassword(), new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
+                                @Override
+                                public void onCompletion(QueryAPI.ApiResult res) {
+
+                                    if (res.success) {
+                                        Log.v("Silent Normal Login: ", res.success.toString());
+                                        //Load first menu item by default
+                                        changeFragment(new PeopleFragment());
+                                    }
+                                }
+                            });
+                        } else {
+                            error = true;
+                        }
                 }
+
+                //if an error occurred, , we redirect the user to the sign in page
+                if (error == true) {
+                    Log.d("Silent logged In failed", "");
+                    Intent intent = new Intent(getApplicationContext(), SignIn.class);
+                    startActivity(intent);
+                }
+
             }
 
-        });
+            //if no user info are stored, we redirect the user to the sign in page
+            else {
+                Log.d("PeopleUserLoggedIn", "false");
+                Intent intent = new Intent(MainActivity.this, SignIn.class);
+                startActivity(intent);
+            }
+
+        }
+
+
+
+
+        //We check if user has GooglePlayServices as they are needed for the app // TODO: check how it works and implement
+        //we replace getApplicationContext() by this
+//        if (checkPlayServices()) {
+//            mGcm = GoogleCloudMessaging.getInstance(this);
+//            String regId = getRegistrationId(this);
+//
+//            if (PROJECT_NUMBER.equals("")) {
+//                new AlertDialog.Builder(this)
+//                        .setTitle("Needs Project Number")
+//                        .setMessage("GCM will not function until you set the Project Number to the one from the Google Developers Console.")
+//                        .setPositiveButton(android.R.string.ok, null)
+//                        .create().show();
+//            } else if (regId.isEmpty()) {
+//                registerInBackground(this);
+//            }
+//        } else {
+//            Log.i(LOG_TAG, "No valid Google Play Services APK.");
+//            // Store regID as null
+//            storeRegistrationId(this, null);
+//        }
+
 
     }
 

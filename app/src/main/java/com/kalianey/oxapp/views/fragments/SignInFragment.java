@@ -37,6 +37,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.activities.MainActivity;
@@ -94,6 +95,9 @@ public class SignInFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
+        // Session manager
+        session = AppController.getSession();
+
         //FB
         FacebookSdk.sdkInitialize(getActivity().getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -133,6 +137,14 @@ public class SignInFragment extends Fragment implements
         email = (EditText) view.findViewById(R.id.emailInput);
         password = (EditText) view.findViewById(R.id.passwordInput);
 
+        // Check if user is already logged in
+        if (session.isLoggedIn()) {
+            // User is already logged in. Take him to main activity
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
+        }
+
+        //Normal Sign In Button clicked
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,17 +159,6 @@ public class SignInFragment extends Fragment implements
                 // Progress dialog
                 pDialog = new ProgressDialog(getActivity());
                 pDialog.setCancelable(false);
-
-                // Session manager
-                session = new SessionManager(getActivity().getApplicationContext());
-
-                // Check if user is already logged in or not
-//                if (session.isLoggedIn()) {
-//                    // User is already logged in. Take him to main activity
-//                    Intent intent = new Intent(getActivity(), MainActivity.class);
-//                    startActivity(intent);
-//                    //finish();
-//                }
 
                 //We check that the fields are not empty and perform the login
                 if (!emailText.isEmpty() && !passwordText.isEmpty()) {
@@ -203,6 +204,7 @@ public class SignInFragment extends Fragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         //FB
         LoginButton loginButton = (LoginButton) view.findViewById(R.id.login_button);
         //Button loginButton = (Button) view.findViewById(R.id.login_button);
@@ -216,8 +218,6 @@ public class SignInFragment extends Fragment implements
         loginButton.setFragment(this);
         loginButton.registerCallback(callbackManager, callback);
 
-
-
 //        loginButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -228,7 +228,7 @@ public class SignInFragment extends Fragment implements
 
     }
 
-    // FB CONNECT METHODS
+    /*** FB CONNECT METHODS ***/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -282,7 +282,7 @@ public class SignInFragment extends Fragment implements
         @Override
         public void onSuccess(LoginResult loginResult) {
             AccessToken accessToken = loginResult.getAccessToken();
-            String token = loginResult.getAccessToken().getToken();
+            final String token = loginResult.getAccessToken().getToken();
             Log.i(TAG + " token: ", token);
 
             if (token != null) {
@@ -293,6 +293,8 @@ public class SignInFragment extends Fragment implements
                         displayMessage(profile);
 
                         if (result) {
+                            session.setLoginType(2);
+                            session.setToken(token);
                             Intent intent = new Intent(getActivity(), MainActivity.class);
                             startActivity(intent);
                         }
@@ -314,7 +316,7 @@ public class SignInFragment extends Fragment implements
     };
 
 
-    //GOOGLE SIGN IN METHODS
+    /*** GOOGLE SIGN IN METHODS ***/
 
     @Override
     public void onConnected(Bundle bundle) {

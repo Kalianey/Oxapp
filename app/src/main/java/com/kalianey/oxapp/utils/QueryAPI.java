@@ -39,10 +39,12 @@ import java.util.UUID;
 
 public class QueryAPI {
 
-    private String hostname = "http://bonnieandclit.com/";
 //    private String hostname = "http://192.168.123.1/bonnieandclit/";
 //    private String hostname = "http://10.0.3.2/bonnieandclit/";
 //    private String hostname = "http://192.168.57.1/bonnieandclit/";
+    private String hostname = "http://bonnieandclit.com/";
+
+//    private String hostname = AppController.getHostname();
 
     private SessionManager session;
 
@@ -550,36 +552,6 @@ public class QueryAPI {
     }
 
 
-//    func friendRequestList(completion: ([ModelUser]) -> ()) -> NSURLSessionDataTask {
-//
-//        let url = "owapi/user/friend/requestList"
-//        var task = self.requestAPI(url, params: "") { (res: ApiResponse) -> () in
-//
-//            var items = [ModelUser]() //TODO error checking
-//
-//            if(res.success)
-//            {
-//                if let data = res.data as? NSDictionary {
-//                if let friendsRequest = data["friendsRequest"] as? NSArray {
-//                    println(friendsRequest)
-//
-//                    for item in friendsRequest {
-//
-//                        let item = ModelUser(data: item as! NSDictionary)
-//                        items.append(item)
-//
-//                    }
-//                }
-//            }
-//
-//            }
-//            completion(items)
-//
-//        }
-//        return task
-//    }
-
-
     public void favorite(final ApiResponse<ModelFavorite> completion)
     {
 
@@ -653,6 +625,60 @@ public class QueryAPI {
         });
 
     }
+
+
+    public void updateProfile(String password, String realname, String oldPassword, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/user/update/";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("password", password);
+        params.put("realname", realname);
+        params.put("oldPassword", oldPassword);
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                if (res.success != null && res.success) {
+                    Log.v("Profile Updated:", res.success.toString());
+                } else {
+                    Log.v("Profile NOT Updated", res.success.toString());
+                }
+
+                completion.onCompletion(res.success);
+
+            }
+        });
+
+    }
+
+//    func updateProfile(password:String, email:String, realname:String, oldPassword:String, completion: (Bool, AnyObject?) -> ()) -> NSURLSessionDataTask {
+//
+//        let url = "owapi/user/update/"
+//
+//        let escPass = password.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+//        let escEmail = email.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+//        let escRealname = realname.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+//        let escOldPassword = oldPassword.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+//        let postParams = "password="+escPass!+"&realname="+escRealname!+"&email="+escEmail!+"&oldPassword="+escOldPassword!
+//
+//                let task = self.requestAPI(url, params: postParams ) { (res: ApiResponse) -> () in
+//
+//            print(postParams)
+//            //print(res.data) // crash here sometimes
+//
+//            var result: Bool = false
+//
+//            if(res.success)
+//            {
+//                result = true
+//                print(res.success)
+//            }
+//
+//            completion(result, res.data)
+//        }
+//        return task
+//    }
 
 
     /* Conversation Functions */
@@ -1048,7 +1074,7 @@ public class QueryAPI {
 
         final ApiResult res = new ApiResult();
 
-        session = new SessionManager(AppController.getContext());
+        session = AppController.getSession();
         session.setLogin(true);
 
         //Here request user and save it in a local var (or in sqlite), then in completion save email and password in sqlite
@@ -1073,7 +1099,8 @@ public class QueryAPI {
 
     public void login(final String username, final String password, final ApiResponse<ApiResult> completion) {
 
-        session = new SessionManager(AppController.getContext());
+        //session = new SessionManager(AppController.getContext());
+        session = AppController.getSession();
 
         // Url of Oxwall website
         String url = hostname+"base/user/ajax-sign-in";
@@ -1094,6 +1121,8 @@ public class QueryAPI {
 
                             if (res.success) {
                                 session.setLogin(true);
+                                session.setLoginType(1);
+                                session.setLoginInfo(username, password);
                                 Boolean isUserLoggedIn = session.isLoggedIn();
                                 Log.v("SessionSetUserLoggedIn", isUserLoggedIn.toString());
                                 //Here request user and save it in a local var (or in sqlite), then in completion save email and password in sqlite
@@ -1258,6 +1287,7 @@ public class QueryAPI {
         });
 
     }
+
 
 
 
