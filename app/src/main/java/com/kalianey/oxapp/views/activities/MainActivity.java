@@ -119,6 +119,63 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
         // Check if user is already logged in or not
         if (!session.isLoggedIn()) {
+            silentLogin();
+        }
+        else {
+            changeFragment(new PeopleFragment());
+        }
+
+        //We check if user has GooglePlayServices as they are needed for the app // TODO: check how it works and implement
+        //we replace getApplicationContext() by this
+//        if (checkPlayServices()) {
+//            mGcm = GoogleCloudMessaging.getInstance(this);
+//            String regId = getRegistrationId(this);
+//
+//            if (PROJECT_NUMBER.equals("")) {
+//                new AlertDialog.Builder(this)
+//                        .setTitle("Needs Project Number")
+//                        .setMessage("GCM will not function until you set the Project Number to the one from the Google Developers Console.")
+//                        .setPositiveButton(android.R.string.ok, null)
+//                        .create().show();
+//            } else if (regId.isEmpty()) {
+//                registerInBackground(this);
+//            }
+//        } else {
+//            Log.i(LOG_TAG, "No valid Google Play Services APK.");
+//            // Store regID as null
+//            storeRegistrationId(this, null);
+//        }
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // TODO
+        // If Google Play Services is not available, some features, such as GCM-powered weather
+        // alerts, will not be available.
+        if (!checkPlayServices()) {
+            // Store regID as null
+        }
+
+        // FB: Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // FB : Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
+    }
+
+
+    private void silentLogin() {
+
 
             //we check if there are some silent login info stored
             if (session.getLoginType() != 0) {
@@ -202,57 +259,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
             }
 
-        }
 
-
-
-
-        //We check if user has GooglePlayServices as they are needed for the app // TODO: check how it works and implement
-        //we replace getApplicationContext() by this
-//        if (checkPlayServices()) {
-//            mGcm = GoogleCloudMessaging.getInstance(this);
-//            String regId = getRegistrationId(this);
-//
-//            if (PROJECT_NUMBER.equals("")) {
-//                new AlertDialog.Builder(this)
-//                        .setTitle("Needs Project Number")
-//                        .setMessage("GCM will not function until you set the Project Number to the one from the Google Developers Console.")
-//                        .setPositiveButton(android.R.string.ok, null)
-//                        .create().show();
-//            } else if (regId.isEmpty()) {
-//                registerInBackground(this);
-//            }
-//        } else {
-//            Log.i(LOG_TAG, "No valid Google Play Services APK.");
-//            // Store regID as null
-//            storeRegistrationId(this, null);
-//        }
-
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // TODO
-        // If Google Play Services is not available, some features, such as GCM-powered weather
-        // alerts, will not be available.
-        if (!checkPlayServices()) {
-            // Store regID as null
-        }
-
-        // FB: Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // FB : Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
     }
 
     private void setUpMenu() {
@@ -669,13 +676,12 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         query.logout(new QueryAPI.ApiResponse<Boolean>() {
             @Override
             public void onCompletion(Boolean result) {
+                //Wipe out preferences
+                session.delete();
                 Intent i = new Intent(getApplicationContext(), SignIn.class);
                 startActivity(i);
             }
         });
-
-//        Intent i = new Intent(getApplicationContext(), SignIn.class);
-//        startActivity(i);
 
     }
 

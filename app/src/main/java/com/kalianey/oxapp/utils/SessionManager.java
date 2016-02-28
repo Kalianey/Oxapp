@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.kalianey.oxapp.models.ModelUser;
+
 /**
  * Created by kalianey on 11/08/2015.
  */
@@ -93,6 +95,12 @@ public class SessionManager {
     }
 
 
+    /*** Delete all stored data ***/
+    public void delete () {
+        editor.clear();
+        editor.commit();
+        AppController.getInstance().setLoggedInUser(new ModelUser());
+    }
 
 
 }

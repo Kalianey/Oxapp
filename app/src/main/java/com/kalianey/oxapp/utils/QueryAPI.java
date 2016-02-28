@@ -1081,14 +1081,13 @@ public class QueryAPI {
         currentUser(new ApiResponse<ModelUser>() {
             @Override
             public void onCompletion(ModelUser user) {
-                if(user != null){
+                if (user != null) {
                     res.success = true;
                     AppController.getInstance().setLoggedInUser(user);
                     ModelUser currentUser = AppController.getInstance().getLoggedInUser();
                     Log.v("Global var created", currentUser.toString());
 
-                }
-                else {
+                } else {
                     res.success = false;
                 }
                 completion.onCompletion(res.success);
@@ -1131,8 +1130,12 @@ public class QueryAPI {
                                     public void onCompletion(ModelUser user) {
                                         if(user != null){
                                             AppController.getInstance().setLoggedInUser(user);
-                                            ModelUser currentUser = AppController.getInstance().getLoggedInUser();
-                                            Log.v("Global var created",currentUser.toString());
+                                            Log.v("Global var created",user.toString());
+                                            completion.onCompletion(res);
+                                        } else {
+                                            res.success = false;
+                                            res.message = "Cannot retrieve user info after login";
+                                            completion.onCompletion(res);
                                         }
                                     }
                                 });
@@ -1143,9 +1146,9 @@ public class QueryAPI {
                             e.printStackTrace();
                             res.success = false;
                             res.message = "Error during login";
+                            completion.onCompletion(res);
                         }
 
-                        completion.onCompletion(res);
 
                     }
                 },
