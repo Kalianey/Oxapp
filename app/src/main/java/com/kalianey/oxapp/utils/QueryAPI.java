@@ -228,7 +228,13 @@ public class QueryAPI {
                                     catch (JSONException x)
                                     {
                                         Log.v("exception catch", x.getMessage());
-                                        res.data = response.getInt("data");
+                                        try {
+                                            res.data = response.getInt("data");
+                                        }
+                                        catch (JSONException z)
+                                        {
+                                            res.data = response.getString("data");
+                                        }
                                     }
                                 }
 
@@ -272,12 +278,14 @@ public class QueryAPI {
 
     public void RequestMultiPart(File file, String filename, String boundary, String url, Map<String,String> params, final ApiResponse<String> completion ) {
 
-        MultipartRequest imageUploadReq = new MultipartRequest(url,params,file,filename,"ow_file_attachment[]",
+        final String reqUrl = hostname+url;
+        MultipartRequest imageUploadReq = new MultipartRequest(reqUrl,params,file,filename,"ow_file_attachment[]",
             new Response.ErrorListener()
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
+                        Log.d("Multipart Request Url: ", reqUrl);
                         Log.d("Login ERROR","error => "+error.toString());
                     }
                 },
@@ -652,31 +660,163 @@ public class QueryAPI {
 
     }
 
-//    func updateProfile(password:String, email:String, realname:String, oldPassword:String, completion: (Bool, AnyObject?) -> ()) -> NSURLSessionDataTask {
+
+    public void updateAvatar(File media, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/user/update/avatar";
+
+        String uuid = UUID.randomUUID().toString();
+        String boundary = "----------------------------"+uuid;
+        String fileName = uuid+".jpg";
+        Map<String,String> params = new HashMap<>();
+        params.put("file", "filename="+fileName);
+        params.put("ajaxFunc", "ajaxUploadImage");
+        params.put("pluginKey", "mailbox");
+
+        this.RequestMultiPart(media, fileName, boundary, url, params, new ApiResponse<String>() {
+            @Override
+            public void onCompletion(String result) {
+
+                //Parse result
+                String pattern = ".*updateItems\\((.+)\\);.*";
+                String replacement = "$1";
+                String processedStr = result.replaceAll(pattern, replacement);
+                Log.d("ProcessedStr", processedStr);
+
+                try {
+                    JSONObject data = new JSONObject(processedStr);
+                    Boolean success = data.getBoolean("success");
+                    if (success) {
+                        try {
+                            String resultString = data.getString("data");
+                            completion.onCompletion(success);
+
+                        } catch (JSONException x) {
+                            completion.onCompletion(success);
+                        }
+                    }
+                    else {
+                        completion.onCompletion(success);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
+
+
+//    func updateAvatar( media: NSData, completion: (Bool, String?) -> ()) -> NSURLSessionDataTask {
 //
-//        let url = "owapi/user/update/"
+//        let uuid = NSUUID().UUIDString
 //
-//        let escPass = password.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-//        let escEmail = email.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-//        let escRealname = realname.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-//        let escOldPassword = oldPassword.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-//        let postParams = "password="+escPass!+"&realname="+escRealname!+"&email="+escEmail!+"&oldPassword="+escOldPassword!
+//        let url = "owapi/user/update/avatar"
 //
-//                let task = self.requestAPI(url, params: postParams ) { (res: ApiResponse) -> () in
+//        // we connect to the website with NSURLSession
+//        let session = NSURLSession.sharedSession()
+//        let urlStr = hostname+url
 //
-//            print(postParams)
-//            //print(res.data) // crash here sometimes
+//        let request = NSMutableURLRequest(URL: NSURL(string:urlStr )!)
+//        request.HTTPMethod = "POST"
 //
-//            var result: Bool = false
 //
-//            if(res.success)
-//            {
-//                result = true
-//                print(res.success)
+//        // Set Content-Type in HTTP header.
+//        let boundary = "----------------------------"+uuid; // This should be auto-generated.
+//        let contentType = "multipart/form-data; boundary=" + boundary
+//
+//        let body = NSMutableData()
+//
+//        // Media
+//        var mediaName = Utils.urlEncode( "{\"\(uuid).jpg\":1}" )
+//        body.appendData(NSString(format: "\r\n--%@\r\n", boundary).dataUsingEncoding(NSUTF8StringEncoding)!)
+//        body.appendData(NSString(format:"Content-Disposition: form-data; name=\"file\"; filename=\"\(uuid).jpg\"\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+//        body.appendData(NSString(format: "Content-Type: image/jpeg\r\n\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+//        body.appendData(media)
+//        body.appendData(NSString(format: "\r\n--%@\r\n", boundary).dataUsingEncoding(NSUTF8StringEncoding)!)
+//        body.appendData(NSString(format:"Content-Disposition: form-data; name=\"ajaxFunc\"; \r\n ajaxUploadImage\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+//        body.appendData(NSString(format: "\r\n--%@\r\n", boundary).dataUsingEncoding(NSUTF8StringEncoding)!)
+//
+//        request.HTTPBody = body
+//
+//        var dta = NSString(data: body, encoding: NSUTF8StringEncoding)
+//        //print(dta)
+//
+//        request.addValue(contentType, forHTTPHeaderField: "Content-Type")
+//        request.addValue("XMLHTTPRequest", forHTTPHeaderField: "X-Requested-With")
+//        request.addValue("KaliMessenger", forHTTPHeaderField: "User-Agent")
+//
+//
+//        let task = session.dataTaskWithRequest(request){
+//            (data, response, error) -> Void in
+//
+//            let res = ApiResponse();
+//
+//            if error != nil {
+//                res.success = false
+//                res.message = error!.localizedDescription
+//                res.data = nil;
+//
+//                print(error!.localizedDescription)
+//
+//            }
+//            else {
+//
+//
+//                //print(data)
+//
+//                let dataString = NSString(data: data!, encoding: NSASCIIStringEncoding);
+//
+//                //We parse and transform the answer into JSON
+//                let pattern = ".*updateItems\\((.+)\\);.*"
+//
+//                let jsonString = dataString!.stringByReplacingOccurrencesOfString(pattern, withString: "$1", options: NSStringCompareOptions.RegularExpressionSearch, range: NSMakeRange(0, dataString!.length))
+//                let jsonData = jsonString.dataUsingEncoding(NSASCIIStringEncoding, allowLossyConversion: false)
+//
+//                if let jsonResult = try? NSJSONSerialization.JSONObjectWithData(jsonData!, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary //return a dictionnary with a list of indexes (array)
+//                {
+//                    //print("Here is jsonresult: \(jsonResult)")
+//
+//                    if let success = jsonResult!["success"] as? Bool {
+//
+//                    res.success = success
+//
+//                    if(res.success)
+//                    {
+//                        if let url = jsonResult!["data"] as? String {
+//
+//                        res.message = url
+//
+//                    }
+//
+//                    }
+//                    else
+//                    {
+//                        res.success = false
+//                        res.message = "Error while saving the attachment";
+//                        res.data = nil
+//                    }
+//                }
+//                }
+//                else
+//                {
+//                    //when we do not manage to get the result, we display the url called, what we have received, and set the response to false
+//                    let dataContent = NSString(data: jsonData!, encoding: NSASCIIStringEncoding);
+//                    print("Error decoding JSON: \(dataContent)")
+//                    res.message = "error decoding json response"
+//                    res.data = nil
+//                    res.success = false
+//                }
+//
 //            }
 //
-//            completion(result, res.data)
+//            dispatch_async(dispatch_get_main_queue()){
+//                completion(res.success, res.message)
+//            }
 //        }
+//
+//        task.resume()
 //        return task
 //    }
 
@@ -955,7 +1095,7 @@ public class QueryAPI {
     public void messageSendWithMedia(final String convId, String opponentId, final String lastMessage, File media, final ApiResponse<List<ModelMessage>> completion) {
 
         String bundle = "mailbox_dialog_"+convId+"_"+opponentId+"_3333";
-        String url = hostname+"base/attachment/add-file/?flUid="+bundle;
+        String url = "base/attachment/add-file/?flUid="+bundle;
 
         String uuid = UUID.randomUUID().toString();
         String boundary = "----------------------------"+uuid;
@@ -1274,8 +1414,8 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                Log.v("GoogleRes", res.toString());
                 if (res.success) {
+                    //Log.v("GoogleRes", res.toString());
                     setSession(new ApiResponse<Boolean>() {
                         @Override
                         public void onCompletion(Boolean result) {

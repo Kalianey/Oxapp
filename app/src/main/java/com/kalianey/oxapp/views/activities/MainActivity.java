@@ -71,7 +71,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     private ResideMenuItem itemFriends;
     private ResideMenuItem itemFav;
     private ResideMenuItem itemAccount;
-    private ResideMenuItem itemLogout;
 
     //Action Bar
     android.support.v7.app.ActionBar mActionBar;
@@ -276,8 +275,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
         itemFav = new ResideMenuItem(this, R.drawable.icons_star, "Favorites");
-        itemAccount = new ResideMenuItem(this, R.drawable.icons_star, "Account");
-        itemLogout = new ResideMenuItem(this, R.drawable.exit, "LOGOUT");
+        itemAccount = new ResideMenuItem(this, R.drawable.exit, "Account");
 
         itemHome.setOnClickListener(this);
         itemConversations.setOnClickListener(this);
@@ -285,7 +283,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         itemFriends.setOnClickListener(this);
         itemFav.setOnClickListener(this);
         itemAccount.setOnClickListener(this);
-        itemLogout.setOnClickListener(this);
 
         resideMenu.addMenuItem(itemHome);
         resideMenu.addMenuItem(itemConversations);
@@ -293,7 +290,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         resideMenu.addMenuItem(itemFriends);
         resideMenu.addMenuItem(itemFav);
         resideMenu.addMenuItem(itemAccount);
-        resideMenu.addMenuItem(itemLogout);
 
     }
 
@@ -339,9 +335,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             account.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(account);
             mActionBar.hide();
-        }
-        else if (view == itemLogout){
-            logout();
         }
 
         resideMenu.closeMenu();
@@ -653,37 +646,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
-    }
-
-    private void logout(){
-
-        //Google
-        mGoogleApiClient = AppController.getInstance().getmGoogleApiClient();
-        mGoogleApiClient.connect();
-
-        if (mGoogleApiClient.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            mGoogleApiClient.disconnect();
-
-            //set timer to delay of 1sec the continuity of the script and allow the disconnect to happen
-            //mGoogleApiClient.connect();
-        }
-
-        //Facebook
-        FacebookSdk.sdkInitialize(this.getApplicationContext());
-        LoginManager.getInstance().logOut();
-
-        //Oxwall
-        query.logout(new QueryAPI.ApiResponse<Boolean>() {
-            @Override
-            public void onCompletion(Boolean result) {
-                //Wipe out preferences
-                session.delete();
-                Intent i = new Intent(getApplicationContext(), SignIn.class);
-                startActivity(i);
-            }
-        });
-
     }
 
 

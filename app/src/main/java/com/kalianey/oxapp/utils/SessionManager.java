@@ -79,6 +79,11 @@ public class SessionManager {
         return username;
     }
 
+    public void setPassword(String password) {
+        editor.putString("password", password);
+        editor.commit();
+    }
+
     public String getPassword() {
         String password = pref.getString("password", "");
         return password;
