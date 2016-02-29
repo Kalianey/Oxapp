@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -93,6 +95,8 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
     private Boolean error;
 
+    private LocationManager mLocationManager;
+
 
     @SuppressLint("NewApi")
     @Override
@@ -119,8 +123,33 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             silentLogin();
         }
         else {
+
+            //Location
+            mLocationManager = AppController.getInstance().getLocationManager();
+            AppController.getInstance().updateLocation();
+            query.httpRequestGeocode(AppController.getInstance().getCurrentUserLat().toString(), AppController.getInstance().getCurrentUserLng().toString(), new QueryAPI.ApiResponse<String>() {
+                @Override
+                public void onCompletion(String address) {
+
+                    query.updateLocation(address, new QueryAPI.ApiResponse<Boolean>() {
+                        @Override
+                        public void onCompletion(Boolean result) {
+                            if (result == true) {
+                                Log.i("Location ", "successfully updated");
+                            } else {
+                                Log.i("Location", " not updated");
+                            }
+                        }
+                    });
+
+                }
+            });
+
+            //Load Main Fragment
             changeFragment(new PeopleFragment());
         }
+
+
 
         //We check if user has GooglePlayServices as they are needed for the app // TODO: check how it works and implement
         //we replace getApplicationContext() by this
@@ -160,6 +189,9 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         // FB: Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
 
+        //Location : request updates every 10 minutes & 1km
+        AppController.getInstance().updateLocation();
+
     }
 
     @Override
@@ -168,6 +200,8 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
         // FB : Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
+
+        AppController.getInstance().stopUpdateLocation();
     }
 
 

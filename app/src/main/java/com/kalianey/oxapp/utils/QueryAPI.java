@@ -146,7 +146,7 @@ public class QueryAPI {
         );
 
         //Added because of Login ERROR﹕ error => com.android.volley.TimeoutError
-        //jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 1, 1.0f));
+        jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 1, 1.0f));
 
         AppController.getInstance().addToRequestQueue(jsonRequest);
 
@@ -570,7 +570,7 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                if (res.success && res.dataIsObject() ) {
+                if (res.success && res.dataIsObject()) {
 
                     JSONObject usersList = res.getDataAsObject();
 
@@ -578,7 +578,7 @@ public class QueryAPI {
                     try {
                         JSONObject me = usersList.getJSONObject("me");
                         favorite.setMeMenuLabel(me.getString("menu-label"));
-                        JSONArray list =  me.getJSONArray("userIds");
+                        JSONArray list = me.getJSONArray("userIds");
                         ArrayList<ModelUser> users = new ArrayList<ModelUser>();
                         for (int i = 0; i < list.length(); i++) {
 
@@ -595,7 +595,7 @@ public class QueryAPI {
                     try {
                         JSONObject my = usersList.getJSONObject("my");
                         favorite.setMyMenuLabel(my.getString("menu-label"));
-                        JSONArray list =  my.getJSONArray("userIds");
+                        JSONArray list = my.getJSONArray("userIds");
                         ArrayList<ModelUser> users = new ArrayList<ModelUser>();
                         for (int i = 0; i < list.length(); i++) {
 
@@ -612,7 +612,7 @@ public class QueryAPI {
                     try {
                         JSONObject mutual = usersList.getJSONObject("mutual");
                         favorite.setMutualMenuLabel(mutual.getString("menu-label"));
-                        JSONArray list =  mutual.getJSONArray("userIds");
+                        JSONArray list = mutual.getJSONArray("userIds");
                         ArrayList<ModelUser> users = new ArrayList<ModelUser>();
                         for (int i = 0; i < list.length(); i++) {
 
@@ -694,8 +694,7 @@ public class QueryAPI {
                         } catch (JSONException x) {
                             completion.onCompletion(success);
                         }
-                    }
-                    else {
+                    } else {
                         completion.onCompletion(success);
                     }
                 } catch (JSONException e) {
@@ -706,119 +705,6 @@ public class QueryAPI {
         });
 
     }
-
-
-//    func updateAvatar( media: NSData, completion: (Bool, String?) -> ()) -> NSURLSessionDataTask {
-//
-//        let uuid = NSUUID().UUIDString
-//
-//        let url = "owapi/user/update/avatar"
-//
-//        // we connect to the website with NSURLSession
-//        let session = NSURLSession.sharedSession()
-//        let urlStr = hostname+url
-//
-//        let request = NSMutableURLRequest(URL: NSURL(string:urlStr )!)
-//        request.HTTPMethod = "POST"
-//
-//
-//        // Set Content-Type in HTTP header.
-//        let boundary = "----------------------------"+uuid; // This should be auto-generated.
-//        let contentType = "multipart/form-data; boundary=" + boundary
-//
-//        let body = NSMutableData()
-//
-//        // Media
-//        var mediaName = Utils.urlEncode( "{\"\(uuid).jpg\":1}" )
-//        body.appendData(NSString(format: "\r\n--%@\r\n", boundary).dataUsingEncoding(NSUTF8StringEncoding)!)
-//        body.appendData(NSString(format:"Content-Disposition: form-data; name=\"file\"; filename=\"\(uuid).jpg\"\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
-//        body.appendData(NSString(format: "Content-Type: image/jpeg\r\n\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
-//        body.appendData(media)
-//        body.appendData(NSString(format: "\r\n--%@\r\n", boundary).dataUsingEncoding(NSUTF8StringEncoding)!)
-//        body.appendData(NSString(format:"Content-Disposition: form-data; name=\"ajaxFunc\"; \r\n ajaxUploadImage\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
-//        body.appendData(NSString(format: "\r\n--%@\r\n", boundary).dataUsingEncoding(NSUTF8StringEncoding)!)
-//
-//        request.HTTPBody = body
-//
-//        var dta = NSString(data: body, encoding: NSUTF8StringEncoding)
-//        //print(dta)
-//
-//        request.addValue(contentType, forHTTPHeaderField: "Content-Type")
-//        request.addValue("XMLHTTPRequest", forHTTPHeaderField: "X-Requested-With")
-//        request.addValue("KaliMessenger", forHTTPHeaderField: "User-Agent")
-//
-//
-//        let task = session.dataTaskWithRequest(request){
-//            (data, response, error) -> Void in
-//
-//            let res = ApiResponse();
-//
-//            if error != nil {
-//                res.success = false
-//                res.message = error!.localizedDescription
-//                res.data = nil;
-//
-//                print(error!.localizedDescription)
-//
-//            }
-//            else {
-//
-//
-//                //print(data)
-//
-//                let dataString = NSString(data: data!, encoding: NSASCIIStringEncoding);
-//
-//                //We parse and transform the answer into JSON
-//                let pattern = ".*updateItems\\((.+)\\);.*"
-//
-//                let jsonString = dataString!.stringByReplacingOccurrencesOfString(pattern, withString: "$1", options: NSStringCompareOptions.RegularExpressionSearch, range: NSMakeRange(0, dataString!.length))
-//                let jsonData = jsonString.dataUsingEncoding(NSASCIIStringEncoding, allowLossyConversion: false)
-//
-//                if let jsonResult = try? NSJSONSerialization.JSONObjectWithData(jsonData!, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary //return a dictionnary with a list of indexes (array)
-//                {
-//                    //print("Here is jsonresult: \(jsonResult)")
-//
-//                    if let success = jsonResult!["success"] as? Bool {
-//
-//                    res.success = success
-//
-//                    if(res.success)
-//                    {
-//                        if let url = jsonResult!["data"] as? String {
-//
-//                        res.message = url
-//
-//                    }
-//
-//                    }
-//                    else
-//                    {
-//                        res.success = false
-//                        res.message = "Error while saving the attachment";
-//                        res.data = nil
-//                    }
-//                }
-//                }
-//                else
-//                {
-//                    //when we do not manage to get the result, we display the url called, what we have received, and set the response to false
-//                    let dataContent = NSString(data: jsonData!, encoding: NSASCIIStringEncoding);
-//                    print("Error decoding JSON: \(dataContent)")
-//                    res.message = "error decoding json response"
-//                    res.data = nil
-//                    res.success = false
-//                }
-//
-//            }
-//
-//            dispatch_async(dispatch_get_main_queue()){
-//                completion(res.success, res.message)
-//            }
-//        }
-//
-//        task.resume()
-//        return task
-//    }
 
 
     /* Conversation Functions */
@@ -1147,6 +1033,25 @@ public class QueryAPI {
 
     /* LOCATION */
 
+    public void updateLocation(String json, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/user/updateLocation/";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("json", json);
+
+        this.RequestApiPOST(url, params, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult res) {
+
+                completion.onCompletion(res.success);
+
+            }
+        });
+
+    }
+
+
     public void nearUsers(final ApiResponse<List<ModelUser>> completion) {
 
         String url = "owapi/user/near/";
@@ -1177,6 +1082,48 @@ public class QueryAPI {
                 completion.onCompletion(users);
             }
         });
+    }
+
+
+    //Request address from Google API with lat/lng
+    public void httpRequestGeocode(String lat, String lng, final ApiResponse<String> completion) {
+
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"&language=fr&key=AIzaSyDd2dDC7nZbtckZHE1diYiKsAwJweNjU_Q";
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, (JSONObject) null,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    //Log.v("RequestApi Response", response.toString());
+                    String res = "";
+                    try {
+                        JSONArray results = response.getJSONArray("results");
+                        try {
+                           res  =  results.getJSONObject(0).toString();
+                        } catch (JSONException e) {
+                            Log.v("exception catch", e.getMessage());
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    completion.onCompletion(res);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    ApiResult res = new ApiResult();
+                    completion.onCompletion("");
+                }
+            }
+        );
+
+        //Added because of Login ERROR﹕ error => com.android.volley.TimeoutError
+        jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 1, 1.0f));
+
+        AppController.getInstance().addToRequestQueue(jsonRequest);
+
     }
 
 

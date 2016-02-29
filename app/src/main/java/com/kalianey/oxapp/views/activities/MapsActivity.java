@@ -2,6 +2,8 @@ package com.kalianey.oxapp.views.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -43,17 +45,18 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     private List<ModelUser> users = new ArrayList<ModelUser>();
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
-
     //UI
     NetworkImageView avatarImageView;
     TextView name;
     TextView infos;
     TextView distance;
     RelativeLayout detailView;
-
     private FrameLayout mNavigationTop;
     private TextView mNavigationTitle;
     private Button mNavigationBackBtn;
+
+    //Vars
+    private LocationManager mLocationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,10 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
 
         });
 
+        //Get User Location
+        mLocationManager = AppController.getInstance().getLocationManager();
+        AppController.getInstance().updateLocation();
+
 
         query.nearUsers(new QueryAPI.ApiResponse<List<ModelUser>>() {
             @Override
@@ -101,6 +108,15 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+
+        //Location : request updates every 10 minutes & 1km
+        AppController.getInstance().updateLocation();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AppController.getInstance().stopUpdateLocation();
     }
 
     /**
@@ -143,8 +159,12 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
 
     private void setUpClusterer() {
 
+        //Get User position
+        Double lat = AppController.getInstance().getCurrentUserLat();
+        Double lng = AppController.getInstance().getCurrentUserLng();
+
         // Position the map.
-        getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(46.155115, 2.473060), 5));
+        getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 5));
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
@@ -180,7 +200,7 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
 
     @Override
     public boolean onClusterItemClick(final ModelUser item) {
-        // Does nothing, but you could go into the user's profile page, for example.
+        // Does nothing, but I could go into the user's profile page.
         Log.d("User clicked:", item.getName());
         avatarImageView.setImageUrl(item.getAvatar_url(), imageLoader);
         name.setText(item.getName());
@@ -238,8 +258,8 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
         protected void onBeforeClusterItemRendered(final ModelUser user, final MarkerOptions markerOptions) {
             // Draw a single person.
             // Set the info window to show their name.
-           // mImageView.setImageUrl(user.getAvatar_url(), imageLoader);
-            Log.d("Avatar url:", user.getAvatar_url());
+            // mImageView.setImageUrl(user.getAvatar_url(), imageLoader);
+            //Log.d("Avatar url:", user.getAvatar_url());
 //            Picasso.with(getApplicationContext())
 //                    .load(user.getAvatar_url())
 //                    .noFade()
@@ -281,29 +301,35 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
 //                        }
 //                    });
 
-            Glide.with(getApplicationContext()).
-                    load(user.getAvatar_url())
-                    .asBitmap()
-                    .fitCenter()
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                            // let's find marker for this user
-                            Marker markerToChange = null;
-                            for (Marker marker : mClusterManager.getMarkerCollection().getMarkers()) {
-                                if (marker.getPosition().equals(user.getPosition())) {
-                                    markerToChange = marker;
-                                }
-                            }
-                            // if found - change icon
-                            if (markerToChange != null) {
-                                markerToChange.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                            }
-                        }
-                    });
+            //Works but size ugly and not round
+//            Glide.with(getApplicationContext()).
+//                    load(user.getAvatar_url())
+//                    .asBitmap()
+//                    .fitCenter()
+//                    .into(new SimpleTarget<Bitmap>() {
+//                        @Override
+//                        public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+//                            // let's find marker for this user
+//                            Marker markerToChange = null;
+//                            for (Marker marker : mClusterManager.getMarkerCollection().getMarkers()) {
+//                                if (marker.getPosition().equals(user.getPosition())) {
+//                                    markerToChange = marker;
+//                                }
+//                            }
+//                            // if found - change icon
+//                            if (markerToChange != null) {
+//                                markerToChange.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+//                            }
+//                        }
+//                    });
+//
+//            Bitmap icon = mIconGenerator.makeIcon();
+//            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(user.getName());
 
+            Drawable drawable =getApplicationContext().getResources().getDrawable(R.drawable.annotation);
+            mImageView.setImageDrawable(drawable);
             Bitmap icon = mIconGenerator.makeIcon();
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(user.getName());
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
 
 
