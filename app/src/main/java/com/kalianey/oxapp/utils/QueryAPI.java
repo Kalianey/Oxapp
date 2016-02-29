@@ -1044,6 +1044,7 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
+                //TODO: check why it sends it twice
                 completion.onCompletion(res.success);
 
             }

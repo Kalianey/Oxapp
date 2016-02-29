@@ -46,8 +46,8 @@ public class PeopleFragment extends Fragment {
                 .smallIcon(R.drawable.pugnotification_ic_launcher)
                 .autoCancel(false)
                 .largeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.pugnotification_ic_launcher))
-                .title("title of my notif")
-                .message("Message of my notif")
+                .title("You have a new message")
+                .message("Here come the name of the user and text of msg")
                 .bigTextStyle("e")
                 .simple()
                 .build();
