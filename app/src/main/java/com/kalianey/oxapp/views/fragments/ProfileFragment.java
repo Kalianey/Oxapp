@@ -2,6 +2,10 @@ package com.kalianey.oxapp.views.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +30,8 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.commit451.nativestackblur.NativeStackBlur;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.models.ModelAttachment;
@@ -88,7 +94,9 @@ public class ProfileFragment extends Fragment {
     private TwoWayView friendsListView;
     private ProfileFriendListViewAdapter friendsAdapter;
     private TextView profileFriendText;
+    private TextView noFriendText;
     private TextView profilePhotoText;
+    private TextView noPhotoText;
     private StickyListHeadersListView stickyList;
 
     //Vars
@@ -101,6 +109,8 @@ public class ProfileFragment extends Fragment {
     private String title;
     private Integer isFriend;
     private Boolean isFav;
+    private Integer photoCount = 0;
+    private Integer friendCount = 0;
     int imgId;
 
 
@@ -127,7 +137,7 @@ public class ProfileFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        initializeRecyclerView();
+        //initializeRecyclerView();
 
         view.scrollTo(0, 10);
 
@@ -154,7 +164,9 @@ public class ProfileFragment extends Fragment {
         mAddFavorite = (ImageButton) view.findViewById(R.id.imageButtonFavorite);
         UITabs tab = (UITabs) view.findViewById(R.id.toggle);
         profilePhotoText = (TextView) view.findViewById(R.id.profile_photo_text);
+        noPhotoText = (TextView) view.findViewById(R.id.noPhotos);
         profileFriendText = (TextView) view.findViewById(R.id.profile_friend_text);
+        noFriendText = (TextView) view.findViewById(R.id.noFriends);
 
         mNavigationTop.getBackground().setAlpha(0);
         mNavigationTitle.setVisibility(View.INVISIBLE);
@@ -172,24 +184,38 @@ public class ProfileFragment extends Fragment {
         query.userExtra(user, new QueryAPI.ApiResponse<ModelUser>() {
             @Override
             public void onCompletion(ModelUser result) {
+
                 user = result;
+                photoCount = user.getPhotos().size();
+                friendCount = user.getFriends().size();
 
                 //Staggered grid view for the photos
                 photoList.clear();
                 photoList.addAll(0, user.getPhotos());
+                initializeRecyclerView();
                 adapter.setPhotos(photoList);
                 adapter.setUser(user);
                 adapter.notifyDataSetChanged();
 
+                if (photoCount == 0) {
+                    noPhotoText.setVisibility(view.VISIBLE);
+                    gridView.setVisibility(view.GONE);
+                }
+
                 //Horizontal ListView for friends
-                friendsAdapter = new ProfileFriendListViewAdapter(getActivity(), R.layout.profile_friend_list_item, user.getFriends());
-                friendsListView.setAdapter(friendsAdapter);
+                if (friendCount > 0) {
+                    friendsAdapter = new ProfileFriendListViewAdapter(getActivity(), R.layout.profile_friend_list_item, user.getFriends());
+                    friendsListView.setAdapter(friendsAdapter);
 //                friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //                    @Override
 //                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                        Log.v("friend clicked: ", Integer.toString(position));
 //                    }
 //                });
+                } else {
+                    noFriendText.setVisibility(view.VISIBLE);
+                    friendsListView.setVisibility(view.GONE);
+                }
 
                 //Profile Questions
 
@@ -296,8 +322,17 @@ public class ProfileFragment extends Fragment {
         }
 
         cImageView.setImageUrl(user.getCover_url(), imageLoader);
+
         if (user.getCover_url() != null) {
             mLayoutContainer.setBackground(cImageView.getDrawable());
+
+        } else {
+            //If there is no cover image, we set a default one and blur it
+            Bitmap bm = BitmapFactory.decodeResource(getActivity().getApplicationContext().getResources(),
+                    R.drawable.default_bg);
+            Bitmap bg = NativeStackBlur.process(bm, 100);
+            Drawable defaulBackground = new BitmapDrawable(getResources(), bg);
+            mLayoutContainer.setBackground(defaulBackground);
         }
 
         mTitleView.setText(title);
@@ -393,6 +428,14 @@ public class ProfileFragment extends Fragment {
                         profilePhotoText.setVisibility(LinearLayout.VISIBLE);
                         profileFriendText.setVisibility(LinearLayout.VISIBLE);
                         stickyList.setVisibility(View.GONE);
+                        if (photoCount == 0) {
+                            noPhotoText.setVisibility(view.VISIBLE);
+                            gridView.setVisibility(view.GONE);
+                        }
+                        if (friendCount == 0) {
+                            noFriendText.setVisibility(view.VISIBLE);
+                            friendsListView.setVisibility(view.GONE);
+                        }
                         return;
                     case R.id.toggle2:
                         // mTextView.setVisibility(View.VISIBLE);
@@ -400,7 +443,9 @@ public class ProfileFragment extends Fragment {
                         gridView.setVisibility(LinearLayout.GONE);
                         friendsListView.setVisibility(LinearLayout.GONE);
                         profilePhotoText.setVisibility(LinearLayout.GONE);
+                        noPhotoText.setVisibility(view.GONE);
                         profileFriendText.setVisibility(LinearLayout.GONE);
+                        noFriendText.setVisibility(view.GONE);
                         return;
                 }
             }
@@ -430,13 +475,28 @@ public class ProfileFragment extends Fragment {
 
     //http://blog.ashwanik.in/2015/05/handling-adapter-error-while-using-recyclerview.html
     void initializeRecyclerView() {
+
+        Integer photoRows = 1;
+        Integer gridHeight = 150;
+        if (photoCount > 1 && photoCount < 10) {
+            photoRows = 2;
+            gridHeight = 300;
+        } else if (photoCount > 10){
+            photoRows = 3;
+            gridHeight = 600;
+        }
+
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
-        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.HORIZONTAL );
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(photoRows,StaggeredGridLayoutManager.HORIZONTAL );
         gridLayoutManager.setOrientation(gridLayoutManager.HORIZONTAL);
         adapter = new ProfilePhotoRecyclerViewAdapter(getActivity());
         gridView.setAdapter(adapter);
         gridView.setLayoutManager(gridLayoutManager);
         gridView.setHasFixedSize(true);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, gridHeight);
+        params.height= gridHeight;
+        gridView.setLayoutParams(params);
+
         //gridView.setVisibility(View.GONE);
     }
 

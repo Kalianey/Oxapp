@@ -256,7 +256,11 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
 
         @Override
         protected void onBeforeClusterItemRendered(final ModelUser user, final MarkerOptions markerOptions) {
-            // Draw a single person.
+
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.annotation));
+
+            // Draw a single person as a marker on the map
+
             // Set the info window to show their name.
             // mImageView.setImageUrl(user.getAvatar_url(), imageLoader);
             //Log.d("Avatar url:", user.getAvatar_url());
@@ -326,10 +330,6 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
 //            Bitmap icon = mIconGenerator.makeIcon();
 //            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(user.getName());
 
-            Drawable drawable =getApplicationContext().getResources().getDrawable(R.drawable.annotation);
-            mImageView.setImageDrawable(drawable);
-            Bitmap icon = mIconGenerator.makeIcon();
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
         }
 
 

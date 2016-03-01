@@ -77,7 +77,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:orientation="vertical" >
+                    android:orientation="vertical"
+                    android:background="@drawable/border_right" >
 
                     <ImageButton
                         android:layout_width="wrap_content"
@@ -124,7 +125,8 @@
                     android:layout_gravity="center"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/informations_container">
 
                     <RadioButton
                         android:id="@+id/toggle1"
@@ -148,6 +150,7 @@
 
                 </com.kalianey.oxapp.utils.UITabs>
 
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -158,6 +161,20 @@
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:id="@+id/noPhotos"
+                    android:layout_below="@+id/profile_photo_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="center"
+                    android:text="@string/noPhotos"
+                    android:textColor="@color/gray_light"
+                    android:textSize="@dimen/textsize_medium_small"
+                    android:textStyle="italic"
+                    android:visibility="gone"/>
 
 
                 <android.support.v7.widget.RecyclerView
@@ -178,6 +195,20 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+
+                <TextView
+                    android:id="@+id/noFriends"
+                    android:layout_below="@+id/profile_friend_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="center"
+                    android:text="@string/noFriends"
+                    android:textColor="@color/gray_light"
+                    android:textSize="@dimen/textsize_medium_small"
+                    android:textStyle="italic"
+                    android:visibility="gone"/>
 
                 <org.lucasr.twowayview.TwoWayView
                     xmlns:android="http://schemas.android.com/apk/res/android"

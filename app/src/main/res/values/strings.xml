@@ -109,5 +109,9 @@
     <!-- FB -->
     <string name="facebook_app_id">344271245710270</string>
     <string name="title_activity_account">Account</string>
+    <!-- FB -->
+
+    <string name="noPhotos">No photo yet.</string>
+    <string name="noFriends">No friend yet.</string>
 
 </resources>
