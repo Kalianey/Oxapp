@@ -47,7 +47,7 @@ import com.kalianey.oxapp.views.fragments.ProfileFragment;
 
 import java.io.IOException;
 
-public class MainActivity  extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SessionManager session;
     private QueryAPI query= new QueryAPI();
