@@ -1,5 +1,6 @@
 package com.kalianey.oxapp.models;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -32,6 +33,8 @@ public class ModelMessage implements Serializable {
     String fileName;
     String fileSize;
     Object attachment; // JSQMediaItem?
+
+    File image;
 
     public Object getAttachment() {
         return attachment;
@@ -175,6 +178,14 @@ public class ModelMessage implements Serializable {
 
     public void setFileSize(String fileSize) {
         this.fileSize = fileSize;
+    }
+
+    public File getImage() {
+        return image;
+    }
+
+    public void setImage(File image) {
+        this.image = image;
     }
 
 

@@ -121,14 +121,12 @@ public class MessageFragment extends Fragment {
             }
         });
 
-
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openImageIntent();
             }
         });
-
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +151,10 @@ public class MessageFragment extends Fragment {
             public void onLoadMore(int page, int totalItemsCount) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to your AdapterView
-                loadMore(page);
+                //TODO: in new conv with not enough messages to display the toast stay there all the time and trigger the method continously
+                if (totalItemsCount > 15) {
+                    loadMore(page);
+                }
                 // or customLoadMoreDataFromApi(totalItemsCount);
             }
         };
@@ -167,9 +168,10 @@ public class MessageFragment extends Fragment {
 
     // Append more data into the adapter
     public void loadMore(int offset) {
-        // This method probably sends out a network request and appends new data items to your adapter.
-        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // This method probably sends out a network request and appends new data items to the adapter.
+        // Use the offset value and add it as a parameter to the API request to retrieve paginated data.
         // Deserialize API response and then construct new objects to append to the adapter
+
         Toast.makeText(getActivity(), "Scrolled to top", Toast.LENGTH_SHORT).show();
 
         String lastMessageId = messages.get(0).getId();
@@ -204,6 +206,12 @@ public class MessageFragment extends Fragment {
         gcmFilter.addAction("GCM_RECEIVED_ACTION");
         getActivity().registerReceiver(gcmReceiver, gcmFilter);
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(gcmReceiver);
     }
 
     // A BroadcastReceiver must override the onReceive() event.
@@ -318,7 +326,7 @@ public class MessageFragment extends Fragment {
                         selectedImageUri = data == null ? null : data.getData();
                         //String realPath = getRealPathFromURI(getActivity().getApplicationContext(), selectedImageUri);
                         String realPath = getImagePath(selectedImageUri);
-                        File imgFile = new File(realPath);
+                        final File imgFile = new File(realPath);
                         String lastMessage = messages.get(messages.size() - 1).getId();
 
                         query.messageSendWithMedia(conversation.getId(), conversation.getOpponentId(), lastMessage, imgFile, new QueryAPI.ApiResponse<List<ModelMessage>>() {
@@ -326,12 +334,17 @@ public class MessageFragment extends Fragment {
                             public void onCompletion(List<ModelMessage> newMessages) {
                                 Log.d("Result media", messages.toString());
 
-                                for(int i = 0; i < newMessages.size(); i++ ){
-                                    ModelMessage mess = newMessages.get(i);
-                                    //mess.setIsMediaMessage(true); //TODO : set attachment url in backend
-                                    messages.add(mess);
+                                if (newMessages.size() > 0) {
+
+                                    for (int i = 0; i < newMessages.size(); i++) {
+                                        ModelMessage mess = newMessages.get(i);
+                                        mess.setIsMediaMessage(true); //TODO : set attachment url in backend
+                                        mess.setImage(imgFile);
+                                        messages.add(mess);
+                                    }
+                                    adapter.notifyDataSetChanged();
+
                                 }
-                                adapter.notifyDataSetChanged();
                             }
                         });
 

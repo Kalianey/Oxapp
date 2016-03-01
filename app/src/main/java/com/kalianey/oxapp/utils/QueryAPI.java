@@ -19,11 +19,14 @@ import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelQuestion;
 import com.kalianey.oxapp.models.ModelUser;
 
+import org.apache.http.cookie.Cookie;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.net.CookieManager;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -257,7 +260,7 @@ public class QueryAPI {
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
-                        Log.v("error post:" , error.toString());
+                        Log.v("error post:", error.toString());
                     }
                 })
 
@@ -286,7 +289,7 @@ public class QueryAPI {
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
                         Log.d("Multipart Request Url: ", reqUrl);
-                        Log.d("Login ERROR","error => "+error.toString());
+                        Log.d("Login ERROR", "error => " + error.toString());
                     }
                 },
             new Response.Listener<String>()
@@ -299,7 +302,24 @@ public class QueryAPI {
 
                     }
                 }
-            );
+
+
+            ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                CookieManager manager = AppController.getInstance().getCookieManager();
+                //String cookie = manager.getCookieStore().getCookies().toString(); //display all the cookies
+                List<HttpCookie> cookies = manager.getCookieStore().getCookies();
+                for (HttpCookie eachCookie : cookies) {
+                    String cookieName = eachCookie.getName().toString();
+                    String cookieValue = eachCookie.getValue().toString();
+                    headers.put(cookieName, cookieValue);
+                }
+                return headers;
+            }
+
+        };
 
         //imageUploadReq.setBoundary(boundary);
         AppController.getInstance().addToRequestQueue(imageUploadReq);
@@ -707,6 +727,111 @@ public class QueryAPI {
     }
 
 
+    /* Add Friends & Favorites Functions */
+
+    public void isFriend(String friendId, final ApiResponse<Integer> completion) {
+
+        String url = "owapi/user/isfriend/"+friendId;
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult result) {
+                Integer isFriend = 0;
+                 if (result.success && result.dataIsObject()) {
+                     try {
+                         JSONObject data = result.getDataAsObject();
+                         String status = data.getString("isFriend");
+                         if (status.equals("pending")) {
+                             isFriend = 1;
+                         } else if (status.equals("active")) {
+                             isFriend = 2;
+                         }
+                         completion.onCompletion(isFriend);
+
+                     } catch (JSONException x) {
+                         completion.onCompletion(isFriend);
+                     }
+                 } else {
+                     completion.onCompletion(-1);
+                 }
+            }
+        });
+    }
+
+
+    public void friend(String friendId, String command, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/user/friend/"+command+"/"+friendId;
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult result) {
+                if (result.success && result.dataIsObject()) {
+                    try {
+                        JSONObject data = result.getDataAsObject();
+                        String msg = data.getString("msg");
+                        Log.i("Friend Command: ", msg);
+                        completion.onCompletion(result.success);
+                    } catch (JSONException x) {
+                        completion.onCompletion(result.success);
+                    }
+                } else {
+                    completion.onCompletion(result.success);
+                }
+            }
+        });
+    }
+
+
+    public void isFavorite(String favoriteId, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/user/isFavorite/"+favoriteId;
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult result) {
+                Boolean isFavorite = false;
+                if (result.success && result.dataIsObject()) {
+                    try {
+                        JSONObject data = result.getDataAsObject();
+                        isFavorite = data.getBoolean("isFavorite");
+                        completion.onCompletion(isFavorite);
+                    } catch (JSONException x) {
+                        completion.onCompletion(isFavorite);
+                    }
+                } else {
+                    completion.onCompletion(isFavorite);
+                }
+            }
+        });
+    }
+
+
+    public void favorite(String favoriteId, String command, final ApiResponse<Boolean> completion) {
+
+        String url = "owapi/user/favorite/"+command+"/"+favoriteId;
+
+        this.RequestApi(url, new ApiResponse<ApiResult>() {
+            @Override
+            public void onCompletion(ApiResult result) {
+                if (result.success && result.dataIsObject()) {
+                    try {
+                        JSONObject data = result.getDataAsObject();
+                        String msg = data.getString("msg");
+                        Log.i("Favorite Command: ", msg);
+                        completion.onCompletion(result.success);
+                    } catch (JSONException x) {
+                        completion.onCompletion(result.success);
+                    }
+                } else {
+                    completion.onCompletion(result.success);
+                }
+            }
+        });
+    }
+
+
+
     /* Conversation Functions */
 
     public void conversationList(final ApiResponse<List<ModelConversation>> completion)
@@ -911,7 +1036,10 @@ public class QueryAPI {
         this.RequestApi(url, new ApiResponse<ApiResult>() {
             @Override
             public void onCompletion(ApiResult res) {
-                Log.d("Success MessHist", res.data.toString());
+
+                if (res.data != null) {
+                    Log.d("Success MessHist", res.data.toString());
+                }
 
                 if (res.success && res.dataIsArray()) {
                     JSONArray messageList = res.getDataAsArray();
@@ -964,8 +1092,8 @@ public class QueryAPI {
             @Override
             public void onCompletion(ApiResult res) {
 
-                Log.v("VicRes", res.toString());
                 if (res.success) {
+                    Log.v("VicRes", res.toString());
                     ModelMessage message = new ModelMessage();
                     message = new Gson().fromJson(res.data.toString(), ModelMessage.class);
                     completion.onCompletion(message);
@@ -980,7 +1108,10 @@ public class QueryAPI {
 
     public void messageSendWithMedia(final String convId, String opponentId, final String lastMessage, File media, final ApiResponse<List<ModelMessage>> completion) {
 
-        String bundle = "mailbox_dialog_"+convId+"_"+opponentId+"_3333";
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+
+        String bundle = "mailbox_dialog_"+convId+"_"+opponentId+"_"+ts;
         String url = "base/attachment/add-file/?flUid="+bundle;
 
         String uuid = UUID.randomUUID().toString();

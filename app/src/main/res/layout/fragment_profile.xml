@@ -67,7 +67,7 @@
             <LinearLayout
                 android:id="@+id/statistics"
                 android:layout_below="@+id/sumary"
-                android:background="@color/white_transparent"
+                android:background="@color/gray_transparent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
@@ -79,22 +79,13 @@
                     android:padding="5dp"
                     android:orientation="vertical" >
 
-                    <TextView
+                    <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="sans-serif-light"
-                        android:text="@string/followers"
-                        android:textColor="@color/theme_color"
-                        android:textSize="@dimen/textsize_medium" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="sans-serif-light"
-                        android:text="@string/followers_placeholder"
-                        android:textSize="@dimen/textsize_medium_small" />
+                        android:id="@+id/imageButtonFriend"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/user"
+                        android:background="@android:color/transparent"/>
 
                 </LinearLayout>
 
@@ -103,25 +94,16 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:layout_weight="1"
-                    android:background="@color/white_transparent"
+                    android:background="@color/gray_transparent"
                     android:orientation="vertical" >
 
-                    <TextView
+                    <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="sans-serif-light"
-                        android:textColor="@color/theme_color"
-                        android:text="@string/views"
-                        android:textSize="@dimen/textsize_medium" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="sans-serif-light"
-                        android:text="@string/placeholder_views"
-                        android:textSize="@dimen/textsize_medium_small" />
+                        android:id="@+id/imageButtonFavorite"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/star"
+                        android:background="@android:color/transparent"/>
 
                 </LinearLayout>
 

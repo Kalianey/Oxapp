@@ -1,6 +1,8 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,10 +156,21 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         if (viewHolder.message.getIsMediaMessage()){
 
             viewHolder.text.setVisibility(View.GONE);
-            Picasso.with(listContext)
-                    .load(viewHolder.message.getDownloadUrl())
-                    .noFade()
-                    .into(viewHolder.attachment);
+
+            // If the user just sent the image, we don't have a download url
+            // so we load the image directly from the file on the phone
+            if (viewHolder.message.getDownloadUrl() == null) {
+                if(viewHolder.message.getImage().exists()){
+                    Bitmap myBitmap = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
+                    viewHolder.attachment.setImageBitmap(myBitmap);
+                }
+            }
+            else {
+                Picasso.with(listContext)
+                        .load(viewHolder.message.getDownloadUrl())
+                        .noFade()
+                        .into(viewHolder.attachment);
+            }
         } else {
             viewHolder.attachment.setVisibility(View.GONE);
             viewHolder.text.setVisibility(View.VISIBLE);

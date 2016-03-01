@@ -93,8 +93,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     //GOOGLE SIGN IN
     private GoogleApiClient mGoogleApiClient;
 
-    private Boolean error;
-
+    //LOCATION
     private LocationManager mLocationManager;
 
 
@@ -207,8 +206,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
     private void silentLogin() {
 
-        error = false;
-
         //we check if there are some silent login info stored
         if (session.getLoginType() != 0) {
 
@@ -227,12 +224,12 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                                     //Load first menu item by default
                                     changeFragment(new PeopleFragment());
                                 } else {
-                                    error = true;
+                                    loginFailed();
                                 }
                             }
                         });
                     } else {
-                        error = true;
+                        loginFailed();
                     }
                     break;
 
@@ -247,12 +244,13 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                                     //Load first menu item by default
                                     changeFragment(new PeopleFragment());
                                 } else {
-                                    error = true;
+                                    loginFailed();
                                 }
                             }
                         });
-                    } else {
-                        error = true;
+                    }
+                    else {
+                        loginFailed();
                     }
                     break;
 
@@ -268,29 +266,29 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                                     //Load first menu item by default
                                     changeFragment(new PeopleFragment());
                                 }
+                                else {
+                                    loginFailed();
+                                }
                             }
                         });
-                    } else {
-                        error = true;
+                    }
+                    else {
+                        loginFailed();
                     }
             }
 
-            //if an error occurred, , we redirect the user to the sign in page
-            if (error == true) {
-                Log.d("Silent logged In failed", "");
-                Intent intent = new Intent(getApplicationContext(), SignIn.class);
-                startActivity(intent);
-            }
-
         }
-
         //if no user info are stored, we redirect the user to the sign in page
         else {
-            Log.d("PeopleUserLoggedIn", "false");
-            Intent intent = new Intent(MainActivity.this, SignIn.class);
-            startActivity(intent);
+            loginFailed();
         }
 
+    }
+
+    private void loginFailed () {
+        Log.d("Silent logged In failed", " on MainActivity");
+        Intent intent = new Intent(getApplicationContext(), SignIn.class);
+        startActivity(intent);
     }
 
     private void setUpMenu() {
@@ -389,7 +387,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                 .beginTransaction()
                 .replace(R.id.main_fragment, targetFragment, "fragment")
                 .setTransitionStyle(android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+                .commitAllowingStateLoss(); // instead of //.commit();, http://stackoverflow.com/questions/7575921/illegalstateexception-can-not-perform-this-action-after-onsaveinstancestate-wit
     }
 
     //return the residemenu to fragments

@@ -51,6 +51,8 @@ public class AppController extends Application implements
 
     private static String hostname;
 
+    private CookieManager cookieManager;
+
     private ModelUser loggedInUser;
 
     /* Client used to interact with Google APIs. */
@@ -118,6 +120,10 @@ public class AppController extends Application implements
 
     }
 
+    public CookieManager getCookieManager() {
+        return cookieManager;
+    }
+
     public ModelUser getLoggedInUser() {
         return loggedInUser;
     }
@@ -175,8 +181,8 @@ public class AppController extends Application implements
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
 
-            CookieManager manager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
-            CookieHandler.setDefault(manager);
+            cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+            CookieHandler.setDefault(cookieManager);
             mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         }
 

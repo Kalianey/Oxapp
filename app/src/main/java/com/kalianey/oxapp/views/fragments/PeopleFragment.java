@@ -41,12 +41,13 @@ public class PeopleFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_people, container, false);
 
+        //TODO: implement properly, I'm just a test
         PugNotification.with(getActivity().getApplicationContext())
                 .load()
                 .smallIcon(R.drawable.pugnotification_ic_launcher)
                 .autoCancel(false)
                 .largeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.pugnotification_ic_launcher))
-                .title("You have a new message")
+                .title("TEST: You have a new message")
                 .message("Here come the name of the user and text of msg")
                 .bigTextStyle("e")
                 .simple()
@@ -60,8 +61,8 @@ public class PeopleFragment extends Fragment {
         query.allUsers(first.toString(), new QueryAPI.ApiResponse<List<ModelUser>>() {
             @Override
             public void onCompletion(List<ModelUser> result) {
-                Log.v("UserListCompletion", result.toString());
                 if (!result.isEmpty() && result != null) {
+                    Log.v("UserListCompletion", result.toString());
                     users = result;
                     adapter = new PeopleGridViewAdapter(getActivity(), R.layout.people_gridview_item, users);
                     gridView.setAdapter(adapter);

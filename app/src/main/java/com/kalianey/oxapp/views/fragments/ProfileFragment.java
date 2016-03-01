@@ -14,15 +14,15 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -80,7 +80,10 @@ public class ProfileFragment extends Fragment {
     private TextView mNavigationTitle;
     private Button mNavigationBackBtn;
     private TextView mTitleView;
-    private UICircularImage mShare;
+    private UICircularImage mChatButton;
+    private LinearLayout mLinearLayoutButtonHolder;
+    private ImageButton mAddFriend;
+    private ImageButton mAddFavorite;
     private ProfilePhotoRecyclerViewAdapter adapter;
     private TwoWayView friendsListView;
     private ProfileFriendListViewAdapter friendsAdapter;
@@ -95,8 +98,11 @@ public class ProfileFragment extends Fragment {
     private int delta_left;
     private float scale_width;
     private float scale_height;
-    String title;
+    private String title;
+    private Integer isFriend;
+    private Boolean isFav;
     int imgId;
+
 
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
@@ -125,9 +131,35 @@ public class ProfileFragment extends Fragment {
 
         view.scrollTo(0, 10);
 
-        gridView = (RecyclerView) view.findViewById(R.id.grid_view);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
 
+        //Set up UI elements
+        gridView = (RecyclerView) view.findViewById(R.id.grid_view);
         friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
+        ((UIParallaxScroll) view.findViewById(R.id.scroller)).setOnScrollChangedListener(mOnScrollChangedListener);
+        cImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
+        mImageView = (UICircularImage) view.findViewById(R.id.image_view);
+        // mTextView = (TextView) view.findViewById(R.id.contact);
+        mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
+        mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
+        mLayoutContainer = (RelativeLayout) view.findViewById(R.id.bg_layout);
+        mTitleView = (TextView) view.findViewById(R.id.title);
+        mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
+        TextView mSum = (TextView) view.findViewById(R.id.sumary);
+        mLinearLayoutButtonHolder = (LinearLayout) view.findViewById(R.id.statistics);
+        mChatButton = (UICircularImage) view.findViewById(R.id.action1);
+        mAddFriend = (ImageButton) view.findViewById(R.id.imageButtonFriend);
+        mAddFavorite = (ImageButton) view.findViewById(R.id.imageButtonFavorite);
+        UITabs tab = (UITabs) view.findViewById(R.id.toggle);
+        profilePhotoText = (TextView) view.findViewById(R.id.profile_photo_text);
+        profileFriendText = (TextView) view.findViewById(R.id.profile_friend_text);
+
+        mNavigationTop.getBackground().setAlpha(0);
+        mNavigationTitle.setVisibility(View.INVISIBLE);
+
+        mImageView.bringToFront();
 
         //Get logged in user
         if (user == null) {
@@ -192,37 +224,10 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
-
-
-        ((UIParallaxScroll) view.findViewById(R.id.scroller)).setOnScrollChangedListener(mOnScrollChangedListener);
-
-        cImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
-        mImageView = (UICircularImage) view.findViewById(R.id.image_view);
-       // mTextView = (TextView) view.findViewById(R.id.contact);
-        mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
-        mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
-        mLayoutContainer = (RelativeLayout) view.findViewById(R.id.bg_layout);
-        mTitleView = (TextView) view.findViewById(R.id.title);
-        mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
-        TextView mSum = (TextView) view.findViewById(R.id.sumary);
-        mShare = (UICircularImage) view.findViewById(R.id.action1);
-        UITabs tab = (UITabs) view.findViewById(R.id.toggle);
-        profilePhotoText = (TextView) view.findViewById(R.id.profile_photo_text);
-        profileFriendText = (TextView) view.findViewById(R.id.profile_friend_text);
-
-        mNavigationTop.getBackground().setAlpha(0);
-        mNavigationTitle.setVisibility(View.INVISIBLE);
-
-        mImageView.bringToFront();
-
         title = user.getName();
         String sum = user.getAddress();
 
-        //Here to wrap if coming from intent
+        //Set up animation for the user avatar image
         if (!isLoggedInUser) {
             Bundle bundle = getActivity().getIntent().getExtras();
 
@@ -255,8 +260,39 @@ public class ProfileFragment extends Fragment {
                     return true;
                 }
             });
+
+            //As the user is different from the LoggedIn User, we get friend and fav status
+            //Get Friend Status
+            query.isFriend(user.getUserId(), new QueryAPI.ApiResponse<Integer>() {
+                @Override
+                public void onCompletion(Integer result) {
+                    Log.i("isFriend: ", result.toString());
+                    isFriend = result;
+                    if (isFriend == 1) {
+                        mAddFriend.setImageResource(R.drawable.user_ok);
+                    } else if (isFriend == 2) {
+                        mAddFriend.setImageResource(R.drawable.user_ok_tick);
+                    }
+                }
+            });
+
+            //Get Favorite Status
+            query.isFavorite(user.getUserId(), new QueryAPI.ApiResponse<Boolean>() {
+                @Override
+                public void onCompletion(Boolean result) {
+                    isFav = result;
+                    if (isFav) {
+                        mAddFavorite.setImageResource(R.drawable.star_ok);
+                    }
+                }
+            });
+
+
         } else {
             mNavigationBackBtn.setBackgroundResource(R.drawable.titlebar_menu_selector);
+            mLinearLayoutButtonHolder.setVisibility(view.INVISIBLE);
+            mAddFriend.setVisibility(view.INVISIBLE);
+            mAddFavorite.setVisibility(view.INVISIBLE);
         }
 
         cImageView.setImageUrl(user.getCover_url(), imageLoader);
@@ -275,8 +311,8 @@ public class ProfileFragment extends Fragment {
                 .into(mImageView);
 
 
+        //Set up the navigation
         mNavigationTitle.setText(title);
-
         mNavigationBackBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -298,7 +334,8 @@ public class ProfileFragment extends Fragment {
         });
 
 
-        mShare.setOnClickListener(new View.OnClickListener() {
+        //Set up the Chat Button
+        mChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
 
@@ -344,6 +381,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        //Set up the tabs (General / Infos)
         tab.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
@@ -368,7 +406,25 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+
+        //Set up the Add Friend and Favorite Buttons
+        mAddFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                friendWasTapped();
+            }
+        });
+
+        mAddFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                favoriteWasTapped();
+            }
+        });
+
+        //Return the View
         return view;
+
     }
 
 
@@ -484,4 +540,71 @@ public class ProfileFragment extends Fragment {
 
         }
     };
+
+
+    private void friendWasTapped(){
+
+        mAddFriend.setEnabled(false);
+
+        if (isFriend == 0){
+            query.friend(user.getUserId(), "add", new QueryAPI.ApiResponse<Boolean>() {
+                @Override
+                public void onCompletion(Boolean result) {
+                    if (result) {
+                        isFriend = 1;
+                        mAddFriend.setImageResource(R.drawable.user_ok);
+                        Toast.makeText(getActivity().getApplicationContext(), "Friend request sent", Toast.LENGTH_SHORT).show();
+                    }
+                    mAddFriend.setEnabled(true);
+                }
+            });
+        } else if (isFriend == 1) {
+            query.friend(user.getUserId(), "cancel", new QueryAPI.ApiResponse<Boolean>() {
+                @Override
+                public void onCompletion(Boolean result) {
+                    if (result) {
+                        isFriend = 0;
+                        mAddFriend.setImageResource(R.drawable.user);
+                        Toast.makeText(getActivity().getApplicationContext(), "Friend removed", Toast.LENGTH_SHORT).show();
+                    }
+                    mAddFriend.setEnabled(true);
+                }
+            });
+        } else {
+            mAddFriend.setEnabled(true);
+        }
+    }
+
+
+    private void favoriteWasTapped(){
+
+        mAddFavorite.setEnabled(false);
+
+        if (!isFav){
+            query.favorite(user.getUserId(), "add", new QueryAPI.ApiResponse<Boolean>() {
+                @Override
+                public void onCompletion(Boolean result) {
+                    if (result) {
+                        isFav = true;
+                        mAddFavorite.setImageResource(R.drawable.star_ok);
+                        Toast.makeText(getActivity().getApplicationContext(), "Favorite added", Toast.LENGTH_SHORT).show();
+                    }
+                    mAddFavorite.setEnabled(true);
+                }
+            });
+        } else {
+            query.favorite(user.getUserId(), "remove", new QueryAPI.ApiResponse<Boolean>() {
+                @Override
+                public void onCompletion(Boolean result) {
+                    if (result) {
+                        isFav = false;
+                        mAddFavorite.setImageResource(R.drawable.star);
+                        Toast.makeText(getActivity().getApplicationContext(), "Favorite removed", Toast.LENGTH_SHORT).show();
+                    }
+                    mAddFavorite.setEnabled(true);
+                }
+            });
+        }
+    }
+
 }
