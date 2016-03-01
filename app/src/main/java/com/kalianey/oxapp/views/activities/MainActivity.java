@@ -1,9 +1,6 @@
 package com.kalianey.oxapp.views.activities;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,15 +8,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyCharacterMap;
@@ -32,17 +27,13 @@ import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.plus.Plus;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.menu.ResideMenuItem;
@@ -59,11 +50,6 @@ import java.io.IOException;
 public class MainActivity  extends AppCompatActivity implements View.OnClickListener {
 
     private SessionManager session;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
-    private ListView navList;
-    private FragmentTransaction fragmentTransaction;
-    private FragmentManager fragmentManager;
     private QueryAPI query= new QueryAPI();
 
     private ResideMenu resideMenu;
@@ -77,16 +63,13 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     //Action Bar
     android.support.v7.app.ActionBar mActionBar;
     private TextView mTitleTextView;
+    private ImageView mLogo;
 
     // GCM
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
-    /**
-     * Substitute you own project number here. This project number comes
-     * from the Google Developers Console.
-     */
     public static final String PROJECT_NUMBER = "645184786563";
     private GoogleCloudMessaging mGcm;
 
@@ -294,7 +277,8 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     private void setUpMenu() {
 
         resideMenu = new ResideMenu(this);
-        resideMenu.setBackground(R.drawable.menu_background);
+        //resideMenu.setBackground(R.drawable.menu_background);
+        resideMenu.setBackground(R.drawable.slider_menu_bg);
         resideMenu.attachToActivity(this);
         resideMenu.setShadowVisible(true);
         resideMenu.setHeaderView(findViewById(R.id.actionbar));
@@ -302,12 +286,12 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         //valid scale factor is between 0.0f and 1.0f. leftmenu'width is 150dip.
         resideMenu.setScaleValue(0.6f);
 
-        itemHome     = new ResideMenuItem(this, R.drawable.ic_home,     "People");
-        itemConversations  = new ResideMenuItem(this, R.drawable.icons_chat,  "Messages");
+        itemHome     = new ResideMenuItem(this, R.drawable.ic_home, "People");
+        itemConversations  = new ResideMenuItem(this, R.drawable.icons_chat, "Messages");
         itemProfile = new ResideMenuItem(this, R.drawable.ic_list_2, "Profile");
         itemFriends = new ResideMenuItem(this, R.drawable.ic_list_1, "Friends");
         itemFav = new ResideMenuItem(this, R.drawable.icons_star, "Favorites");
-        itemAccount = new ResideMenuItem(this, R.drawable.exit, "Account");
+        itemAccount = new ResideMenuItem(this, R.drawable.icons_filter, "Account");
 
         itemHome.setOnClickListener(this);
         itemConversations.setOnClickListener(this);
@@ -335,12 +319,15 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
         if (view == itemHome){
             changeFragment(new PeopleFragment());
-            mTitleTextView.setText("Bonnie&Clit");
+            mTitleTextView.setVisibility(View.GONE);
+            mLogo.setVisibility(View.VISIBLE);
             mActionBar.show();
         }
         else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
             mTitleTextView.setText("Messages");
+            mTitleTextView.setVisibility(View.VISIBLE);
+            mLogo.setVisibility(View.GONE);
             mActionBar.show();
         }
         else if (view == itemProfile){
@@ -348,18 +335,19 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             profile.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(profile);
             mActionBar.hide();
-//            mActionBar.setDisplayShowTitleEnabled(false);
-//            mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         }
         else if (view == itemFriends){
-            //changeFragment(new FriendsListFragment());
             changeFragment(new FriendActivityFragment());
             mTitleTextView.setText("Friends");
+            mTitleTextView.setVisibility(View.VISIBLE);
+            mLogo.setVisibility(View.GONE);
             mActionBar.show();
         }
         else if (view == itemFav){
             changeFragment(new FavoriteActivityFragment());
             mTitleTextView.setText("Favorites");
+            mTitleTextView.setVisibility(View.VISIBLE);
+            mLogo.setVisibility(View.GONE);
             mActionBar.show();
         }
         else if (view == itemAccount){
@@ -506,12 +494,14 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayShowHomeEnabled(false);
         mActionBar.setDisplayShowTitleEnabled(false);
-        mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        //mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#ffffff"));
+        mActionBar.setBackgroundDrawable(colorDrawable);
         LayoutInflater mInflater = LayoutInflater.from(this);
 
         View mCustomView = mInflater.inflate(R.layout.custom_actionbar, null);
         mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
-        mTitleTextView.setText("Bonnie&Clit");
+        mLogo = (ImageView) mCustomView.findViewById(R.id.logo);
 
         ImageButton menuButton = (ImageButton) mCustomView
                 .findViewById(R.id.menu);
