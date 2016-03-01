@@ -19,6 +19,7 @@ android:orientation="vertical" >
             app:line_color="@android:color/white"
             app:line_color_press="@color/theme_color"
             app:line_width="1dp"
-            app:padding ="0dp" />
+            app:padding ="0dp"
+            android:layout_marginBottom="5dp" />
 
 </LinearLayout>

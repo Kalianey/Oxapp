@@ -208,7 +208,8 @@
                 android:text="Read the Terms &amp; Conditions"
                 android:id="@+id/termsTextView"
                 android:gravity="center"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                android:textColorLink="#000000"/>
 
         </LinearLayout>
 

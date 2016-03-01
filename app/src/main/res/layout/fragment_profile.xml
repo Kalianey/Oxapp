@@ -174,6 +174,7 @@
                     android:textColor="@color/gray_light"
                     android:textSize="@dimen/textsize_medium_small"
                     android:textStyle="italic"
+                    android:height="70dp"
                     android:visibility="gone"/>
 
 
@@ -208,6 +209,7 @@
                     android:textColor="@color/gray_light"
                     android:textSize="@dimen/textsize_medium_small"
                     android:textStyle="italic"
+                    android:minHeight="50dp"
                     android:visibility="gone"/>
 
                 <org.lucasr.twowayview.TwoWayView

@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1"
-        >
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
 
         <com.kalianey.oxapp.utils.UICircularImage
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -64,7 +65,7 @@
                 android:textColor="#ff212121"
                 android:textSize="11sp"
 
-                />
+                android:paddingRight="1dp" />
 
         </LinearLayout>
 
@@ -88,7 +89,8 @@
                 android:id="@+id/imageView2"
                 android:src="@drawable/icon_arrow_right"
                 android:contentDescription="arrow-right"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                android:paddingTop="2dp" />
 
         </LinearLayout>
 

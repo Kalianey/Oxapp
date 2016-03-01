@@ -44,7 +44,8 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/pad_5dp"
             android:paddingLeft="@dimen/pad_chat_item"
-            android:paddingTop="@dimen/pad_5dp" >
+            android:paddingTop="@dimen/pad_5dp"
+            android:layout_marginLeft="-15dp">
 
 
             <ImageView

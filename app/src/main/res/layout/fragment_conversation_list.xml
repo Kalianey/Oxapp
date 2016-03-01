@@ -12,8 +12,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:dividerHeight="1dp"
-        android:divider="#C4CCCF">
-
+        android:divider="#C4CCCF"
+        android:layout_marginTop="-10dp">
     </ListView>
 
 </RelativeLayout>

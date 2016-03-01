@@ -35,7 +35,8 @@
                 android:paddingLeft="@dimen/pad_15dp"
                 android:paddingRight="@dimen/pad_chat_item"
                 android:paddingTop="@dimen/pad_5dp"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:layout_marginRight="-15dp">
 
             <ImageView
                 android:layout_width="90dp"
