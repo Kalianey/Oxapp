@@ -5,15 +5,19 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -24,7 +28,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -32,7 +35,6 @@ import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
@@ -45,7 +47,6 @@ import com.kalianey.oxapp.views.activities.MainActivity;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 //import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 //import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -63,6 +64,7 @@ public class SignInFragment extends Fragment implements
     private EditText email;
     private EditText password;
     private Text noAccount;
+    private TextView mTermsTextView;
     private Button signInButton;
     private ProgressDialog pDialog;
     private SessionManager session;
@@ -74,6 +76,15 @@ public class SignInFragment extends Fragment implements
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private ProfileTracker profileTracker;
+
+    private LoginButton fbLoginButton;
+    private Button fbCustomButton;
+
+    private String id;
+    private String name;
+    private String gender;
+    private String emailFB;
+    private Object birthday;
 
     //GOOGLE
      /* Request code used to invoke sign in user interactions. */
@@ -136,7 +147,14 @@ public class SignInFragment extends Fragment implements
 
         signInButton = (Button) view.findViewById(R.id.signInButton);
         email = (EditText) view.findViewById(R.id.emailInput);
+        email.getBackground().mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         password = (EditText) view.findViewById(R.id.passwordInput);
+        password.getBackground().mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        mTermsTextView = (TextView) view.findViewById(R.id.termsText);
+        String str_links = "By continuing, I agree to the <a href='"+AppController.getHostname()+"conditions-d-utilisation'>Terms & Conditions</a>";
+        mTermsTextView.setLinksClickable(true);
+        mTermsTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        mTermsTextView.setText(Html.fromHtml(str_links));
 
         // Check if user is already logged in
         if (session.isLoggedIn()) {
@@ -207,26 +225,25 @@ public class SignInFragment extends Fragment implements
         super.onViewCreated(view, savedInstanceState);
 
         //FB
-        LoginButton fbLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-        //Button loginButton = (Button) view.findViewById(R.id.login_button);
-
+        fbLoginButton = (LoginButton) view.findViewById(R.id.login_button);
+        fbCustomButton = (Button) view.findViewById(R.id.fb_button);
+        fbCustomButton.setOnClickListener(this);
         fbLoginButton.setReadPermissions("user_friends");
         fbLoginButton.setFragment(this);
         fbLoginButton.registerCallback(callbackManager, callback);
 
-//        fbLoginButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends"));
-//                LoginManager.getInstance().registerCallback(callbackManager, callback);
-//            }
-//        });
+        Profile profile = Profile.getCurrentProfile().getCurrentProfile();
+        if (profile != null) {
+            fbCustomButton.setText("Log out from facebook");
+
+        } else {
+            // user has not logged in
+            fbCustomButton.setText("Sign in with facebook");
+        }
 
         //Google
-        //SignInButton glSignInButton = (SignInButton) view.findViewById(R.id.sign_in_button);
         Button glSignInButton = (Button) view.findViewById(R.id.sign_in_button);
         glSignInButton.setOnClickListener(this);
-
 
     }
 
@@ -345,6 +362,10 @@ public class SignInFragment extends Fragment implements
 
         if (v.getId() == R.id.sign_in_button) {
             onSignInClicked();
+        }
+
+        if (v == fbCustomButton) {
+            fbLoginButton.performClick();
         }
     }
 
