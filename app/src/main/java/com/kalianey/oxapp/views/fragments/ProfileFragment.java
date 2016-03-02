@@ -483,7 +483,7 @@ public class ProfileFragment extends Fragment {
             gridHeight = 500;
         } else if (photoCount > 10){
             photoRows = 3;
-            gridHeight = 600;
+            gridHeight = 750;
         }
 
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);

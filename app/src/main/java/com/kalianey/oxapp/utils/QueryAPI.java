@@ -212,6 +212,7 @@ public class QueryAPI {
                         }
                         JSONObject response = null;
                         ApiResult res = new ApiResult();
+                        res.success = false;
                         try {
                             response = new JSONObject(responseString);
 
