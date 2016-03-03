@@ -2,8 +2,10 @@ package com.kalianey.oxapp.views.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyCharacterMap;
@@ -27,9 +30,12 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.androidadvance.topsnackbar.TSnackbar;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -38,11 +44,13 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.menu.ResideMenuItem;
+import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.fragments.AccountFragment;
 import com.kalianey.oxapp.views.fragments.ConversationListFragment;
+import com.kalianey.oxapp.views.fragments.MessageFragment;
 import com.kalianey.oxapp.views.fragments.PeopleFragment;
 import com.kalianey.oxapp.views.fragments.ProfileFragment;
 
@@ -80,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //LOCATION
     private LocationManager mLocationManager;
 
+    //NOTIFICATIONS
+    private BroadcastReceiver gcmReceiver;
+    private FrameLayout frameLayout_main;
+
 
     @SuppressLint("NewApi")
     @Override
@@ -100,6 +112,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setPaddings();
 
         session = AppController.getSession();
+
+        /** Set up top notifications TSnackBar **/
+
+        frameLayout_main = (FrameLayout) findViewById(R.id.main);
+        // A BroadcastReceiver must override the onReceive() event.
+        gcmReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Bundle extras = intent.getExtras();
+                if (!extras.isEmpty()) {
+                    // Unparcel the bundle included in the Intent
+                    Bundle bundle = extras.getBundle("conversation");
+                    ModelConversation conversation = (ModelConversation) bundle.getSerializable("convObj");
+
+                    Log.d("Notif receiver", "Got message: " + conversation.getPreviewText());
+
+                    if (bundle != null) {
+                        // display a notification at the top of the screen
+                        displayAlert(getApplicationContext(), MessageFragment.class, bundle, frameLayout_main);
+                    }
+                }
+            }
+        };
+
 
         // Check if user is already logged in or not
         if (!session.isLoggedIn()) {
@@ -153,6 +191,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Location : request updates every 10 minutes & 1km
         AppController.getInstance().updateLocation();
 
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(gcmReceiver, new IntentFilter("msg-received"));
+
     }
 
     @Override
@@ -163,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AppEventsLogger.deactivateApp(this);
 
         AppController.getInstance().stopUpdateLocation();
+
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(gcmReceiver);
     }
 
 
@@ -675,6 +717,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Store regID as null
             storeRegistrationId(this, null);
         }
+    }
+
+    private void displayAlert(final Context context, Class activity, final Bundle bundle, View view) {
+
+        //Extract the conversation
+        ModelConversation conversation = (ModelConversation) bundle.getSerializable("convObj");
+
+        String msg = conversation.getName() + ": " + conversation.getPreviewText();
+
+        TSnackbar snackbar = TSnackbar
+                .make(view, msg, TSnackbar.LENGTH_LONG)
+                .setAction("See", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("SnackBar Button", " onClick triggered");
+
+                        //Load conversation fragment and set conv as argument
+                        ConversationListFragment conversationListFragment = new ConversationListFragment();
+                        conversationListFragment.setArguments(bundle);
+                        changeFragment(conversationListFragment);
+                        //Set ActionBar args
+                        mTitleTextView.setText("Messages");
+                        mTitleTextView.setVisibility(View.VISIBLE);
+                        mLogo.setVisibility(View.GONE);
+                        mActionBar.show();
+                    }
+                });
+        snackbar.setActionTextColor(Color.LTGRAY);
+        snackbar.setDuration(TSnackbar.LENGTH_LONG);
+        snackbar.addIcon(R.mipmap.ic_core, 100);
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(Color.parseColor("#555555"));
+        TextView textView = (TextView) snackbarView.findViewById(com.androidadvance.topsnackbar.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+        snackbar.show();
+
     }
 
 

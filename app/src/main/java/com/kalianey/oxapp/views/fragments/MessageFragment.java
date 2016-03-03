@@ -20,7 +20,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -31,7 +33,6 @@ import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
-import com.kalianey.oxapp.service.GcmBroadcastReceiver;
 import com.kalianey.oxapp.utils.EndlessScrollListener;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
@@ -59,7 +60,7 @@ public class MessageFragment extends Fragment {
     private Button mNavigationBackBtn;
     private Button sendButton;
     private ImageView cameraButton;
-    private TextView text;
+    private EditText text;
 
     private Uri outputFileUri;
 
@@ -78,9 +79,16 @@ public class MessageFragment extends Fragment {
         mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
 
         listView = (ListView) view.findViewById(R.id.message_list);
-        text = (TextView) view.findViewById(R.id.txt);
+        text = (EditText) view.findViewById(R.id.txt);
         sendButton = (Button) view.findViewById(R.id.btnSend);
         cameraButton = (ImageView) view.findViewById(R.id.camera);
+
+        //Hide keyboard when open view
+//        text.clearFocus();
+//        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+//        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
+//        //imm.hideSoftInput(text, InputMethodManager.SHOW_IMPLICIT);
+
 
         mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
 
@@ -121,7 +129,10 @@ public class MessageFragment extends Fragment {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageIntent();
+                //openImageIntent();
+                text.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
             }
         });
 
@@ -199,41 +210,18 @@ public class MessageFragment extends Fragment {
     public void onResume() {
 
         super.onResume();
-//        IntentFilter gcmFilter = new IntentFilter();
-//        gcmFilter.addAction("GCM_RECEIVED_ACTION");
-//        getActivity().registerReceiver(gcmReceiver, gcmFilter);
 
-        getActivity().getApplicationContext().registerReceiver(gcmReceiver, new IntentFilter("msg-received"));
+        //Hide keyboard when open view
+//        text.clearFocus();
+//        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+//        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(gcmReceiver);
     }
-
-    // A BroadcastReceiver must override the onReceive() event.
-    private BroadcastReceiver gcmReceiver = new BroadcastReceiver() {
-
-        private String broadcastMessage;
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            // Extract data included in the Intent
-            Bundle bundle = intent.getExtras().getBundle("conversation");
-            broadcastMessage = intent.getExtras().getString("gcm");
-
-            Log.d("Notif receiver", "Got message: " + broadcastMessage);
-
-//            if (broadcastMessage != null && getActivity() != null) {
-//                // display our received message
-//                onResume();
-//            }
-        }
-    };
-
 
 
     // Send Image
@@ -360,28 +348,6 @@ public class MessageFragment extends Fragment {
         }
     }
 
-//    public String getRealPathFromURI(Context context, Uri contentUri) {
-//        Cursor cursor = null;
-//        try {
-//
-//            if("content".equals(contentUri.getScheme())) {
-//                String[] proj = {MediaStore.Images.Media.DATA};
-//                cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-//                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-//                cursor.moveToFirst();
-//                return cursor.getString(column_index);
-//            }
-//            else{
-//                return contentUri.getPath();
-//            }
-//
-//
-//        } finally {
-//            if (cursor != null) {
-//                cursor.close();
-//            }
-//        }
-//    }
 
     public String getImagePath(Uri uri){
         Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);

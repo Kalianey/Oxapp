@@ -19,8 +19,6 @@ import com.kalianey.oxapp.views.adapters.PeopleGridViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.goncalves.pugnotification.notification.PugNotification;
-
 /**
  * A placeholder fragment containing a simple view.
  */
