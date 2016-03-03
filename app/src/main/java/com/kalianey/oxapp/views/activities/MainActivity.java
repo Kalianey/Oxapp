@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         session = AppController.getSession();
 
         /** Set up top notifications TSnackBar **/
-
         frameLayout_main = (FrameLayout) findViewById(R.id.main);
         // A BroadcastReceiver must override the onReceive() event.
         gcmReceiver = new BroadcastReceiver() {
@@ -126,10 +125,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (!extras.isEmpty()) {
                     // Unparcel the bundle included in the Intent
                     Bundle bundle = extras.getBundle("conversation");
-                    ModelConversation conversation = (ModelConversation) bundle.getSerializable("convObj");
-
-                    Log.d("Notif receiver", "Got message: " + conversation.getPreviewText());
-
                     if (bundle != null) {
                         // display a notification at the top of the screen
                         displayAlert(getApplicationContext(), MessageFragment.class, bundle, frameLayout_main);

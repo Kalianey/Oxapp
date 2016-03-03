@@ -1,11 +1,16 @@
 package com.kalianey.oxapp.views.activities;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,10 +34,13 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
+import com.kalianey.oxapp.utils.Utility;
+import com.kalianey.oxapp.views.fragments.MessageFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +52,9 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     private QueryAPI query = new QueryAPI();
     private List<ModelUser> users = new ArrayList<ModelUser>();
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+
+    //NOTIFICATIONS
+    private BroadcastReceiver gcmReceiver;
 
     //UI
     NetworkImageView avatarImageView;
@@ -89,6 +100,25 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
         mLocationManager = AppController.getInstance().getLocationManager();
         AppController.getInstance().updateLocation();
 
+        /** Set up top notifications TSnackBar **/
+        gcmReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Bundle extras = intent.getExtras();
+                if (!extras.isEmpty()) {
+                    // Unparcel the bundle included in the Intent
+                    Bundle bundle = extras.getBundle("conversation");
+
+                    if (bundle != null) {
+                        // display a notification at the top of the screen
+                        Utility.displayNewMsgNotification(getApplicationContext(), MapsActivity.this, MessageFragment.class, bundle, mNavigationTop);
+                    }
+                }
+            }
+        };
+
 
         query.nearUsers(new QueryAPI.ApiResponse<List<ModelUser>>() {
             @Override
@@ -107,16 +137,18 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
     @Override
     protected void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
 
+        setUpMapIfNeeded();
         //Location : request updates every 10 minutes & 1km
         AppController.getInstance().updateLocation();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(gcmReceiver, new IntentFilter("msg-received"));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         AppController.getInstance().stopUpdateLocation();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(gcmReceiver);
     }
 
     /**

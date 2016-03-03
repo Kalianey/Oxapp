@@ -74,6 +74,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
                         JSONObject dataObj = new JSONObject(dataString); //{"senderId":3,"conversationId":2,"displayName":"Veda","recipientId":"1","message":"test again"}
 
                         //Send notification
+                        //TODO: only send if app is closed or in background in order not to spam user
                         String alert = "New message: " + dataObj.getString("message");
                         sendNotification(context, alert);
 

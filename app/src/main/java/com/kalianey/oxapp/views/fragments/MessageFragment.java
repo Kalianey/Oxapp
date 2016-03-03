@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.EndlessScrollListener;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
+import com.kalianey.oxapp.utils.Utility;
 import com.kalianey.oxapp.views.adapters.MessageListAdapter;
 
 import java.io.File;
@@ -65,6 +67,9 @@ public class MessageFragment extends Fragment {
     private Uri outputFileUri;
 
     private EndlessScrollListener scrollListener;
+
+    //NOTIFICATIONS
+    private BroadcastReceiver gcmReceiver;
 
     public MessageFragment() {
     }
@@ -170,6 +175,32 @@ public class MessageFragment extends Fragment {
         //Load more on scroll top
         listView.setOnScrollListener(scrollListener);
 
+
+        /** Set up top notifications TSnackBar **/
+        gcmReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Bundle extras = intent.getExtras();
+                if (!extras.isEmpty()) {
+                    // Unparcel the bundle included in the Intent
+                    Bundle bundle = extras.getBundle("conversation");
+                    ModelConversation openConvFromMsg = (ModelConversation) bundle.getSerializable("convObj");
+
+                    Log.d("Notif receiver", "Got message: " + conversation.getPreviewText());
+
+                    if (bundle != null) {
+                        //We check if the conversation notification to show is different from the current open conversation
+                        if (!openConvFromMsg.getId().equals(conversation.getId())) {
+                            // display a notification at the top of the screen
+                            Utility.displayNewMsgNotification(getActivity().getApplicationContext(), getActivity(), MessageFragment.class, bundle, mNavigationTop);
+                        }
+                    }
+                }
+            }
+        };
+
         return view;
     }
 
@@ -210,6 +241,7 @@ public class MessageFragment extends Fragment {
     public void onResume() {
 
         super.onResume();
+        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(gcmReceiver, new IntentFilter("msg-received"));
 
         //Hide keyboard when open view
 //        text.clearFocus();
@@ -221,6 +253,7 @@ public class MessageFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).unregisterReceiver(gcmReceiver);
     }
 
 

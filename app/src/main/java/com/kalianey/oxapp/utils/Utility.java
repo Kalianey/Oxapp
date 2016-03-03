@@ -1,8 +1,20 @@
 package com.kalianey.oxapp.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
+import com.androidadvance.topsnackbar.TSnackbar;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.models.ModelConversation;
+import com.kalianey.oxapp.views.activities.Message;
+import com.kalianey.oxapp.views.fragments.ConversationListFragment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -156,6 +168,47 @@ public class Utility {
             e.printStackTrace();
             return null;
         }
+    }
+
+
+    /**
+     * Display a TSnackbar at the top of the screen with a new message received and a button redirecting to the conversation
+     * @param context the context
+     * @param activity the Activity to send the intent from
+     * @param targetActivityClass the class Activity to send the intent to
+     * @param bundle A bundle to sent with the intent
+     * @param view The view under which display the notification
+     */
+    public static void displayNewMsgNotification(final Context context, final FragmentActivity activity, Class targetActivityClass, final Bundle bundle, View view)
+    {
+
+        //Extract the conversation
+        ModelConversation conversation = (ModelConversation) bundle.getSerializable("convObj");
+
+        String msg = conversation.getName() + ": " + conversation.getPreviewText();
+
+        TSnackbar snackbar = TSnackbar
+                .make(view, msg, TSnackbar.LENGTH_LONG)
+                .setAction("See", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("SnackBar Button", " onClick triggered");
+
+                        ModelConversation conversation = (ModelConversation) bundle.getSerializable("convObj");
+                        Intent i = new Intent(activity, Message.class);
+                        i.putExtras(bundle);
+                        activity.startActivity(i);
+                    }
+                });
+        snackbar.setActionTextColor(Color.LTGRAY);
+        snackbar.setDuration(TSnackbar.LENGTH_LONG);
+        snackbar.addIcon(R.mipmap.ic_core, 100);
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(Color.parseColor("#555555"));
+        TextView textView = (TextView) snackbarView.findViewById(com.androidadvance.topsnackbar.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+        snackbar.show();
+
     }
 
 }
