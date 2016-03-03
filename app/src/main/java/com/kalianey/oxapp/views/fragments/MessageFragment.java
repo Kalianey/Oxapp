@@ -31,6 +31,7 @@ import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.service.GcmBroadcastReceiver;
 import com.kalianey.oxapp.utils.EndlessScrollListener;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
@@ -71,10 +72,6 @@ public class MessageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
-
-
-
-        //LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, new IntentFilter("Msg"));
 
         mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
         mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
@@ -202,9 +199,11 @@ public class MessageFragment extends Fragment {
     public void onResume() {
 
         super.onResume();
-        IntentFilter gcmFilter = new IntentFilter();
-        gcmFilter.addAction("GCM_RECEIVED_ACTION");
-        getActivity().registerReceiver(gcmReceiver, gcmFilter);
+//        IntentFilter gcmFilter = new IntentFilter();
+//        gcmFilter.addAction("GCM_RECEIVED_ACTION");
+//        getActivity().registerReceiver(gcmReceiver, gcmFilter);
+
+        getActivity().getApplicationContext().registerReceiver(gcmReceiver, new IntentFilter("msg-received"));
 
     }
 
@@ -222,27 +221,19 @@ public class MessageFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
+            // Extract data included in the Intent
             Bundle bundle = intent.getExtras().getBundle("conversation");
             broadcastMessage = intent.getExtras().getString("gcm");
 
-            if (broadcastMessage != null && getActivity() != null) {
-                // display our received message
-                onResume();
-            }
+            Log.d("Notif receiver", "Got message: " + broadcastMessage);
+
+//            if (broadcastMessage != null && getActivity() != null) {
+//                // display our received message
+//                onResume();
+//            }
         }
     };
 
-
-//    private BroadcastReceiver onNotice= new BroadcastReceiver() {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            Log.v("Mess: ", intent.toString());
-//
-//            //add row
-//
-//        }
-//    };
 
 
     // Send Image

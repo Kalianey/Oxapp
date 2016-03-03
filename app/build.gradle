@@ -45,7 +45,7 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.1.0'
 
     compile 'com.github.bumptech.glide:glide:3.5.2'
-    compile 'com.github.halysongoncalves:pugnotification:1.7.0'
+    compile 'com.androidadvance:topsnackbar:0.0.9'
 
     //HTTP Client for multipart
     compile ('org.apache.httpcomponents:httpmime:4.3.5') {

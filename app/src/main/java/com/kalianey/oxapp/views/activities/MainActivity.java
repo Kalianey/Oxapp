@@ -1,6 +1,7 @@
 package com.kalianey.oxapp.views.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -127,33 +128,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
 
+            registerDeviceForNotification();
+
             //Load Main Fragment
             changeFragment(new PeopleFragment());
         }
-
-
-
-        //We check if user has GooglePlayServices as they are needed for the app // TODO: check how it works and implement
-        //we replace getApplicationContext() by this
-//        if (checkPlayServices()) {
-//            mGcm = GoogleCloudMessaging.getInstance(this);
-//            String regId = getRegistrationId(this);
-//
-//            if (PROJECT_NUMBER.equals("")) {
-//                new AlertDialog.Builder(this)
-//                        .setTitle("Needs Project Number")
-//                        .setMessage("GCM will not function until you set the Project Number to the one from the Google Developers Console.")
-//                        .setPositiveButton(android.R.string.ok, null)
-//                        .create().show();
-//            } else if (regId.isEmpty()) {
-//                registerInBackground(this);
-//            }
-//        } else {
-//            Log.i(LOG_TAG, "No valid Google Play Services APK.");
-//            // Store regID as null
-//            storeRegistrationId(this, null);
-//        }
-
 
     }
 
@@ -204,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void onCompletion(Boolean result) {
                                 if (result) {
                                     Log.v("Silent FB Login: ", result.toString());
+                                    registerDeviceForNotification();
                                     //Load first menu item by default
                                     changeFragment(new PeopleFragment());
                                 } else {
@@ -224,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void onCompletion(Boolean result) {
                                 if (result) {
                                     Log.v("Silent Google Login: ", result.toString());
+                                    registerDeviceForNotification();
                                     //Load first menu item by default
                                     changeFragment(new PeopleFragment());
                                 } else {
@@ -246,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                 if (res.success) {
                                     Log.v("Silent Normal Login: ", res.success.toString());
+                                    registerDeviceForNotification();
                                     //Load first menu item by default
                                     changeFragment(new PeopleFragment());
                                 }
@@ -636,7 +618,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     query.registerForNotifications(regId, new QueryAPI.ApiResponse<String>() {
                         @Override
                         public void onCompletion(String result) {
-
+                            if (result != null) {
+                                Log.i("Result of device Reg:", result);
+                            }
                         }
                     });
 
@@ -668,6 +652,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+    }
+
+    private void registerDeviceForNotification() {
+        //We check if user has GooglePlayServices as they are needed for the app // TODO: check how it works
+        //we replace getApplicationContext() by this
+        if (checkPlayServices()) {
+            mGcm = GoogleCloudMessaging.getInstance(this);
+            String regId = getRegistrationId(this);
+
+            if (PROJECT_NUMBER.equals("")) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Needs Project Number")
+                        .setMessage("GCM will not function until you set the Project Number to the one from the Google Developers Console.")
+                        .setPositiveButton(android.R.string.ok, null)
+                        .create().show();
+            } else if (regId.isEmpty()) {
+                registerInBackground(this);
+            }
+        } else {
+            Log.i(LOG_TAG, "No valid Google Play Services APK.");
+            // Store regID as null
+            storeRegistrationId(this, null);
+        }
     }
 
 

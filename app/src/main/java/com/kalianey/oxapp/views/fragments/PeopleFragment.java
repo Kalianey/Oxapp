@@ -41,18 +41,6 @@ public class PeopleFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_people, container, false);
 
-        //TODO: implement properly, I'm just a test
-        PugNotification.with(getActivity().getApplicationContext())
-                .load()
-                .smallIcon(R.drawable.pugnotification_ic_launcher)
-                .autoCancel(false)
-                .largeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.pugnotification_ic_launcher))
-                .title("TEST: You have a new message")
-                .message("Here come the name of the user and text of msg")
-                .bigTextStyle("e")
-                .simple()
-                .build();
-
 
         gridView = (GridView) view.findViewById(R.id.people_gridView);
         gridView.setClipToPadding(false);
