@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,8 @@ public class MessageFragment extends Fragment {
     private List<ModelMessage> messages = new ArrayList<>();
     private ModelConversation conversation;
 
+    //UI
+    private LinearLayout messageFragmentContainer;
     private FrameLayout mNavigationTop;
     private TextView mNavigationTitle;
     private Button mNavigationBackBtn;
@@ -77,8 +80,9 @@ public class MessageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_message, container, false);
+        final View view = inflater.inflate(R.layout.fragment_message, container, false);
 
+        messageFragmentContainer = (LinearLayout) view.findViewById(R.id.message_fragment_container);
         mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
         mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
         mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
@@ -89,10 +93,26 @@ public class MessageFragment extends Fragment {
         cameraButton = (ImageView) view.findViewById(R.id.camera);
 
         //Hide keyboard when open view
+        messageFragmentContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideSoftKeyboard();
+            }
+        });
+        /* text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    // code to execute when EditText loses focus
+                    hideSoftKeyboard();
+                }
+            }
+        });
 //        text.clearFocus();
 //        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
 //        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
 //        //imm.hideSoftInput(text, InputMethodManager.SHOW_IMPLICIT);
+*/
 
 
         mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
@@ -119,6 +139,7 @@ public class MessageFragment extends Fragment {
                 QueryAPI.getInstance().user(conversation.getOpponentId(), new QueryAPI.ApiResponse<ModelUser>() {
                     @Override
                     public void onCompletion(ModelUser user) {
+                        //view.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
                         adapter = new MessageListAdapter(getActivity(), R.layout.message_item_sent, messages);
                         adapter.setSenderUser(user);
                         listView.setAdapter(adapter);
@@ -134,10 +155,7 @@ public class MessageFragment extends Fragment {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //openImageIntent();
-                text.clearFocus();
-                InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
+                openImageIntent();
             }
         });
 
@@ -188,13 +206,23 @@ public class MessageFragment extends Fragment {
                     Bundle bundle = extras.getBundle("conversation");
                     ModelConversation openConvFromMsg = (ModelConversation) bundle.getSerializable("convObj");
 
-                    Log.d("Notif receiver", "Got message: " + conversation.getPreviewText());
+                    Log.d("MSG received", "Got message: " + conversation.getPreviewText());
 
                     if (bundle != null) {
                         //We check if the conversation notification to show is different from the current open conversation
                         if (!openConvFromMsg.getId().equals(conversation.getId())) {
                             // display a notification at the top of the screen
                             Utility.displayNewMsgNotification(getActivity().getApplicationContext(), getActivity(), MessageFragment.class, bundle, mNavigationTop);
+                        } else {
+                            //we get the latest messageList and notify the adapter to display the received msg
+                            //TODO: check if it would be better to append the new msg without querying the server?
+                            query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
+                                @Override
+                                public void onCompletion(List<ModelMessage> result) {
+                                    messages = result;
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
                         }
                     }
                 }
@@ -433,6 +461,25 @@ public class MessageFragment extends Fragment {
         }
         return inSampleSize;
     }
+
+
+    /**
+     * Hides the soft keyboard
+     */
+    public void hideSoftKeyboard() {
+        text.clearFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    /**
+     * Shows the soft keyboard
+     */
+//    public void showSoftKeyboard(View view) {
+//        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+//        view.requestFocus();
+//        inputMethodManager.showSoftInput(view, 0);
+//    }
 
 }
 

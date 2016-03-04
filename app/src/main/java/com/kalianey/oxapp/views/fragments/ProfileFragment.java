@@ -477,13 +477,13 @@ public class ProfileFragment extends Fragment {
     void initializeRecyclerView() {
 
         Integer photoRows = 1;
-        Integer gridHeight = 250;
+        Integer gridHeight = 100;
         if (photoCount > 1 && photoCount < 10) {
             photoRows = 2;
-            gridHeight = 500;
+            gridHeight = 200;
         } else if (photoCount > 10){
             photoRows = 3;
-            gridHeight = 750;
+            gridHeight = 400;
         }
 
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);

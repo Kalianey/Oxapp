@@ -2,9 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="com.kalianey.oxapp.views.fragments.MessageFragment">
+    tools:context="com.kalianey.oxapp.views.fragments.MessageFragment"
+    android:id="@+id/message_fragment_container">
+
 
     <RelativeLayout
         android:orientation="vertical"
@@ -43,6 +46,15 @@
     </FrameLayout>
 
     </RelativeLayout>
+
+    <!--com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avloadingIndicatorView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:indicator="LineScalePulseOut"
+        app:indicator_color="#E75764"
+        /-->
 
     <ListView
         android:id="@+id/message_list"

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.GridView;
 
 import com.kalianey.oxapp.R;
@@ -42,6 +43,8 @@ public class PeopleFragment extends Fragment {
 
         gridView = (GridView) view.findViewById(R.id.people_gridView);
         gridView.setClipToPadding(false);
+
+        //gridView.setColumnWidth();
         //setInsets(gridView);
 
         query.allUsers(first.toString(), new QueryAPI.ApiResponse<List<ModelUser>>() {
@@ -54,6 +57,31 @@ public class PeopleFragment extends Fragment {
                     gridView.setAdapter(adapter);
                     //adapter.notifyDataSetChanged();
                     Log.v("Data Set Changed: ", users.toString());
+
+
+                    //Test to calculate width of columns
+//                    gridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+////                        if (adapter.getNumColumns() == 0) {
+////                            final int numColumns = (int) Math.floor((double) gridView.getWidth() / (mImageThumbSize + mImageThumbSpacing));
+////                            if (numColumns > 0) {
+////                                final int columnWidth = mGridView.getWidth() / numColumns - mImageThumbSpacing;
+////                                adapter.setNumColumns(numColumns);
+////                                adapter.setItemHeight(columnWidth);
+////                            }
+////                        }
+//
+//                        int gridWidth = gridView.getWidth();
+//
+//                    }
+//
+//                     });
+
+
+
+
+
                 }
             }
 
