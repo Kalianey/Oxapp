@@ -38,7 +38,7 @@ public class PeopleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_people, container, false);
+        final View view = inflater.inflate(R.layout.fragment_people, container, false);
 
 
         gridView = (GridView) view.findViewById(R.id.people_gridView);
@@ -52,6 +52,7 @@ public class PeopleFragment extends Fragment {
             public void onCompletion(List<ModelUser> result) {
                 if (!result.isEmpty() && result != null) {
                     Log.v("UserListCompletion", result.toString());
+                    view.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
                     users = result;
                     adapter = new PeopleGridViewAdapter(getActivity(), R.layout.people_gridview_item, users);
                     gridView.setAdapter(adapter);

@@ -1,5 +1,6 @@
 package com.kalianey.oxapp.views.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,15 +20,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,7 +86,7 @@ public class MessageFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_message, container, false);
 
-        messageFragmentContainer = (LinearLayout) view.findViewById(R.id.message_fragment_container);
+        RelativeLayout listViewContainer = (RelativeLayout) view.findViewById(R.id.listViewContainer);
         mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
         mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
         mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
@@ -91,28 +95,6 @@ public class MessageFragment extends Fragment {
         text = (EditText) view.findViewById(R.id.txt);
         sendButton = (Button) view.findViewById(R.id.btnSend);
         cameraButton = (ImageView) view.findViewById(R.id.camera);
-
-        //Hide keyboard when open view
-        messageFragmentContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideSoftKeyboard();
-            }
-        });
-        /* text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    // code to execute when EditText loses focus
-                    hideSoftKeyboard();
-                }
-            }
-        });
-//        text.clearFocus();
-//        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
-//        //imm.hideSoftInput(text, InputMethodManager.SHOW_IMPLICIT);
-*/
 
 
         mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
@@ -139,7 +121,7 @@ public class MessageFragment extends Fragment {
                 QueryAPI.getInstance().user(conversation.getOpponentId(), new QueryAPI.ApiResponse<ModelUser>() {
                     @Override
                     public void onCompletion(ModelUser user) {
-                        //view.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
+                        view.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
                         adapter = new MessageListAdapter(getActivity(), R.layout.message_item_sent, messages);
                         adapter.setSenderUser(user);
                         listView.setAdapter(adapter);
@@ -270,11 +252,6 @@ public class MessageFragment extends Fragment {
 
         super.onResume();
         LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(gcmReceiver, new IntentFilter("msg-received"));
-
-        //Hide keyboard when open view
-//        text.clearFocus();
-//        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
 
     }
 
@@ -461,25 +438,6 @@ public class MessageFragment extends Fragment {
         }
         return inSampleSize;
     }
-
-
-    /**
-     * Hides the soft keyboard
-     */
-    public void hideSoftKeyboard() {
-        text.clearFocus();
-        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
-    }
-
-    /**
-     * Shows the soft keyboard
-     */
-//    public void showSoftKeyboard(View view) {
-//        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-//        view.requestFocus();
-//        inputMethodManager.showSoftInput(view, 0);
-//    }
 
 }
 

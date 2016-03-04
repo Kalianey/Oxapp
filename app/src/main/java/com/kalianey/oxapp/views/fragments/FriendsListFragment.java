@@ -41,7 +41,6 @@ public class FriendsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
 
         android.support.v7.app.ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
@@ -70,24 +69,25 @@ public class FriendsListFragment extends Fragment {
             switch (pos) {
                 case 0:
                     // Friend List
+                    parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.VISIBLE);
                     query.friendList(new QueryAPI.ApiResponse<List<ModelFriend>>() {
                         @Override
                         public void onCompletion(List<ModelFriend> result) {
-
+                            parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
                             mAdapter = new FriendListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
                             listView.setAdapter(mAdapter);
                             mAdapter.notifyDataSetChanged();
                         }
                     });
-
                     break;
 
                 case 1:
                     // Friend Requests
+                    parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.VISIBLE);
                     query.friendRequestList(new QueryAPI.ApiResponse<List<ModelUser>>() {
                         @Override
                         public void onCompletion(List<ModelUser> result) {
-
+                            parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
                             FriendRequestListAdapter adapter = new FriendRequestListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
                             listView.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
@@ -97,7 +97,11 @@ public class FriendsListFragment extends Fragment {
             }
         }
 
-
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.VISIBLE);
+    }
 }

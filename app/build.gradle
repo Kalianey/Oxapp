@@ -55,9 +55,10 @@ dependencies {
     }
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
     //AVLoadingIndicatorView
-    //compile 'com.wang.avi:library:1.0.2'
+    compile 'com.wang.avi:library:1.0.2'
+    compile 'com.nineoldandroids:library:2.4.0'
     //ClearUI
-    compile files('libs/nineoldandroids-library-2.4.0.jar')
+    //compile files('libs/nineoldandroids-library-2.4.0.jar')
     compile files('libs/renderscript-v8.jar')
     //Blur
     compile 'com.commit451:NativeStackBlur:1.0.2'

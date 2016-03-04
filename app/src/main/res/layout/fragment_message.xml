@@ -47,20 +47,29 @@
 
     </RelativeLayout>
 
-    <!--com.wang.avi.AVLoadingIndicatorView
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode ="true"
+        android:id="@+id/listViewContainer">
+
+    <com.wang.avi.AVLoadingIndicatorView
         android:id="@+id/avloadingIndicatorView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
         app:indicator="LineScalePulseOut"
         app:indicator_color="#E75764"
-        /-->
+        android:layout_gravity="center_horizontal"
+        android:layout_centerInParent="true" />
 
     <ListView
         android:id="@+id/message_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:divider="@color/white"
         android:dividerHeight="@dimen/pad_5dp"
         android:fastScrollEnabled="true"
@@ -70,6 +79,8 @@
         android:paddingTop="@dimen/pad_10dp">
     </ListView>
 
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -77,7 +88,6 @@
         android:gravity="center_vertical"
         android:padding="@dimen/pad_5dp"
         tools:context=".MainActivity" >
-
 
         <EditText
             android:id="@+id/txt"

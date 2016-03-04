@@ -1,20 +1,40 @@
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/people_gridView" android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:scrollingCache="true"
-    android:smoothScrollbar="true"
-    android:clipChildren="true"
-    android:alwaysDrawnWithCache="true"
-    android:numColumns="auto_fit"
-    android:columnWidth="80dp"
-    android:stretchMode="columnWidth"
-    android:gravity="center_horizontal"
-    android:background="#ffffff"
-    android:verticalSpacing="5dp"
-    android:adjustViewBounds="true"
-    android:listSelector="@null"
-    android:paddingTop="7dp"
-    android:paddingBottom="0dp"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp">
-</GridView>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/people_gridView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollingCache="true"
+        android:smoothScrollbar="true"
+        android:clipChildren="true"
+        android:alwaysDrawnWithCache="true"
+        android:numColumns="auto_fit"
+        android:columnWidth="80dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center_horizontal"
+        android:background="#ffffff"
+        android:verticalSpacing="5dp"
+        android:adjustViewBounds="true"
+        android:listSelector="@null"
+        android:paddingTop="7dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp">
+    </GridView>
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avloadingIndicatorView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:indicator="LineScalePulseOut"
+        app:indicator_color="#E75764"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerInParent="true" />
+
+</RelativeLayout>

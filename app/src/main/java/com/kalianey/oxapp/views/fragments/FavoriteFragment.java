@@ -44,12 +44,14 @@ public class FavoriteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_favorite, container, false);
+        final View view = inflater.inflate(R.layout.fragment_favorite, container, false);
         listView = (ListView) view.findViewById(R.id.listView);
 
         query.favorite(new QueryAPI.ApiResponse<ModelFavorite>() {
             @Override
             public void onCompletion(ModelFavorite favorite) {
+
+                view.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
 
                 if (favorite != null) {
 //                    users.clear();

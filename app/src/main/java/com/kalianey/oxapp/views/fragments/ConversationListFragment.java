@@ -51,6 +51,7 @@ public class ConversationListFragment extends Fragment {
             public void onCompletion(List<ModelConversation> result) {
                 Log.v("ConvListCompletion", result.toString());
                 if (!result.isEmpty() && result != null) {
+                    view.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
                     conversations = result;
                     adapter = new ConversationListAdapter(getActivity(), R.layout.fragment_conversation_list_item, conversations);
                     listView.setAdapter(adapter);
