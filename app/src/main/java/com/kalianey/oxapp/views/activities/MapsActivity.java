@@ -235,8 +235,13 @@ public class MapsActivity extends FragmentActivity implements ClusterManager.OnC
         // Does nothing, but I could go into the user's profile page.
         Log.d("User clicked:", item.getName());
         avatarImageView.setImageUrl(item.getAvatar_url(), imageLoader);
-        name.setText(item.getName());
-        infos.setText(item.getAge());
+        String nameAndAge = item.getName();
+        if (!item.getAge().isEmpty() && item.getAge() != null && !item.getAge().equals("")) {
+            nameAndAge += " (" +item.getAge()+ ")";
+        }
+        name.setText(nameAndAge);
+        //infos.setText(item.getAge());
+        infos.setText(item.getAddress());
         double d = Double.parseDouble(item.getDistance());
         distance.setText( String.format("%.1f", d) + "Km");
         detailView.setVisibility(View.VISIBLE);

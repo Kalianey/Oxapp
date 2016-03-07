@@ -45,9 +45,9 @@
     android:layout_width="match_parent" android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:background="#ffffff"
+        android:background="#f5f5f5"
         android:layout_alignParentEnd="true"
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/detailView"
         android:touchscreenBlocksFocus="true">
 
@@ -57,7 +57,7 @@
             android:id="@+id/imageView"
             android:layout_alignParentTop="false"
             android:layout_alignParentStart="false"
-            android:background="#ff6a92"
+            android:background="#f5f5f5"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp" />
 
@@ -71,7 +71,7 @@
             android:layout_toEndOf="@+id/imageView"
             android:layout_marginStart="10dp"
             android:textSize="18dp"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="5dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -79,8 +79,9 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Small Text"
             android:id="@+id/info"
-            android:layout_alignBottom="@+id/imageView"
-            android:layout_alignStart="@+id/name" />
+            android:layout_alignBottom="@+id/imageView3"
+            android:layout_toEndOf="@+id/imageView3"
+            android:textSize="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -92,7 +93,19 @@
             android:layout_alignParentEnd="true"
             android:padding="10dp"
             android:textSize="10dp"
-            android:background="#90f2ff" />
+            android:background="@drawable/bg_rounded_corner_filled"
+            android:layout_marginRight="10dp"
+            android:textColor="#ffffff" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView3"
+            android:src="@drawable/location_icon"
+            android:layout_below="@+id/name"
+            android:layout_alignStart="@+id/name"
+            android:layout_marginRight="5dp"
+            android:tint="@color/gray"/>
 
 
     </RelativeLayout>

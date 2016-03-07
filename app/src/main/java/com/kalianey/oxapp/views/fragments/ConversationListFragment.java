@@ -96,7 +96,7 @@ public class ConversationListFragment extends Fragment {
                     conversations = result;
                     adapter = new ConversationListAdapter(getActivity(), R.layout.fragment_conversation_list_item, conversations);
                     listView.setAdapter(adapter);
-                    //adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                     Log.v("Data Set Changed: ", conversations.toString());
                 } else {
                     noConversation.setVisibility(View.VISIBLE);
