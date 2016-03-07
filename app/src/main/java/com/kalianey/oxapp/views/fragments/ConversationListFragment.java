@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.utils.QueryAPI;
@@ -26,6 +28,7 @@ public class ConversationListFragment extends Fragment {
     private ListView listView;
     private ConversationListAdapter adapter;
     private List<ModelConversation> conversations = new ArrayList<>();
+    private TextView noConversation;
 
     public ConversationListFragment() {}
 
@@ -36,6 +39,7 @@ public class ConversationListFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_conversation_list, container, false); //creates the view
 
         listView = (ListView) view.findViewById(R.id.conversation_list);
+        noConversation = (TextView) view.findViewById(R.id.noConversation);
 
         //If coming from GCM, we unparcel bundle and load conversation detail
         Bundle bundle = getArguments();
@@ -57,6 +61,8 @@ public class ConversationListFragment extends Fragment {
                     listView.setAdapter(adapter);
                     //adapter.notifyDataSetChanged();
                     Log.v("Data Set Changed: ", conversations.toString());
+                } else {
+                    noConversation.setVisibility(View.VISIBLE);
                 }
             }
 

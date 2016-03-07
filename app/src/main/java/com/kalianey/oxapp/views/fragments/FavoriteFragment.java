@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelFavorite;
@@ -25,7 +26,7 @@ public class FavoriteFragment extends Fragment {
     private FavoriteListAdapter mAdapter;
     QueryAPI query = new QueryAPI();
     private ArrayList<ModelUser> users = new ArrayList<ModelUser>();
-
+    private TextView noFavorite;
 
     public static FavoriteFragment getInstance(int position) {
 
@@ -46,6 +47,7 @@ public class FavoriteFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_favorite, container, false);
         listView = (ListView) view.findViewById(R.id.listView);
+        noFavorite = (TextView) view.findViewById(R.id.noFav);
 
         query.favorite(new QueryAPI.ApiResponse<ModelFavorite>() {
             @Override
@@ -72,6 +74,11 @@ public class FavoriteFragment extends Fragment {
                                 mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
                                 listView.setAdapter(mAdapter);
                                 mAdapter.notifyDataSetChanged();
+
+                                if (favorite.getMy().isEmpty()) {
+                                    noFavorite.setVisibility(View.VISIBLE);
+                                }
+
                                 break;
 
                             case 1:
@@ -81,6 +88,11 @@ public class FavoriteFragment extends Fragment {
                                 mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
                                 listView.setAdapter(mAdapter);
                                 mAdapter.notifyDataSetChanged();
+
+                                if (favorite.getMe().isEmpty()) {
+                                    noFavorite.setVisibility(View.VISIBLE);
+                                }
+
                                 break;
                             case 2:
                                 // Mutual fav fragment activity
@@ -89,6 +101,11 @@ public class FavoriteFragment extends Fragment {
                                 mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
                                 listView.setAdapter(mAdapter);
                                 mAdapter.notifyDataSetChanged();
+
+                                if (favorite.getMutual().isEmpty()) {
+                                    noFavorite.setVisibility(View.VISIBLE);
+                                }
+
                                 break;
                         }
                     }

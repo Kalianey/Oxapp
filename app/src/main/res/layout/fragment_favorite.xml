@@ -8,6 +8,19 @@
     android:background="#ffffff"
     android:id="@+id/parentView">
 
+    <TextView
+        android:id="@+id/noFav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:text="@string/noFavorite"
+        android:textColor="@color/gray_light"
+        android:textSize="@dimen/textsize_medium_small"
+        android:textStyle="italic"
+        android:minHeight="50dp"
+        android:visibility="gone"/>
 
     <ListView
     android:id="@+id/listView"

@@ -206,46 +206,16 @@ public class ProfileFragment extends Fragment {
                 if (friendCount > 0) {
                     friendsAdapter = new ProfileFriendListViewAdapter(getActivity(), R.layout.profile_friend_list_item, user.getFriends());
                     friendsListView.setAdapter(friendsAdapter);
-//                friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                        Log.v("friend clicked: ", Integer.toString(position));
-//                    }
-//                });
                 } else {
                     noFriendText.setVisibility(view.VISIBLE);
                     friendsListView.setVisibility(view.GONE);
                 }
 
                 //Profile Questions
-
                 stickyList = (StickyListHeadersListView) view.findViewById(R.id.questions_list);
                 ProfileQuestionListAdapter adapter = new ProfileQuestionListAdapter(getActivity(), user);
                 stickyList.setAdapter(adapter);
 
-
-//                final ItemClickSupport itemClick = ItemClickSupport.addTo(friendsAdapter);
-//
-//                friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                        Intent i = new Intent(getActivity(), Profile.class);
-//                        Bundle mBundle = new Bundle();
-//                        mBundle.putSerializable("userObj", user.getFriends().get(position));
-//
-//                        int[] screen_location = new int[2];
-//                        friendsListView.getLocationOnScreen(screen_location);
-//
-//                        mBundle.putInt(PACKAGE + ".left", screen_location[0]);
-//                        mBundle.putInt(PACKAGE + ".top", screen_location[1]);
-//                        mBundle.putInt(PACKAGE + ".width", 90);
-//                        mBundle.putInt(PACKAGE + ".height", 90);
-//
-//                        i.putExtras(mBundle);
-//                        getActivity().startActivity(i);
-//                    }
-//                });
 
             }
         });

@@ -114,5 +114,7 @@
     <string name="noPhotos">No photo yet.</string>
     <string name="noFriends">No friend yet.</string>
     <string name="seen">seen</string>
+    <string name="noFavorite">No favorite yet.</string>
+    <string name="noConversation">No conversation yet.</string>
 
 </resources>

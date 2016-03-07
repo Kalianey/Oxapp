@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelFriend;
@@ -18,6 +19,8 @@ import com.kalianey.oxapp.views.adapters.FavoriteListAdapter;
 import com.kalianey.oxapp.views.adapters.FriendListAdapter;
 import com.kalianey.oxapp.views.adapters.FriendRequestListAdapter;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,7 @@ public class FriendsListFragment extends Fragment {
     private View parentView;
     private ListView listView;
     private FriendListAdapter mAdapter;
+    private TextView noFriends;
 
     public static FriendsListFragment getInstance(int position) {
 
@@ -51,6 +55,7 @@ public class FriendsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView = inflater.inflate(R.layout.fragment_friend_list, container, false);
         listView   = (ListView) parentView.findViewById(R.id.listView);
+        noFriends = (TextView) parentView.findViewById(R.id.noFriends);
         initView();
 
         return parentView;
@@ -77,6 +82,10 @@ public class FriendsListFragment extends Fragment {
                             mAdapter = new FriendListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
                             listView.setAdapter(mAdapter);
                             mAdapter.notifyDataSetChanged();
+
+                            if (result.isEmpty()) {
+                                noFriends.setVisibility(View.VISIBLE);
+                            }
                         }
                     });
                     break;
@@ -91,6 +100,11 @@ public class FriendsListFragment extends Fragment {
                             FriendRequestListAdapter adapter = new FriendRequestListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
                             listView.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
+
+                            if (result.isEmpty()) {
+                                noFriends.setText("No friend request.");
+                                noFriends.setVisibility(View.VISIBLE);
+                            }
                         }
                     });
                     break;
