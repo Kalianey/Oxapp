@@ -1,8 +1,12 @@
 package com.kalianey.oxapp.views.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.utils.QueryAPI;
@@ -29,6 +34,9 @@ public class ConversationListFragment extends Fragment {
     private ConversationListAdapter adapter;
     private List<ModelConversation> conversations = new ArrayList<>();
     private TextView noConversation;
+    private View view;
+
+    private BroadcastReceiver gcmReceiver;
 
     public ConversationListFragment() {}
 
@@ -36,11 +44,40 @@ public class ConversationListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.fragment_conversation_list, container, false); //creates the view
+        view = inflater.inflate(R.layout.fragment_conversation_list, container, false); //creates the view
 
         listView = (ListView) view.findViewById(R.id.conversation_list);
         noConversation = (TextView) view.findViewById(R.id.noConversation);
 
+        gcmReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                loadConversationList();
+            }
+        };
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+
+        super.onResume();
+
+        loadConversationList();
+
+        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(gcmReceiver, new IntentFilter("msg-received"));
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).unregisterReceiver(gcmReceiver);
+    }
+
+
+    private void loadConversationList(){
         //If coming from GCM, we unparcel bundle and load conversation detail
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -67,20 +104,6 @@ public class ConversationListFragment extends Fragment {
             }
 
         });
-
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-
-        super.onResume();
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
 }

@@ -78,6 +78,7 @@ public class ProfileFragment extends Fragment {
 
     //UI Elements
     private View view;
+    private UIParallaxScroll scrollView;
     private RecyclerView gridView;
     private NetworkImageView mCoverImageView;
     private UICircularImage mAvatarImageView;
@@ -139,16 +140,17 @@ public class ProfileFragment extends Fragment {
 
         //initializeRecyclerView();
 
-        view.scrollTo(0, 10);
-
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
         //Set up UI elements
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
+        gridView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
         friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
-        ((UIParallaxScroll) view.findViewById(R.id.scroller)).setOnScrollChangedListener(mOnScrollChangedListener);
+        friendsListView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
+        scrollView = (UIParallaxScroll) view.findViewById(R.id.scroller);
+        scrollView.setOnScrollChangedListener(mOnScrollChangedListener);
         mCoverImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
         mAvatarImageView = (UICircularImage) view.findViewById(R.id.image_view);
         // mTextView = (TextView) view.findViewById(R.id.contact);
@@ -285,7 +287,13 @@ public class ProfileFragment extends Fragment {
 
 
         } else {
+            //If user is the logged in user
+            // we set the back button to slidemenu button
             mNavigationBackBtn.setBackgroundResource(R.drawable.titlebar_menu_selector);
+            //Add a bit of margin to the menu button
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mNavigationBackBtn.getLayoutParams();
+            params.topMargin = 50;
+            //Hide friend and favorite buttons
             mLinearLayoutButtonHolder.setVisibility(view.INVISIBLE);
             mAddFriend.setVisibility(view.INVISIBLE);
             mAddFavorite.setVisibility(view.INVISIBLE);
@@ -455,6 +463,14 @@ public class ProfileFragment extends Fragment {
                 favoriteWasTapped();
             }
         });
+
+        //set the scrollview to always scroll to top onCreate
+//        scrollView.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                scrollView.fullScroll(ScrollView.FOCUS_UP);
+//            }
+//        }, 200);
 
         //Return the View
         return view;

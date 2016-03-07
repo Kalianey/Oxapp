@@ -20,7 +20,7 @@
     <string name="Sign_in_label">Sign In</string>
     <string name="Sign_in_forgot_password_label">Forgot password?</string>
     <string name="sign_in_btn">Sign In</string>
-    <string name="sign_in_register_label">Don\'t have an account? Sign up</string>
+    <string name="sign_in_register_label">Don\'t have an account? Sign up below with Facebook or Google, or on the web</string>
     <string name="closeDrawer">Open</string>
     <string name="openDrawer">Close</string>
     <string name="title_activity_main">MainActivity</string>

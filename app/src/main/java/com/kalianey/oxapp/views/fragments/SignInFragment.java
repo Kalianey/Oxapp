@@ -63,7 +63,7 @@ public class SignInFragment extends Fragment implements
 
     private EditText email;
     private EditText password;
-    private Text noAccount;
+    private TextView registerTextView;
     private TextView mTermsTextView;
     private Button signInButton;
     private ProgressDialog pDialog;
@@ -150,6 +150,11 @@ public class SignInFragment extends Fragment implements
         email.getBackground().mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         password = (EditText) view.findViewById(R.id.passwordInput);
         password.getBackground().mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        registerTextView = (TextView) view.findViewById(R.id.register);
+        String txt_links = "Don't have an account? Register with Facebook or Google below, <a href='"+AppController.getHostname()+"join'> or on the web</a>";
+        registerTextView.setLinksClickable(true);
+        registerTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        registerTextView.setText(Html.fromHtml(txt_links));
         mTermsTextView = (TextView) view.findViewById(R.id.termsText);
         String str_links = "By continuing, I agree to the <a href='"+AppController.getHostname()+"conditions-d-utilisation'>Terms & Conditions</a>";
         mTermsTextView.setLinksClickable(true);
