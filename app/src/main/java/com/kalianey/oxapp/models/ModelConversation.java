@@ -27,7 +27,10 @@ public class ModelConversation implements Serializable {
     private String conversationRead;
     @SerializedName("reply")
     private String conversationReplied;
-    private String onlineStatusBool;
+    @SerializedName("onlineStatus")
+    private String onlineStatus;
+
+    private Boolean onlineStatusBool;
     private String newMessageCount;
 
     //private List<ModelConversation> conv ; //initialized with a null
@@ -104,12 +107,33 @@ public class ModelConversation implements Serializable {
         this.conversationReplied = conversationReplied;
     }
 
-    public String getonlineStatusBool() {
-        return onlineStatusBool;
+    public String getonlineStatus() {
+        return onlineStatus;
     }
-    public void setonlineStatusBool(String onlineStatusBool){
-        this.onlineStatusBool = onlineStatusBool;
+    public void setonlineStatus(String onlineStatus){
+        this.onlineStatus = onlineStatus;
     }
+
+    public Boolean getOnlineStatusBool() {
+        if (this.onlineStatus.equals("1"))
+        {
+            this.onlineStatusBool = true;
+        } else {
+            this.onlineStatusBool = false;
+        }
+
+        return  this.onlineStatusBool;
+    }
+
+    public void setOnlineStatusBool(Boolean onlineStatusBool) {
+        if (this.onlineStatus.equals("1"))
+        {
+            this.onlineStatusBool = true;
+        } else {
+            this.onlineStatusBool = false;
+        }
+    }
+
 
     public String getnewMessageCount() {
         return newMessageCount;

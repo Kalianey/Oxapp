@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.Window;
 
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.utils.Utility;
 
 public class SignIn extends AppCompatActivity {
 
@@ -15,7 +16,7 @@ public class SignIn extends AppCompatActivity {
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-
+        Utility.setupUITouchListener(findViewById(R.id.fragment), SignIn.this);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
     }

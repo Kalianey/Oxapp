@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -79,11 +80,13 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
             viewHolder = new ViewHolder();
 
             //Get references to our views
+            viewHolder.itemWrapper = (LinearLayout) row.findViewById(R.id.item_wrapper);
             viewHolder.avatarImageView = (UICircularImage) row.findViewById(R.id.avatarImageView);
             viewHolder.userStatusImageView = (ImageView) row.findViewById(R.id.userStatus);
             viewHolder.username = (TextView) row.findViewById(R.id.username);
             viewHolder.previewText = (TextView) row.findViewById(R.id.previewText);
             viewHolder.date = (TextView) row.findViewById(R.id.date);
+            viewHolder.seenStatusImageView = (ImageView) row.findViewById(R.id.seenStatusTick);
 
             row.setTag(viewHolder);
 
@@ -103,7 +106,22 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
         viewHolder.username.setText(viewHolder.conversation.getName());
         viewHolder.previewText.setText(viewHolder.conversation.getPreviewText());
         viewHolder.date.setText(viewHolder.conversation.getTimeLabel());
-        //viewHolder.userStatusImageView : here change colour of image of  here according to bool
+        viewHolder.userStatusImageView.setImageResource(R.drawable.online_button);
+
+        if (viewHolder.conversation.getConversationRead().equals("0")) {
+            viewHolder.itemWrapper.setBackgroundResource(R.color.gray_light);
+            viewHolder.seenStatusImageView.setVisibility(View.GONE);
+        }
+
+        if (viewHolder.conversation.getconversationReplied().equals("true")) {
+            viewHolder.seenStatusImageView.setImageResource(R.drawable.tick_icon);
+        } else if (viewHolder.conversation.getConversationViewed().equals("true")) {
+            viewHolder.seenStatusImageView.setImageResource(R.drawable.double_tick_icon);
+        }
+
+        if (viewHolder.conversation.getOnlineStatusBool()) {
+            viewHolder.userStatusImageView.setVisibility(View.VISIBLE);
+        }
 
         //Set onClick item
         final ViewHolder finalViewHolder = viewHolder;
@@ -155,11 +173,13 @@ public class ConversationListAdapter extends ArrayAdapter<ModelConversation> {
     public class ViewHolder {
 
         ModelConversation conversation;
+        LinearLayout itemWrapper;
         UICircularImage avatarImageView;
         ImageView userStatusImageView;
         TextView username;
         TextView previewText;
         TextView date;
+        ImageView seenStatusImageView;
 
     }
 

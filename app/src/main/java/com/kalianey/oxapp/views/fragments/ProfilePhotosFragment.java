@@ -33,6 +33,7 @@ public class ProfilePhotosFragment extends Fragment {
     private AwesomePagerAdapter awesomeAdapter;
     private ArrayList<ModelAttachment> photos;
     private int currentIndex;
+    private Boolean toggleCloseBtn = false;
 
     /** Called when the activity is first created. */
 
@@ -83,39 +84,36 @@ public class ProfilePhotosFragment extends Fragment {
          */
         @Override
         public Object instantiateItem(ViewGroup collection, int position) {
-            LayoutInflater inflater = (LayoutInflater) cxt.getSystemService(cxt.LAYOUT_INFLATER_SERVICE);
 
-            // button height/width *pixels*
-            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
-            lp.height = 60;
-            lp.width = 60;
+            LayoutInflater inflater = LayoutInflater.from(cxt);
+            View parentView = inflater.inflate(R.layout.fragment_profile_photos_item, collection, false) ; //resource, viewGroup, attachToGroup
 
-            mImageView = new NetworkImageView(cxt);
+            final NetworkImageView mImageView  = (NetworkImageView) parentView.findViewById(R.id.imageView);
+            final ImageButton closeBtn = (ImageButton) parentView.findViewById(R.id.closeBtn);
 
             mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
-            mImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (toggleCloseBtn) {
+                        closeBtn.setVisibility(View.INVISIBLE);
+                    } else {
+                        closeBtn.setVisibility(View.VISIBLE);
+                    }
+                    toggleCloseBtn = !toggleCloseBtn;
+                }
+            });
 
-            collection.addView(mImageView);
+            closeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().finish();
+                }
+            });
 
-            ImageButton btnClose = new ImageButton(getActivity());
-            btnClose.setImageResource(R.drawable.close_thin);
-            btnClose.setLayoutParams(lp);
-            btnClose.setBackgroundColor(getResources().getColor(R.color.red));
-            collection.addView(btnClose);
-            btnClose.bringToFront();
+            collection.addView(parentView);
 
-            return mImageView;
-
-            //test with external layout
-           // LayoutInflater inflater = LayoutInflater.from(cxt);
-//            View parentView = inflater.inflate(R.layout.fragment_profile_photos_item, collection, false) ; //resource, viewGroup, attachToGroup
-//
-//            NetworkImageView mImageView  = (NetworkImageView) parentView.findViewById(R.id.imageView);
-//            ImageButton closeBtn = (ImageButton) parentView.findViewById(R.id.closeBtn);
-//
-//            mImageView.setImageUrl(photos.get(position).getUrl(), imageLoader);
-//
-//            return parentView;
+            return parentView;
         }
 
         /**
@@ -130,7 +128,7 @@ public class ProfilePhotosFragment extends Fragment {
          */
         @Override
         public void destroyItem(ViewGroup collection, int position, Object view) {
-            collection.removeView((NetworkImageView) view);
+            collection.removeView((View) view);
         }
 
 

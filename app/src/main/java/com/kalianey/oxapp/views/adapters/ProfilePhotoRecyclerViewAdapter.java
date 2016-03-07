@@ -53,8 +53,6 @@ public class ProfilePhotoRecyclerViewAdapter extends  RecyclerView.Adapter<Profi
 
         final View itemView = LayoutInflater.from(listContext).inflate(R.layout.profile_photogrid_item, parent, false);
 
-
-
         return new ProfilePhotoRecyclerViewAdapter.ViewHolder(itemView);
     }
 

@@ -31,7 +31,6 @@ import android.widget.Toast;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.commit451.nativestackblur.NativeStackBlur;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.models.ModelAttachment;
@@ -44,6 +43,7 @@ import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
 import com.kalianey.oxapp.views.activities.MainActivity;
 import com.kalianey.oxapp.views.activities.Message;
+import com.kalianey.oxapp.views.activities.ProfilePhotos;
 import com.kalianey.oxapp.views.adapters.ProfileFriendListViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfilePhotoRecyclerViewAdapter;
 import com.kalianey.oxapp.views.adapters.ProfileQuestionListAdapter;
@@ -79,8 +79,8 @@ public class ProfileFragment extends Fragment {
     //UI Elements
     private View view;
     private RecyclerView gridView;
-    private NetworkImageView cImageView;
-    private UICircularImage mImageView;
+    private NetworkImageView mCoverImageView;
+    private UICircularImage mAvatarImageView;
     private RelativeLayout mLayoutContainer;
     private FrameLayout mNavigationTop;
     private TextView mNavigationTitle;
@@ -90,7 +90,7 @@ public class ProfileFragment extends Fragment {
     private LinearLayout mLinearLayoutButtonHolder;
     private ImageButton mAddFriend;
     private ImageButton mAddFavorite;
-    private ProfilePhotoRecyclerViewAdapter adapter;
+    private ProfilePhotoRecyclerViewAdapter profilePhotoRecyclerViewAdapter;
     private TwoWayView friendsListView;
     private ProfileFriendListViewAdapter friendsAdapter;
     private TextView profileFriendText;
@@ -149,8 +149,8 @@ public class ProfileFragment extends Fragment {
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
         friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
         ((UIParallaxScroll) view.findViewById(R.id.scroller)).setOnScrollChangedListener(mOnScrollChangedListener);
-        cImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
-        mImageView = (UICircularImage) view.findViewById(R.id.image_view);
+        mCoverImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
+        mAvatarImageView = (UICircularImage) view.findViewById(R.id.image_view);
         // mTextView = (TextView) view.findViewById(R.id.contact);
         mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
         mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
@@ -171,7 +171,7 @@ public class ProfileFragment extends Fragment {
         mNavigationTop.getBackground().setAlpha(0);
         mNavigationTitle.setVisibility(View.INVISIBLE);
 
-        mImageView.bringToFront();
+        mAvatarImageView.bringToFront();
 
         //Get logged in user
         if (user == null) {
@@ -193,9 +193,9 @@ public class ProfileFragment extends Fragment {
                 photoList.clear();
                 photoList.addAll(0, user.getPhotos());
                 initializeRecyclerView();
-                adapter.setPhotos(photoList);
-                adapter.setUser(user);
-                adapter.notifyDataSetChanged();
+                profilePhotoRecyclerViewAdapter.setPhotos(photoList);
+                profilePhotoRecyclerViewAdapter.setUser(user);
+                profilePhotoRecyclerViewAdapter.notifyDataSetChanged();
 
                 if (photoCount == 0) {
                     noPhotoText.setVisibility(view.VISIBLE);
@@ -265,21 +265,21 @@ public class ProfileFragment extends Fragment {
             imgId = 1;//bundle.getInt("img");
 
             //Our Animation initialization
-            ViewTreeObserver observer = mImageView.getViewTreeObserver();
+            ViewTreeObserver observer = mAvatarImageView.getViewTreeObserver();
             observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
 
-                    mImageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    mAvatarImageView.getViewTreeObserver().removeOnPreDrawListener(this);
 
                     int[] screen_location = new int[2];
-                    mImageView.getLocationOnScreen(screen_location);
+                    mAvatarImageView.getLocationOnScreen(screen_location);
 
                     delta_left = left - screen_location[0];
                     delta_top = top - screen_location[1];
 
-                    scale_width = (float) width / mImageView.getWidth();
-                    scale_height = (float) height / mImageView.getHeight();
+                    scale_width = (float) width / mAvatarImageView.getWidth();
+                    scale_height = (float) height / mAvatarImageView.getHeight();
 
                     runEnterAnimation();
 
@@ -321,10 +321,10 @@ public class ProfileFragment extends Fragment {
             mAddFavorite.setVisibility(view.INVISIBLE);
         }
 
-        cImageView.setImageUrl(user.getCover_url(), imageLoader);
+        mCoverImageView.setImageUrl(user.getCover_url(), imageLoader);
 
         if (user.getCover_url() != null) {
-            mLayoutContainer.setBackground(cImageView.getDrawable());
+            mLayoutContainer.setBackground(mCoverImageView.getDrawable());
 
         } else {
             //If there is no cover image, we set a default one and blur it
@@ -338,12 +338,31 @@ public class ProfileFragment extends Fragment {
         mTitleView.setText(title);
         mSum.setText(sum);
 
-        mImageView.setImageResource(R.drawable.abc_btn_rating_star_off_mtrl_alpha);
+        mAvatarImageView.setImageResource(R.drawable.abc_btn_rating_star_off_mtrl_alpha);
 
         Picasso.with(getActivity())
                 .load(user.getAvatar_url())
                 .noFade()
-                .into(mImageView);
+                .into(mAvatarImageView);
+
+        mAvatarImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Create the array to hold our photo
+                ArrayList<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+                ModelAttachment attachment = new ModelAttachment();
+                attachment.setId("0");
+                attachment.setUrl(user.getAvatar_url());
+                photos.add(0, attachment);
+                //Create the intent
+                Intent intent = new Intent(getActivity(), ProfilePhotos.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("photoList", photos);
+                mBundle.putInt("photoIndex", 0);
+                intent.putExtras(mBundle);
+                startActivity(intent);
+            }
+        });
 
 
         //Set up the navigation
@@ -478,7 +497,7 @@ public class ProfileFragment extends Fragment {
 
         Integer photoRows = 1;
         Integer gridHeight = 100;
-        if (photoCount > 1 && photoCount < 10) {
+        if (photoCount > 4 && photoCount < 10) {
             photoRows = 2;
             gridHeight = 200;
         } else if (photoCount > 10){
@@ -489,8 +508,8 @@ public class ProfileFragment extends Fragment {
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
         StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(photoRows,StaggeredGridLayoutManager.HORIZONTAL );
         gridLayoutManager.setOrientation(gridLayoutManager.HORIZONTAL);
-        adapter = new ProfilePhotoRecyclerViewAdapter(getActivity());
-        gridView.setAdapter(adapter);
+        profilePhotoRecyclerViewAdapter = new ProfilePhotoRecyclerViewAdapter(getActivity());
+        gridView.setAdapter(profilePhotoRecyclerViewAdapter);
         gridView.setLayoutManager(gridLayoutManager);
         gridView.setHasFixedSize(true);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, gridHeight);
@@ -521,14 +540,14 @@ public class ProfileFragment extends Fragment {
 
     private void runEnterAnimation() {
 
-        ViewHelper.setPivotX(mImageView, 0.f);
-        ViewHelper.setPivotY(mImageView, 0.f);
-        ViewHelper.setScaleX(mImageView, scale_width);
-        ViewHelper.setScaleY(mImageView, scale_height);
-        ViewHelper.setTranslationX(mImageView, delta_left);
-        ViewHelper.setTranslationY(mImageView, delta_top);
+        ViewHelper.setPivotX(mAvatarImageView, 0.f);
+        ViewHelper.setPivotY(mAvatarImageView, 0.f);
+        ViewHelper.setScaleX(mAvatarImageView, scale_width);
+        ViewHelper.setScaleY(mAvatarImageView, scale_height);
+        ViewHelper.setTranslationX(mAvatarImageView, delta_left);
+        ViewHelper.setTranslationY(mAvatarImageView, delta_top);
 
-        animate(mImageView).
+        animate(mAvatarImageView).
                 setDuration(DURATION).
                 scaleX(1.f).
                 scaleY(1.f).
@@ -550,14 +569,14 @@ public class ProfileFragment extends Fragment {
 
     private void runExitAnimation(final Runnable end_action) {
 
-        ViewHelper.setPivotX(mImageView, 0.f);
-        ViewHelper.setPivotY(mImageView, 0.f);
-        ViewHelper.setScaleX(mImageView, 1.f);
-        ViewHelper.setScaleY(mImageView, 1.f);
-        ViewHelper.setTranslationX(mImageView, 0.f);
-        ViewHelper.setTranslationY(mImageView, 0.f);
+        ViewHelper.setPivotX(mAvatarImageView, 0.f);
+        ViewHelper.setPivotY(mAvatarImageView, 0.f);
+        ViewHelper.setScaleX(mAvatarImageView, 1.f);
+        ViewHelper.setScaleY(mAvatarImageView, 1.f);
+        ViewHelper.setTranslationX(mAvatarImageView, 0.f);
+        ViewHelper.setTranslationY(mAvatarImageView, 0.f);
 
-        animate(mImageView).
+        animate(mAvatarImageView).
                 setDuration(DURATION).
                 scaleX(scale_width).
                 scaleY(scale_height).
