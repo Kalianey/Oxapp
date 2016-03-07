@@ -17,44 +17,44 @@
 
     <LinearLayout
         android:id="@+id/inner_wrap"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="right"
-        >
+        android:layout_gravity="right">
         <!--black bubble -->
         <LinearLayout
                 android:id="@+id/v1"
-                android:layout_width="250dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/pad_10dp"
-                android:background="@drawable/bubble_black"
+                android:layout_marginLeft="@dimen/pad_10dp"
+                android:background="@drawable/bubble_out"
                 android:gravity="center_vertical"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:paddingBottom="@dimen/pad_5dp"
                 android:paddingLeft="@dimen/pad_15dp"
                 android:paddingRight="@dimen/pad_chat_item"
                 android:paddingTop="@dimen/pad_5dp"
             android:baselineAligned="false"
-            android:layout_marginRight="-15dp">
+            android:layout_marginRight="-5dp">
 
             <ImageView
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:id="@+id/attachment"
-                android:layout_gravity="center" />
+                android:layout_gravity="center|right" />
 
             <TextView
                 android:id="@+id/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxWidth="200dp"
                 android:text=""
                 android:autoLink="web|phone|email"
                 android:linksClickable="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/txt_14sp"
-                android:gravity="center_vertical"
-                android:paddingTop="10dp" />
+                android:layout_gravity="center|right" />
 
         </LinearLayout>
 

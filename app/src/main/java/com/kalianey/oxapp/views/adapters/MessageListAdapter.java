@@ -3,14 +3,27 @@ package com.kalianey.oxapp.views.adapters;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.graphics.drawable.ScaleDrawable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
@@ -37,6 +50,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     private ModelUser loggedInUser = AppController.getInstance().getLoggedInUser();
     private ModelUser senderUser;
     private Integer countMessage = 0;
+    private ViewHolder viewHolder;
 
     public MessageListAdapter(Activity context, int resource, List<ModelMessage> objs) {
         super(context, resource, objs);
@@ -100,7 +114,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     {
 
         View row = convertView;
-        ViewHolder viewHolder = null;
+        viewHolder = null;
 
         int cellType = this.getItemViewType(position);
         String avatarUrl = (cellType == CELL_SENT) ? loggedInUser.getAvatar_url() : senderUser.getAvatar_url();
@@ -121,6 +135,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             }
 
             //Get references to our views
+            viewHolder.linearLayout = (LinearLayout) row.findViewById(R.id.v1);
             viewHolder.avatarImageView = (UICircularImage) row.findViewById(R.id.avatarImageView);
             viewHolder.text = (TextView) row.findViewById(R.id.text);
             viewHolder.date = (TextView) row.findViewById(R.id.date);
@@ -161,15 +176,63 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             // so we load the image directly from the file on the phone
             if (viewHolder.message.getDownloadUrl() == null) {
                 if(viewHolder.message.getImage().exists()){
-                    Bitmap myBitmap = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
-                    viewHolder.attachment.setImageBitmap(myBitmap);
+//                    Bitmap myBitmap = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
+//                    viewHolder.attachment.setImageBitmap(myBitmap);
+
+                    //test crop image
+                    Bitmap original = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
+                    Bitmap mask = BitmapFactory.decodeResource(listContext.getResources(),R.drawable.bubble_out);
+                    Bitmap result = Bitmap.createBitmap(mask.getWidth(), mask.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas mCanvas = new Canvas(result);
+                    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+                    mCanvas.drawBitmap(original, 0, 0, null);
+                    mCanvas.drawBitmap(mask, 0, 0, paint);
+                    paint.setXfermode(null);
+                    viewHolder.attachment.setImageBitmap(result);
+                    viewHolder.attachment.setScaleType(ImageView.ScaleType.CENTER);
+                    //viewHolder.attachment.setBackgroundResource(R.drawable.background_frame);
                 }
             }
             else {
-                Picasso.with(listContext)
-                        .load(viewHolder.message.getDownloadUrl())
-                        .noFade()
-                        .into(viewHolder.attachment);
+//                Picasso.with(listContext)
+//                        .load(viewHolder.message.getDownloadUrl())
+//                        .noFade()
+//                        .into(viewHolder.attachment);
+
+                final Bitmap mask = BitmapFactory.decodeResource(listContext.getResources(), R.drawable.bubble_out);
+
+//                Drawable drawMask = ContextCompat.getDrawable(listContext, R.drawable.bubble_out);
+//                //drawMask.setBounds(0, 0, 200, 150);
+//                Drawable drawable = new ScaleDrawable(drawMask, 0, 200, 150).getDrawable();
+//                BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+//                final Bitmap mask = bitmapDrawable.getBitmap();
+
+                //final Bitmap mask = ((BitmapDrawable) drawable).getBitmap();
+
+                Glide.with(listContext).
+                    load(viewHolder.message.getDownloadUrl())
+                    .asBitmap()
+                    .override(mask.getWidth(), mask.getHeight())
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+
+                                Bitmap result = Bitmap.createBitmap(mask.getWidth(), mask.getHeight(), Bitmap.Config.ARGB_8888);
+                                Canvas mCanvas = new Canvas(result);
+                                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+                                mCanvas.drawBitmap(bitmap, 0, 0, null);
+                                mCanvas.drawBitmap(mask, 0, 0, paint);
+                                paint.setXfermode(null);
+                                Drawable drawable = new BitmapDrawable(listContext.getResources(), result);
+                                viewHolder.linearLayout.setBackground(drawable);
+//                                viewHolder.attachment.setImageBitmap(result);
+//                                viewHolder.attachment.setScaleType(ImageView.ScaleType.CENTER);
+//                                viewHolder.attachment.setVisibility(View.VISIBLE);
+
+                            }
+                        });
             }
         } else {
             viewHolder.attachment.setVisibility(View.GONE);
@@ -183,6 +246,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     public class ViewHolder {
 
         ModelMessage message;
+        LinearLayout linearLayout;
         UICircularImage avatarImageView;
         TextView text;
         TextView date;
