@@ -3,8 +3,7 @@
     android:id="@+id/llaa"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/date"
@@ -22,27 +21,26 @@
         android:orientation="horizontal"
         android:gravity="right"
         android:layout_gravity="right">
-        <!--black bubble -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:text=""
+            android:layout_gravity="right|center_vertical"
+            android:gravity="center_vertical" />
+        
         <LinearLayout
                 android:id="@+id/v1"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/pad_10dp"
-                android:background="@drawable/bubble_out"
-                android:gravity="center_vertical"
+                android:gravity="right|center_vertical"
                 android:orientation="horizontal"
                 android:paddingBottom="@dimen/pad_5dp"
-                android:paddingLeft="@dimen/pad_15dp"
-                android:paddingRight="@dimen/pad_chat_item"
                 android:paddingTop="@dimen/pad_5dp"
             android:baselineAligned="false"
-            android:layout_marginRight="-5dp">
-
-            <ImageView
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:id="@+id/attachment"
-                android:layout_gravity="center|right" />
+            android:layout_marginRight="-5dp"
+            android:layout_weight="0.2">
 
             <TextView
                 android:id="@+id/text"
@@ -54,7 +52,35 @@
                 android:linksClickable="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/txt_14sp"
-                android:layout_gravity="center|right" />
+                android:layout_gravity="center|right"
+                android:gravity="center_vertical|center_horizontal"
+                android:padding="10dp"
+                android:background="@drawable/bubble_out"/>
+
+            <!-- Show loading bar for images -->
+            <RelativeLayout
+                android:id="@+id/loadingPanel"
+                android:layout_width="100dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bubble_out"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+            </RelativeLayout>
+            <!-- End show loading bar -->
+
+            <!-- In case of media msg -->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/attachment"
+                android:layout_gravity="center|right"
+                android:visibility="gone"/>
+            <!-- End in case of media msg -->
 
         </LinearLayout>
 
