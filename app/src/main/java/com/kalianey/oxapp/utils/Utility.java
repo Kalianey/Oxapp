@@ -3,7 +3,15 @@ package com.kalianey.oxapp.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -244,6 +252,49 @@ public class Utility {
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+
+    /**
+     *  Draw a mask around an image (used for bubble media messages)
+     * @param context
+     * @param image The original image
+     * @param drawable The mask to set on the image (of type NinePatch)
+     * @param w width
+     * @param h height
+     * @return
+     */
+    public static Bitmap drawMediaWithMask(Context context, Bitmap image, int drawable, int w, int h)
+    {
+
+        Bitmap resize_image = Bitmap.createScaledBitmap(image, w, h, false);
+        resize_image.setHasAlpha(true);
+
+        Bitmap mask = BitmapFactory.decodeResource(context.getResources(), drawable);
+        if (mask.getNinePatchChunk()!=null){
+            byte[] chunk = mask.getNinePatchChunk();
+            NinePatchDrawable ninepatch = new NinePatchDrawable(context.getResources(), mask, chunk, new Rect(), null);
+            ninepatch.setBounds(0, 0, w, h);
+
+            Bitmap resize_mask = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas mask_canvas = new Canvas(resize_mask);
+            ninepatch.draw(mask_canvas);
+
+
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+
+            Bitmap final_image = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(final_image);
+            canvas.drawBitmap(resize_image, 0, 0, null);
+            canvas.drawBitmap(resize_mask, 0, 0, paint);
+            paint.setXfermode(null);
+
+            return final_image;
+        }
+
+        return resize_image;
+
     }
 
 }

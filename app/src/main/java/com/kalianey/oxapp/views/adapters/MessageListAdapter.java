@@ -4,37 +4,25 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
+import com.kalianey.oxapp.utils.Utility;
 import com.kalianey.oxapp.views.activities.ProfilePhotos;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -218,7 +206,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                 if(viewHolder.message.getImage().exists()){
 
                     Bitmap bitmap = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
-                    Bitmap result = drawMediaWithMask(bitmap, viewHolder.msgBubbleBg);
+                    Bitmap result = Utility.drawMediaWithMask(listContext, bitmap, viewHolder.msgBubbleBg, w, h);
                     viewHolder.attachment.setImageBitmap(result);
                     viewHolder.attachment.setScaleType(ImageView.ScaleType.FIT_XY);
                     viewHolder.loadingBar.setVisibility(View.GONE);
@@ -236,7 +224,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                     @Override
                     public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
 
-                        Bitmap result = drawMediaWithMask(bitmap, viewHolder.msgBubbleBg);
+                        Bitmap result = Utility.drawMediaWithMask(listContext, bitmap, viewHolder.msgBubbleBg, w, h);
                         Drawable drawable = new BitmapDrawable(listContext.getResources(), result);
                         viewHolder.attachment.setVisibility(View.VISIBLE);
                         viewHolder.loadingBar.setVisibility(View.GONE);
@@ -298,39 +286,6 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         int msgBubbleBg;
         int position=-1;
         Target target;
-
-    }
-
-    public Bitmap drawMediaWithMask(Bitmap image, int drawable)
-    {
-
-        Bitmap resize_image = Bitmap.createScaledBitmap(image, w, h, false);
-        resize_image.setHasAlpha(true);
-
-        Bitmap mask = BitmapFactory.decodeResource(listContext.getResources(),drawable);
-        if (mask.getNinePatchChunk()!=null){
-            byte[] chunk = mask.getNinePatchChunk();
-            NinePatchDrawable ninepatch = new NinePatchDrawable(listContext.getResources(), mask, chunk, new Rect(), null);
-            ninepatch.setBounds(0, 0, w, h);
-
-            Bitmap resize_mask = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            Canvas mask_canvas = new Canvas(resize_mask);
-            ninepatch.draw(mask_canvas);
-
-
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-
-            Bitmap final_image = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(final_image);
-            canvas.drawBitmap(resize_image, 0, 0, null);
-            canvas.drawBitmap(resize_mask, 0, 0, paint);
-            paint.setXfermode(null);
-
-            return final_image;
-        }
-
-        return resize_image;
 
     }
 

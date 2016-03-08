@@ -98,6 +98,8 @@ public class ProfileFragment extends Fragment {
     private TextView noFriendText;
     private TextView profilePhotoText;
     private TextView noPhotoText;
+    private TextView mSum;
+    private UITabs tab;
     private StickyListHeadersListView stickyList;
 
     //Vars
@@ -138,42 +140,14 @@ public class ProfileFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        getUI();
+
         //initializeRecyclerView();
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
-        //Set up UI elements
-        gridView = (RecyclerView) view.findViewById(R.id.grid_view);
-        gridView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
-        friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
-        friendsListView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
-        scrollView = (UIParallaxScroll) view.findViewById(R.id.scroller);
-        scrollView.setOnScrollChangedListener(mOnScrollChangedListener);
-        mCoverImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
-        mAvatarImageView = (UICircularImage) view.findViewById(R.id.image_view);
-        // mTextView = (TextView) view.findViewById(R.id.contact);
-        mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
-        mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
-        mLayoutContainer = (RelativeLayout) view.findViewById(R.id.bg_layout);
-        mTitleView = (TextView) view.findViewById(R.id.title);
-        mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
-        TextView mSum = (TextView) view.findViewById(R.id.sumary);
-        mLinearLayoutButtonHolder = (LinearLayout) view.findViewById(R.id.statistics);
-        mChatButton = (UICircularImage) view.findViewById(R.id.action1);
-        mAddFriend = (ImageButton) view.findViewById(R.id.imageButtonFriend);
-        mAddFavorite = (ImageButton) view.findViewById(R.id.imageButtonFavorite);
-        UITabs tab = (UITabs) view.findViewById(R.id.toggle);
-        profilePhotoText = (TextView) view.findViewById(R.id.profile_photo_text);
-        noPhotoText = (TextView) view.findViewById(R.id.noPhotos);
-        profileFriendText = (TextView) view.findViewById(R.id.profile_friend_text);
-        noFriendText = (TextView) view.findViewById(R.id.noFriends);
-
-        mNavigationTop.getBackground().setAlpha(0);
-        mNavigationTitle.setVisibility(View.INVISIBLE);
-
-        mAvatarImageView.bringToFront();
 
         //Get logged in user
         if (user == null) {
@@ -221,9 +195,6 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
-        title = user.getName();
-        String sum = user.getAddress();
 
         //Set up animation for the user avatar image
         if (!isLoggedInUser) {
@@ -293,26 +264,58 @@ public class ProfileFragment extends Fragment {
             //Add a bit of margin to the menu button
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mNavigationBackBtn.getLayoutParams();
             params.topMargin = 50;
-            //Hide friend and favorite buttons
+            //Hide msg, friend and favorite buttons
+            mChatButton.setVisibility(view.GONE);
             mLinearLayoutButtonHolder.setVisibility(view.INVISIBLE);
             mAddFriend.setVisibility(view.INVISIBLE);
             mAddFavorite.setVisibility(view.INVISIBLE);
         }
 
-        mCoverImageView.setImageUrl(user.getCover_url(), imageLoader);
+        //Set up all the elements and bind actions
+        setUpUI();
 
-        if (user.getCover_url() != null) {
-            mLayoutContainer.setBackground(mCoverImageView.getDrawable());
+        //Return the View
+        return view;
 
-        } else {
-            //If there is no cover image, we set a default one and blur it
-            Bitmap bm = BitmapFactory.decodeResource(getActivity().getApplicationContext().getResources(),
-                    R.drawable.default_bg);
-            Bitmap bg = NativeStackBlur.process(bm, 100);
-            Drawable defaulBackground = new BitmapDrawable(getResources(), bg);
-            mLayoutContainer.setBackground(defaulBackground);
-        }
+    }
 
+    public void getUI() {
+        //Set up UI elements
+        gridView = (RecyclerView) view.findViewById(R.id.grid_view);
+        gridView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
+        friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
+        friendsListView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
+        scrollView = (UIParallaxScroll) view.findViewById(R.id.scroller);
+        scrollView.setOnScrollChangedListener(mOnScrollChangedListener);
+        mCoverImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
+        mAvatarImageView = (UICircularImage) view.findViewById(R.id.image_view);
+        // mTextView = (TextView) view.findViewById(R.id.contact);
+        mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
+        mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
+        mLayoutContainer = (RelativeLayout) view.findViewById(R.id.bg_layout);
+        mTitleView = (TextView) view.findViewById(R.id.title);
+        mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
+        mSum = (TextView) view.findViewById(R.id.sumary);
+        mLinearLayoutButtonHolder = (LinearLayout) view.findViewById(R.id.statistics);
+        mChatButton = (UICircularImage) view.findViewById(R.id.action1);
+        mAddFriend = (ImageButton) view.findViewById(R.id.imageButtonFriend);
+        mAddFavorite = (ImageButton) view.findViewById(R.id.imageButtonFavorite);
+        tab = (UITabs) view.findViewById(R.id.toggle);
+        profilePhotoText = (TextView) view.findViewById(R.id.profile_photo_text);
+        noPhotoText = (TextView) view.findViewById(R.id.noPhotos);
+        profileFriendText = (TextView) view.findViewById(R.id.profile_friend_text);
+        noFriendText = (TextView) view.findViewById(R.id.noFriends);
+
+        mNavigationTop.getBackground().setAlpha(0);
+        mNavigationTitle.setVisibility(View.INVISIBLE);
+
+        mAvatarImageView.bringToFront();
+    }
+
+    public void setUpUI(){
+
+        title = user.getName();
+        String sum = user.getAddress();
         mTitleView.setText(title);
         mSum.setText(sum);
 
@@ -364,7 +367,6 @@ public class ProfileFragment extends Fragment {
             }
 
         });
-
 
         //Set up the Chat Button
         mChatButton.setOnClickListener(new View.OnClickListener() {
@@ -456,7 +458,6 @@ public class ProfileFragment extends Fragment {
                 friendWasTapped();
             }
         });
-
         mAddFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -464,22 +465,24 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        //set the scrollview to always scroll to top onCreate
-//        scrollView.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                scrollView.fullScroll(ScrollView.FOCUS_UP);
-//            }
-//        }, 200);
+        //Set up cover Image
+        mCoverImageView.setImageUrl(user.getCover_url(), imageLoader);
+        if (user.getCover_url() != null) {
+            mLayoutContainer.setBackground(mCoverImageView.getDrawable());
 
-        //Return the View
-        return view;
+        } else {
+            //If there is no cover image, we set a default one and blur it
+            Bitmap bm = BitmapFactory.decodeResource(getActivity().getApplicationContext().getResources(),
+                    R.drawable.default_bg);
+            Bitmap bg = NativeStackBlur.process(bm, 100);
+            Drawable defaulBackground = new BitmapDrawable(getResources(), bg);
+            mLayoutContainer.setBackground(defaulBackground);
+        }
 
     }
 
-
     //http://blog.ashwanik.in/2015/05/handling-adapter-error-while-using-recyclerview.html
-    void initializeRecyclerView() {
+    public void initializeRecyclerView() {
 
         Integer photoRows = 1;
         Integer gridHeight = 100;

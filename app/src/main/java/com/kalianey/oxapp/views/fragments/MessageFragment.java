@@ -269,6 +269,7 @@ public class MessageFragment extends Fragment {
                             query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
                                 @Override
                                 public void onCompletion(List<ModelMessage> result) {
+                                    messages = new ArrayList<ModelMessage>();
                                     messages = result;
                                     adapter.notifyDataSetChanged();
                                 }
