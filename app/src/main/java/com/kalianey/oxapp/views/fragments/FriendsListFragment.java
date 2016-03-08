@@ -56,7 +56,6 @@ public class FriendsListFragment extends Fragment {
         parentView = inflater.inflate(R.layout.fragment_friend_list, container, false);
         listView   = (ListView) parentView.findViewById(R.id.listView);
         noFriends = (TextView) parentView.findViewById(R.id.noFriends);
-        initView();
 
         return parentView;
     }
@@ -79,11 +78,11 @@ public class FriendsListFragment extends Fragment {
                         @Override
                         public void onCompletion(List<ModelFriend> result) {
                             parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
-                            mAdapter = new FriendListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
-                            listView.setAdapter(mAdapter);
-                            mAdapter.notifyDataSetChanged();
-
-                            if (result.isEmpty()) {
+                            if (result != null && !result.isEmpty()) {
+                                mAdapter = new FriendListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
+                                listView.setAdapter(mAdapter);
+                                mAdapter.notifyDataSetChanged();
+                            } else {
                                 noFriends.setVisibility(View.VISIBLE);
                             }
                         }
@@ -97,11 +96,13 @@ public class FriendsListFragment extends Fragment {
                         @Override
                         public void onCompletion(List<ModelUser> result) {
                             parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
-                            FriendRequestListAdapter adapter = new FriendRequestListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
-                            listView.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
+                            if (result != null && !result.isEmpty()) {
+                                FriendRequestListAdapter adapter = new FriendRequestListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
+                                listView.setAdapter(adapter);
+                                adapter.notifyDataSetChanged();
 
-                            if (result.isEmpty()) {
+                            } else
+                            {
                                 noFriends.setText("No friend request.");
                                 noFriends.setVisibility(View.VISIBLE);
                             }
@@ -117,5 +118,6 @@ public class FriendsListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.VISIBLE);
+        initView();
     }
 }

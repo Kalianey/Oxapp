@@ -37,6 +37,7 @@ import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.views.activities.ProfilePhotos;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ import java.util.List;
 public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
     private final int CELL_RCV = 0;
     private final int CELL_SENT = 1;
+
+    private int w = 500;
+    private int h = 380;
 
     private LayoutInflater inflater;
     private List<ModelMessage> messages; //data
@@ -155,8 +159,8 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             viewHolder = (ViewHolder) row.getTag();
         }
 
-        viewHolder.position = position;
-        viewHolder.message = messages.get(position);
+        viewHolder.position = pos;
+        viewHolder.message = messages.get(pos);
 
         if (cellType == CELL_SENT) {
             viewHolder.msgBubbleBg = R.drawable.bubble_out;
@@ -198,14 +202,14 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             viewHolder.recipientRead.setVisibility(View.GONE);
         }
 
-        //Text of the msg
+        //If the message is just Text
         if (!viewHolder.message.getIsMediaMessage()){
             viewHolder.attachment.setVisibility(View.GONE);
             viewHolder.loadingBar.setVisibility(View.GONE);
             viewHolder.text.setText(viewHolder.message.getText());
             viewHolder.text.setVisibility(View.VISIBLE);
         }
-        //Img of the msg
+        //If the msg is an Image
         else {
             viewHolder.text.setVisibility(View.GONE);
 
@@ -216,7 +220,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                     Bitmap bitmap = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
                     Bitmap result = drawMediaWithMask(bitmap, viewHolder.msgBubbleBg);
                     viewHolder.attachment.setImageBitmap(result);
-                    viewHolder.attachment.setScaleType(ImageView.ScaleType.CENTER);
+                    viewHolder.attachment.setScaleType(ImageView.ScaleType.FIT_XY);
                     viewHolder.loadingBar.setVisibility(View.GONE);
                     viewHolder.attachment.setVisibility(View.VISIBLE);
                 }
@@ -226,46 +230,55 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                 row.findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
                 final Bitmap mask = BitmapFactory.decodeResource(listContext.getResources(), viewHolder.msgBubbleBg);
 
-                Glide.with(listContext).
-                    load(viewHolder.message.getDownloadUrl())
-                    .asBitmap()
-                        .into(new SimpleTarget<Bitmap>() {
+                final ViewHolder finalViewHolder = viewHolder;
+
+                viewHolder.target = new Target() {
+                    @Override
+                    public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+
+                        Bitmap result = drawMediaWithMask(bitmap, viewHolder.msgBubbleBg);
+                        Drawable drawable = new BitmapDrawable(listContext.getResources(), result);
+                        viewHolder.attachment.setVisibility(View.VISIBLE);
+                        viewHolder.loadingBar.setVisibility(View.GONE);
+                        viewHolder.attachment.setImageBitmap(result);
+                        viewHolder.attachment.setScaleType(ImageView.ScaleType.FIT_XY);
+                        notifyDataSetChanged();
+
+                        //OnClick, open the image in full screen
+                        viewHolder.attachment.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                                if(viewHolder.position != pos)
-                                {
-                                    return;
-                                }
-
-                                Bitmap result = drawMediaWithMask(bitmap, viewHolder.msgBubbleBg);
-                                Drawable drawable = new BitmapDrawable(listContext.getResources(), result);
-                                viewHolder.attachment.setImageBitmap(result);
-                                viewHolder.attachment.setScaleType(ImageView.ScaleType.CENTER);
-                                viewHolder.loadingBar.setVisibility(View.GONE);
-                                viewHolder.attachment.setVisibility(View.VISIBLE);
-
-                                //OnClick, open the image in full screen
-                                viewHolder.attachment.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        //Create the array to hold our photo
-                                        ArrayList<ModelAttachment> photos = new ArrayList<ModelAttachment>();
-                                        ModelAttachment attachment = new ModelAttachment();
-                                        attachment.setId("0");
-                                        attachment.setUrl(messages.get(pos).getDownloadUrl());
-                                        photos.add(0, attachment);
-                                        //Create the intent
-                                        Intent intent = new Intent(listContext, ProfilePhotos.class);
-                                        Bundle mBundle = new Bundle();
-                                        mBundle.putSerializable("photoList", photos);
-                                        mBundle.putInt("photoIndex", 0);
-                                        intent.putExtras(mBundle);
-                                        listContext.startActivity(intent);
-                                    }
-                                });
-
+                            public void onClick(View v) {
+                                //Create the array to hold our photo
+                                ArrayList<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+                                ModelAttachment attachment = new ModelAttachment();
+                                attachment.setId("0");
+                                attachment.setUrl(messages.get(pos).getDownloadUrl());
+                                photos.add(0, attachment);
+                                //Create the intent
+                                Intent intent = new Intent(listContext, ProfilePhotos.class);
+                                Bundle mBundle = new Bundle();
+                                mBundle.putSerializable("photoList", photos);
+                                mBundle.putInt("photoIndex", 0);
+                                intent.putExtras(mBundle);
+                                listContext.startActivity(intent);
                             }
                         });
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                };
+
+                Picasso.with(listContext)
+                        .load(viewHolder.message.getDownloadUrl())
+                        .into(viewHolder.target);
             }
         }
 
@@ -284,13 +297,12 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         ImageView attachment;
         int msgBubbleBg;
         int position=-1;
+        Target target;
 
     }
 
     public Bitmap drawMediaWithMask(Bitmap image, int drawable)
     {
-        int w = 300;
-        int h = 200;
 
         Bitmap resize_image = Bitmap.createScaledBitmap(image, w, h, false);
         resize_image.setHasAlpha(true);

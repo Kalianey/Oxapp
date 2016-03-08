@@ -509,7 +509,7 @@ public class QueryAPI {
     public void friendList(final ApiResponse<List<ModelFriend>> completion)
     {
 
-        String url = "owapi/messenger/contactList";
+        String url = "owapi/user/friendList";
         final List<ModelFriend> friends = new ArrayList<ModelFriend>();
 
         this.RequestApi(url, new ApiResponse<ApiResult>() {
@@ -517,16 +517,11 @@ public class QueryAPI {
             public void onCompletion(ApiResult res) {
 
                 if (res.success && res.dataIsObject() ) {
-                    JSONObject data = res.getDataAsObject();
-                    JSONArray friendList = null;
-                    try {
-                        friendList = data.getJSONArray("list");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    for (int i = 0; i < friendList.length(); i++) {
+                    JSONObject json = res.getDataAsObject();
+                    for(Iterator<String> iter = json.keys();iter.hasNext();) {
+                        String key = iter.next();
                         try {
-                            JSONObject jsonObject = friendList.getJSONObject(i);
+                            JSONObject jsonObject = json.getJSONObject(key);
                             ModelFriend friend = new Gson().fromJson(jsonObject.toString(), ModelFriend.class);
                             friends.add(friend);
 

@@ -55,7 +55,7 @@ public class FavoriteFragment extends Fragment {
 
                 view.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
 
-                if (favorite != null) {
+                if (favorite != null ) {
 //                    users.clear();
 //                    users = favorite.getMy();
 //                    mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
@@ -69,13 +69,15 @@ public class FavoriteFragment extends Fragment {
                         switch (pos) {
                             case 0:
                                 // My fav fragment activity
-                                users.clear();
-                                users = favorite.getMy();
-                                mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
-                                listView.setAdapter(mAdapter);
-                                mAdapter.notifyDataSetChanged();
-
-                                if (favorite.getMy().isEmpty()) {
+                                if (users != null) {
+                                    users.clear();
+                                    users = favorite.getMy();
+                                    mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
+                                    listView.setAdapter(mAdapter);
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                                else {
+                                    noFavorite.setText("No favorite yet.");
                                     noFavorite.setVisibility(View.VISIBLE);
                                 }
 
@@ -83,26 +85,28 @@ public class FavoriteFragment extends Fragment {
 
                             case 1:
                                 // Added me fav fragment activity
-                                users.clear();
-                                users = favorite.getMe();
-                                mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
-                                listView.setAdapter(mAdapter);
-                                mAdapter.notifyDataSetChanged();
-
-                                if (favorite.getMe().isEmpty()) {
+                                if ( users != null) {
+                                    users.clear();
+                                    users = favorite.getMe();
+                                    mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
+                                    listView.setAdapter(mAdapter);
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                                else {
                                     noFavorite.setVisibility(View.VISIBLE);
                                 }
 
                                 break;
                             case 2:
                                 // Mutual fav fragment activity
-                                users.clear();
-                                users = favorite.getMutual();
-                                mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
-                                listView.setAdapter(mAdapter);
-                                mAdapter.notifyDataSetChanged();
-
-                                if (favorite.getMutual().isEmpty()) {
+                                if (users != null) {
+                                    users.clear();
+                                    users = favorite.getMutual();
+                                    mAdapter = new FavoriteListAdapter(getActivity(), R.layout.fragment_favorite, users);
+                                    listView.setAdapter(mAdapter);
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                                else {
                                     noFavorite.setVisibility(View.VISIBLE);
                                 }
 

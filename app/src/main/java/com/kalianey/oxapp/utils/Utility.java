@@ -33,14 +33,6 @@ public class Utility {
 
     public static final String DATE_FORMAT = "yyyyMMdd";
 
-
-//    public static String getFriendlyDate(Context context, String dateStr) {
-//        Date todayDate = new Date();
-//        if (todayStr.equals(dateStr)) {
-//
-//        }
-//    }
-
     /**
      * Helper method to convert the database representation of the date into something to display
      * to users.  As classy and polished a user experience as "20140102" is, we can do better.

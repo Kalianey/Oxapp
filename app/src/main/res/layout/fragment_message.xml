@@ -84,7 +84,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradiant_bg"
+        android:background="@color/main_color_gray"
         android:gravity="center_vertical"
         tools:context=".MainActivity">
 

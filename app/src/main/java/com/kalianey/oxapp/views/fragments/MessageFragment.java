@@ -88,30 +88,10 @@ public class MessageFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_message, container, false);
 
-        RelativeLayout listViewContainer = (RelativeLayout) view.findViewById(R.id.listViewContainer);
-        mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
-        mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
-        mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
-
-        listView = (ListView) view.findViewById(R.id.message_list);
-        text = (EditText) view.findViewById(R.id.txt);
-        sendButton = (ImageButton) view.findViewById(R.id.btnSend);
-        cameraButton = (ImageButton) view.findViewById(R.id.camera);
-
-
-        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View arg0) {
-                finish();
-            }
-
-        });
+        setUpUI(view);
 
         //Get serialized object
         conversation = (ModelConversation) getActivity().getIntent().getSerializableExtra("convObj");
-        Log.d("ConvId for messList: ", conversation.getId());
-
         mNavigationTitle.setText(conversation.getName());
 
         query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
@@ -136,88 +116,7 @@ public class MessageFragment extends Fragment {
             }
         });
 
-        cameraButton.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openImageIntent();
-            }
-        });
-
-        sendButton.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String messageToSend = text.getText().toString();
-
-                if (!messageToSend.equals("") && messageToSend != null) {
-
-                    query.messageSend(conversation.getId(), messageToSend, new QueryAPI.ApiResponse<ModelMessage>() {
-                        @Override
-                        public void onCompletion(ModelMessage message) {
-
-                            messages.add(message);
-                            adapter.notifyDataSetChanged();
-                            text.setText("");
-
-                        }
-                    });
-                }
-
-            }
-        });
-
-        scrollListener = new EndlessScrollListener(){
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to your AdapterView
-                //TODO: in new conv with not enough messages to display the toast stay there all the time and trigger the method continously
-                if (totalItemsCount > 15) {
-                    loadMore(page);
-                }
-                // or customLoadMoreDataFromApi(totalItemsCount);
-            }
-        };
-        scrollListener.setScrollDirection(EndlessScrollListener.SCROLL_DIRECTION_UP);
-        //Load more on scroll top
-        listView.setOnScrollListener(scrollListener);
-
-
-        /** Set up top notifications TSnackBar **/
-        gcmReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                Bundle extras = intent.getExtras();
-                if (!extras.isEmpty()) {
-                    // Unparcel the bundle included in the Intent
-                    Bundle bundle = extras.getBundle("conversation");
-                    ModelConversation openConvFromMsg = (ModelConversation) bundle.getSerializable("convObj");
-
-                    Log.d("MSG received", "Got message: " + conversation.getPreviewText());
-
-                    if (bundle != null) {
-                        //We check if the conversation notification to show is different from the current open conversation
-                        if (!openConvFromMsg.getId().equals(conversation.getId())) {
-                            // display a notification at the top of the screen
-                            Utility.displayNewMsgNotification(getActivity().getApplicationContext(), getActivity(), MessageFragment.class, bundle, mNavigationTop);
-                        } else {
-                            //we get the latest messageList and notify the adapter to display the received msg
-                            //TODO: check if it would be better to append the new msg without querying the server?
-                            query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
-                                @Override
-                                public void onCompletion(List<ModelMessage> result) {
-                                    messages = result;
-                                    adapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        };
+        setUpNotificationListener();
 
         return view;
     }
@@ -270,7 +169,118 @@ public class MessageFragment extends Fragment {
     }
 
 
-    // Send Image
+    /*** Set up the UI ***/
+    private void setUpUI(View view){
+
+        RelativeLayout listViewContainer = (RelativeLayout) view.findViewById(R.id.listViewContainer);
+        mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
+        mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
+        mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
+
+        listView = (ListView) view.findViewById(R.id.message_list);
+        text = (EditText) view.findViewById(R.id.txt);
+        sendButton = (ImageButton) view.findViewById(R.id.btnSend);
+        cameraButton = (ImageButton) view.findViewById(R.id.camera);
+
+
+        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View arg0) {
+                finish();
+            }
+
+        });
+
+        cameraButton.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageIntent();
+            }
+        });
+
+        sendButton.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String messageToSend = text.getText().toString();
+
+                if (!messageToSend.equals("") && messageToSend != null) {
+
+                    query.messageSend(conversation.getId(), messageToSend, new QueryAPI.ApiResponse<ModelMessage>() {
+                        @Override
+                        public void onCompletion(ModelMessage message) {
+
+                            messages.add(message);
+                            adapter.notifyDataSetChanged();
+                            text.setText("");
+
+                        }
+                    });
+                }
+
+            }
+        });
+
+        scrollListener = new EndlessScrollListener(){
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                //TODO: in new conv with not enough messages to display the toast stay there all the time and trigger the method continously
+                if (totalItemsCount > 15) {
+                    loadMore(page);
+                }
+                // or customLoadMoreDataFromApi(totalItemsCount);
+            }
+        };
+        scrollListener.setScrollDirection(EndlessScrollListener.SCROLL_DIRECTION_UP);
+        //Load more on scroll top
+        listView.setOnScrollListener(scrollListener);
+
+    }
+
+    /*  Set up the Notification Listener for new messages  */
+
+    private void setUpNotificationListener(){
+        /** Set up top notifications TSnackBar **/
+        gcmReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Bundle extras = intent.getExtras();
+                if (!extras.isEmpty()) {
+                    // Unparcel the bundle included in the Intent
+                    Bundle bundle = extras.getBundle("conversation");
+                    ModelConversation openConvFromMsg = (ModelConversation) bundle.getSerializable("convObj");
+
+                    Log.d("MSG received", "Got message: " + conversation.getPreviewText());
+
+                    if (bundle != null) {
+                        //We check if the conversation notification to show is different from the current open conversation
+                        if (!openConvFromMsg.getId().equals(conversation.getId())) {
+                            // display a notification at the top of the screen
+                            Utility.displayNewMsgNotification(getActivity().getApplicationContext(), getActivity(), MessageFragment.class, bundle, mNavigationTop);
+                        } else {
+                            //we get the latest messageList and notify the adapter to display the received msg
+                            //TODO: check if it would be better to append the new msg without querying the server?
+                            query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
+                                @Override
+                                public void onCompletion(List<ModelMessage> result) {
+                                    messages = result;
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    /*** IMAGE PICKER FUNCTIONS ***/
 
     private void openImageIntent() {
 

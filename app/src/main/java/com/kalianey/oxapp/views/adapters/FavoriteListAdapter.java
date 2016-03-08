@@ -46,6 +46,9 @@ public class FavoriteListAdapter extends ArrayAdapter<ModelUser> {
 
     @Override
     public int getCount() {
+        if (users == null ) {
+            return 0;
+        }
         return users.size();
     }
 
