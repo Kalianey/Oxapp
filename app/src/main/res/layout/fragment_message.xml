@@ -84,34 +84,53 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray_light"
+        android:background="@drawable/gradiant_bg"
         android:gravity="center_vertical"
-        android:padding="@dimen/pad_5dp"
-        tools:context=".MainActivity" >
+        tools:context=".MainActivity">
+
+
+            <ImageButton
+            android:id="@+id/camera"
+            style="@style/btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/camera"
+            android:layout_weight="0.7"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@color/transparent"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
 
         <EditText
             android:id="@+id/txt"
             style="@style/edittext_msg"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_weight="1"
-            android:hint="@string/type_msg" >
+            android:hint="@string/type_msg"
+            android:background="@drawable/bg_rounded_corner_filled_white"
+            android:paddingLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp">
         </EditText>
 
-        <ImageView
-            android:id="@+id/camera"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/camera"
-            android:scaleType="centerInside"
-            android:layout_marginRight="10dp" />
-
-        <Button
+        <ImageButton
             android:id="@+id/btnSend"
             style="@style/btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_send" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_send"
+            android:layout_weight="0.7"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@color/transparent"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
 
     </LinearLayout>
 

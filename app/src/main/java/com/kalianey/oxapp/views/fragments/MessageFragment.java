@@ -11,6 +11,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -67,8 +69,8 @@ public class MessageFragment extends Fragment {
     private FrameLayout mNavigationTop;
     private TextView mNavigationTitle;
     private Button mNavigationBackBtn;
-    private Button sendButton;
-    private ImageView cameraButton;
+    private ImageButton sendButton;
+    private ImageButton cameraButton;
     private EditText text;
 
     private Uri outputFileUri;
@@ -93,8 +95,8 @@ public class MessageFragment extends Fragment {
 
         listView = (ListView) view.findViewById(R.id.message_list);
         text = (EditText) view.findViewById(R.id.txt);
-        sendButton = (Button) view.findViewById(R.id.btnSend);
-        cameraButton = (ImageView) view.findViewById(R.id.camera);
+        sendButton = (ImageButton) view.findViewById(R.id.btnSend);
+        cameraButton = (ImageButton) view.findViewById(R.id.camera);
 
 
         mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
@@ -134,6 +136,7 @@ public class MessageFragment extends Fragment {
             }
         });
 
+        cameraButton.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,21 +144,26 @@ public class MessageFragment extends Fragment {
             }
         });
 
+        sendButton.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String messageToSend = text.getText().toString();
 
-                query.messageSend(conversation.getId(), messageToSend, new QueryAPI.ApiResponse<ModelMessage>() {
-                    @Override
-                    public void onCompletion(ModelMessage message) {
+                if (!messageToSend.equals("") && messageToSend != null) {
 
-                        messages.add(message);
-                        adapter.notifyDataSetChanged();
-                        text.setText("");
+                    query.messageSend(conversation.getId(), messageToSend, new QueryAPI.ApiResponse<ModelMessage>() {
+                        @Override
+                        public void onCompletion(ModelMessage message) {
 
-                    }
-                });
+                            messages.add(message);
+                            adapter.notifyDataSetChanged();
+                            text.setText("");
+
+                        }
+                    });
+                }
+
             }
         });
 

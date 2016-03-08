@@ -1,6 +1,7 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.ScaleDrawable;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,13 +30,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.kalianey.oxapp.R;
+import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.UICircularImage;
+import com.kalianey.oxapp.views.activities.ProfilePhotos;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -117,6 +123,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
 
         View row = convertView;
         viewHolder = null;
+        final int pos = position;
 
         int cellType = this.getItemViewType(position);
         String avatarUrl = (cellType == CELL_SENT) ? loggedInUser.getAvatar_url() : senderUser.getAvatar_url();
@@ -127,73 +134,96 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             viewHolder = new ViewHolder();
             inflater = LayoutInflater.from(listContext);
 
-            viewHolder.message = messages.get(position);
-
             if (cellType == CELL_SENT) {
                 row = inflater.inflate(R.layout.message_item_sent, parent, false);
-                viewHolder.msgBubbleBg = R.drawable.bubble_out;
-
             }
             else {
                 row = inflater.inflate(R.layout.message_item_rcv, parent, false);
-                viewHolder.msgBubbleBg = R.drawable.bubble_in;
             }
 
             //Get references to our views
             viewHolder.loadingBar = (RelativeLayout) row.findViewById(R.id.loadingPanel);
             viewHolder.avatarImageView = (UICircularImage) row.findViewById(R.id.avatarImageView);
+            viewHolder.attachment = (ImageView) row.findViewById(R.id.attachment);
             viewHolder.text = (TextView) row.findViewById(R.id.text);
             viewHolder.date = (TextView) row.findViewById(R.id.date);
-            viewHolder.attachment = (ImageView) row.findViewById(R.id.attachment);
-            row.setTag(viewHolder);
+            viewHolder.recipientRead = (ImageView) row.findViewById(R.id.recipientRead);
 
+            row.setTag(viewHolder);
         }
         else {
             viewHolder = (ViewHolder) row.getTag();
         }
 
+        viewHolder.position = position;
         viewHolder.message = messages.get(position);
-        countMessage ++;
-        if (countMessage < 3) {
-            //viewHolder.date.setVisibility(View.GONE);
+
+        if (cellType == CELL_SENT) {
+            viewHolder.msgBubbleBg = R.drawable.bubble_out;
         }
         else {
-            viewHolder.date.setVisibility(View.VISIBLE);
-            countMessage = 0;
+            viewHolder.msgBubbleBg = R.drawable.bubble_in;
         }
-        //We can now display the data
-        //viewHolder.avatarImageView.setImageUrl(avatarUrl, imageLoader); //TODO: Placeholder
 
+        /** ViewHolder is set, so we can initialize the data **/
+
+        //Avatar
         Picasso.with(listContext)
                 .load(avatarUrl)
                 .noFade()
                 .into(viewHolder.avatarImageView);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        String stringDate = sdf.format(new Date(viewHolder.message.getTimeStamp() * 1000));
-        viewHolder.date.setText(stringDate);
-        viewHolder.text.setText(viewHolder.message.getText());
 
-        if (viewHolder.message.getIsMediaMessage()){
+        //Date
+        countMessage ++;
+        if (countMessage < 3) {
+            viewHolder.date.setVisibility(View.GONE);
+        }
+        else {
+            viewHolder.date.setVisibility(View.VISIBLE);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            String stringDate = sdf.format(new Date(viewHolder.message.getTimeStamp() * 1000));
+            viewHolder.date.setText(stringDate);
+            countMessage = 0;
+        }
 
+        //Msg Read
+        int read = viewHolder.message.getRecipientRead();
+        if (read == 0) {
+            viewHolder.recipientRead.setImageResource(R.drawable.tick_icon);
+        }
+        else if (read == 1) {
+            viewHolder.recipientRead.setImageResource(R.drawable.double_tick_icon);
+        }
+        else {
+            viewHolder.recipientRead.setVisibility(View.GONE);
+        }
+
+        //Text of the msg
+        if (!viewHolder.message.getIsMediaMessage()){
+            viewHolder.attachment.setVisibility(View.GONE);
+            viewHolder.loadingBar.setVisibility(View.GONE);
+            viewHolder.text.setText(viewHolder.message.getText());
+            viewHolder.text.setVisibility(View.VISIBLE);
+        }
+        //Img of the msg
+        else {
             viewHolder.text.setVisibility(View.GONE);
 
-            // If the user just sent the image, we don't have a download url
-            // so we load the image directly from the file on the phone
+            // If the user just sent the image, we don't have a download url, so we load the image directly from the local file
             if (viewHolder.message.getDownloadUrl() == null) {
                 if(viewHolder.message.getImage().exists()){
 
                     Bitmap bitmap = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
-                    Bitmap result = drawMedia(bitmap, viewHolder.msgBubbleBg);
+                    Bitmap result = drawMediaWithMask(bitmap, viewHolder.msgBubbleBg);
                     viewHolder.attachment.setImageBitmap(result);
                     viewHolder.attachment.setScaleType(ImageView.ScaleType.CENTER);
+                    viewHolder.loadingBar.setVisibility(View.GONE);
                     viewHolder.attachment.setVisibility(View.VISIBLE);
                 }
             }
+            //Otherwise, we download it from the server
             else {
-
-                //Otherwise, we download it from the server
                 row.findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-                //TODO: put loading bar while downloading
                 final Bitmap mask = BitmapFactory.decodeResource(listContext.getResources(), viewHolder.msgBubbleBg);
 
                 Glide.with(listContext).
@@ -202,20 +232,41 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                                if(viewHolder.position != pos)
+                                {
+                                    return;
+                                }
 
-                                Bitmap result = drawMedia(bitmap, viewHolder.msgBubbleBg);
+                                Bitmap result = drawMediaWithMask(bitmap, viewHolder.msgBubbleBg);
                                 Drawable drawable = new BitmapDrawable(listContext.getResources(), result);
                                 viewHolder.attachment.setImageBitmap(result);
                                 viewHolder.attachment.setScaleType(ImageView.ScaleType.CENTER);
                                 viewHolder.loadingBar.setVisibility(View.GONE);
                                 viewHolder.attachment.setVisibility(View.VISIBLE);
 
+                                //OnClick, open the image in full screen
+                                viewHolder.attachment.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //Create the array to hold our photo
+                                        ArrayList<ModelAttachment> photos = new ArrayList<ModelAttachment>();
+                                        ModelAttachment attachment = new ModelAttachment();
+                                        attachment.setId("0");
+                                        attachment.setUrl(messages.get(pos).getDownloadUrl());
+                                        photos.add(0, attachment);
+                                        //Create the intent
+                                        Intent intent = new Intent(listContext, ProfilePhotos.class);
+                                        Bundle mBundle = new Bundle();
+                                        mBundle.putSerializable("photoList", photos);
+                                        mBundle.putInt("photoIndex", 0);
+                                        intent.putExtras(mBundle);
+                                        listContext.startActivity(intent);
+                                    }
+                                });
+
                             }
                         });
             }
-        } else {
-            viewHolder.attachment.setVisibility(View.GONE);
-            viewHolder.text.setVisibility(View.VISIBLE);
         }
 
         return  row;
@@ -229,13 +280,14 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         UICircularImage avatarImageView;
         TextView text;
         TextView date;
-        TextView delivered;
+        ImageView recipientRead;
         ImageView attachment;
         int msgBubbleBg;
+        int position=-1;
 
     }
 
-    public Bitmap drawMedia(Bitmap image, int drawable )
+    public Bitmap drawMediaWithMask(Bitmap image, int drawable)
     {
         int w = 300;
         int h = 200;
@@ -269,5 +321,6 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         return resize_image;
 
     }
+
 
 }

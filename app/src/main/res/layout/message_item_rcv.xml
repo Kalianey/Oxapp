@@ -100,20 +100,19 @@
     </LinearLayout>
 
 
-
-    <TextView
-        android:id="@+id/delivered"
+    <ImageView
+        android:id="@+id/recipientRead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="delivered"
+        android:src="@drawable/tick_icon"
         android:textColor="@color/main_color_gray"
         android:textSize="@dimen/txt_14sp"
         android:layout_alignRight="@+id/v1"
         android:layout_below="@+id/v1"
         android:layout_marginTop="@dimen/pad_5dp"
         android:layout_marginLeft="@dimen/pad_20dp"
+        android:visibility="gone"
         />
-
 
 
 </LinearLayout>
