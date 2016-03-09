@@ -8,7 +8,6 @@ import android.util.Log;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
-import com.kalianey.oxapp.views.fragments.PeopleFragment;
 
 /**
  * Created by kalianey on 01/03/2016.

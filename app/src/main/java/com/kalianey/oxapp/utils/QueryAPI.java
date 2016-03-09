@@ -19,7 +19,6 @@ import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelQuestion;
 import com.kalianey.oxapp.models.ModelUser;
 
-import org.apache.http.cookie.Cookie;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -280,24 +279,24 @@ public class QueryAPI {
     }
 
 
-    public void RequestMultiPart(File file, String filename, String boundary, String url, Map<String,String> params, final ApiResponse<String> completion ) {
+    public void RequestMultiPart(File file, String filename, String boundary, String url, String fileField, Map<String,String> params, final ApiResponse<String> completion ) {
 
         final String reqUrl = hostname+url;
-        MultipartRequest imageUploadReq = new MultipartRequest(reqUrl,params,file,filename,"ow_file_attachment[]",
+        MultipartRequest imageUploadReq = new MultipartRequest(reqUrl,params,file,filename,fileField,
             new Response.ErrorListener()
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
                         Log.d("Multipart Request Url: ", reqUrl);
-                        Log.d("Login ERROR", "error => " + error.toString());
+                        Log.d("Multipart ERROR", "error => " + error.toString());
+                        completion.onCompletion(error.toString());
                     }
                 },
             new Response.Listener<String>()
                 {
                     @Override
                     public void onResponse(String response) {
-                        //<script>if(parent.window.owFileAttachments['mailbox_dialog_1_4_3333']){parent.window.owFileAttachments['mailbox_dialog_1_4_3333'].updateItems({"noData":false,"items":{"":{"result":true,"dbId":101}},"result":true});}</script>
                         Log.d("MediaSent Response", response);
                         completion.onCompletion(response);
 
@@ -310,19 +309,22 @@ public class QueryAPI {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
                 CookieManager manager = AppController.getInstance().getCookieManager();
-                //String cookie = manager.getCookieStore().getCookies().toString(); //display all the cookies
                 List<HttpCookie> cookies = manager.getCookieStore().getCookies();
+                String cookie = "";
                 for (HttpCookie eachCookie : cookies) {
                     String cookieName = eachCookie.getName().toString();
                     String cookieValue = eachCookie.getValue().toString();
-                    headers.put(cookieName, cookieValue);
+                    cookie += cookieName + "=" + cookieValue + "; ";
                 }
+                headers.put("Cookie", cookie);
                 return headers;
             }
 
         };
 
-        //imageUploadReq.setBoundary(boundary);
+        imageUploadReq.setRetryPolicy(new DefaultRetryPolicy(1000 * 60, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         AppController.getInstance().addToRequestQueue(imageUploadReq);
     }
 
@@ -677,7 +679,7 @@ public class QueryAPI {
     }
 
 
-    public void updateAvatar(File media, final ApiResponse<Boolean> completion) {
+    public void updateAvatar(File media, final ApiResponse<ApiResult> completion) {
 
         String url = "owapi/user/update/avatar";
 
@@ -685,14 +687,15 @@ public class QueryAPI {
         String boundary = "----------------------------"+uuid;
         String fileName = uuid+".jpg";
         Map<String,String> params = new HashMap<>();
-        params.put("file", "filename="+fileName);
         params.put("ajaxFunc", "ajaxUploadImage");
         params.put("pluginKey", "mailbox");
 
-        this.RequestMultiPart(media, fileName, boundary, url, params, new ApiResponse<String>() {
+        this.RequestMultiPart(media, fileName, boundary, url, "file", params, new ApiResponse<String>() {
             @Override
             public void onCompletion(String result) {
 
+                ApiResult res = new ApiResult();
+                res.success = false;
                 //Parse result
                 String pattern = ".*updateItems\\((.+)\\);.*";
                 String replacement = "$1";
@@ -701,22 +704,18 @@ public class QueryAPI {
 
                 try {
                     JSONObject data = new JSONObject(processedStr);
-                    Boolean success = data.getBoolean("success");
-                    if (success) {
+                    res.success = data.getBoolean("success");
+                    if (res.success) {
                         try {
-                            String resultString = data.getString("data");
-                            completion.onCompletion(success);
-
+                            res.data = data.getString("data");
                         } catch (JSONException x) {
-                            completion.onCompletion(success);
+                            x.printStackTrace();
                         }
-                    } else {
-                        completion.onCompletion(success);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
+                completion.onCompletion(res);
             }
         });
 
@@ -1119,7 +1118,7 @@ public class QueryAPI {
         params.put("flUid", bundle);
         params.put("pluginKey", "mailbox");
 
-        this.RequestMultiPart(media, fileName, boundary, url, params, new ApiResponse<String>() {
+        this.RequestMultiPart(media, fileName, boundary, url, "ow_file_attachment[]", params, new ApiResponse<String>() {
             @Override
             public void onCompletion(String result) {
 

@@ -14,7 +14,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,7 +26,6 @@ import com.androidadvance.topsnackbar.TSnackbar;
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.views.activities.Message;
-import com.kalianey.oxapp.views.fragments.ConversationListFragment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -93,7 +91,7 @@ public class Utility {
      * @param context Context to use for resource localization
      * @param dateStr The db formatted date string, expected to be of the form specified
      *                in Utility.DATE_FORMAT
-     * @return
+     * @return returns the name to use for that day
      */
     public static String getDayName(Context context, String dateStr) {
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
@@ -190,7 +188,10 @@ public class Utility {
         //Extract the conversation
         ModelConversation conversation = (ModelConversation) bundle.getSerializable("convObj");
 
-        String msg = conversation.getName() + ": " + conversation.getPreviewText();
+        String msg = "";
+        if (conversation != null) {
+             msg = conversation.getName() + ": " + conversation.getPreviewText();
+        }
 
         TSnackbar snackbar = TSnackbar
                 .make(view, msg, TSnackbar.LENGTH_LONG)
@@ -198,8 +199,6 @@ public class Utility {
                     @Override
                     public void onClick(View v) {
                         Log.d("SnackBar Button", " onClick triggered");
-
-                        ModelConversation conversation = (ModelConversation) bundle.getSerializable("convObj");
                         Intent i = new Intent(activity, Message.class);
                         i.putExtras(bundle);
                         activity.startActivity(i);
@@ -257,12 +256,12 @@ public class Utility {
 
     /**
      *  Draw a mask around an image (used for bubble media messages)
-     * @param context
+     * @param context Context
      * @param image The original image
      * @param drawable The mask to set on the image (of type NinePatch)
      * @param w width
      * @param h height
-     * @return
+     * @return a bitmap with the mask applied
      */
     public static Bitmap drawMediaWithMask(Context context, Bitmap image, int drawable, int w, int h)
     {

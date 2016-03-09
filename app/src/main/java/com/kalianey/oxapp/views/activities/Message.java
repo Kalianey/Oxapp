@@ -1,11 +1,11 @@
 package com.kalianey.oxapp.views.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+
 import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.utils.Utility;
 

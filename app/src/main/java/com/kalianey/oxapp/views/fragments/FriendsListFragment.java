@@ -3,7 +3,6 @@ package com.kalianey.oxapp.views.fragments;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +14,9 @@ import com.kalianey.oxapp.models.ModelFriend;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.views.activities.MainActivity;
-import com.kalianey.oxapp.views.adapters.FavoriteListAdapter;
 import com.kalianey.oxapp.views.adapters.FriendListAdapter;
 import com.kalianey.oxapp.views.adapters.FriendRequestListAdapter;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsListFragment extends Fragment {

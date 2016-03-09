@@ -44,8 +44,6 @@ import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.views.activities.MainActivity;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 
 //import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;

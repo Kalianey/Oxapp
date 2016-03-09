@@ -203,8 +203,8 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
 
             // If the user just sent the image, we don't have a download url, so we load the image directly from the local file
             if (viewHolder.message.getDownloadUrl() == null) {
-                if(viewHolder.message.getImage().exists()){
 
+                if(viewHolder.message.getImage().exists()){
                     Bitmap bitmap = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
                     Bitmap result = Utility.drawMediaWithMask(listContext, bitmap, viewHolder.msgBubbleBg, w, h);
                     viewHolder.attachment.setImageBitmap(result);
@@ -212,6 +212,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                     viewHolder.loadingBar.setVisibility(View.GONE);
                     viewHolder.attachment.setVisibility(View.VISIBLE);
                 }
+
             }
             //Otherwise, we download it from the server
             else {

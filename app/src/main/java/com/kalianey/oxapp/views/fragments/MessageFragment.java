@@ -1,6 +1,5 @@
 package com.kalianey.oxapp.views.fragments;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,16 +20,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -347,9 +342,10 @@ public class MessageFragment extends Fragment {
                     }
 
                     Uri selectedImageUri;
+                    final File imgFile;
                     if (isCamera) {
                         selectedImageUri = outputFileUri;
-                        File imgFile = new File(selectedImageUri.getPath());
+                        imgFile = new File(selectedImageUri.getPath());
                         if (imgFile.exists()) {
 
                             Bitmap myBitmap = getScaledBitmap(imgFile.getAbsolutePath(), 800, 800);
@@ -362,7 +358,19 @@ public class MessageFragment extends Fragment {
                         selectedImageUri = data == null ? null : data.getData();
                         //String realPath = getRealPathFromURI(getActivity().getApplicationContext(), selectedImageUri);
                         String realPath = getImagePath(selectedImageUri);
-                        final File imgFile = new File(realPath);
+                        imgFile = new File(realPath);
+
+                    }
+
+                    //File imgFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), selectedImageUri));
+
+                    if (imgFile.exists()) {
+
+                        //TODO: send bitmap
+                        //Bitmap myBitmap = getScaledBitmap(imgFile.getAbsolutePath(), 800, 800);
+
+                        Log.v("Image picked", selectedImageUri.toString());
+
                         String lastMessage = messages.get(messages.size() - 1).getId();
 
                         query.messageSendWithMedia(conversation.getId(), conversation.getOpponentId(), lastMessage, imgFile, new QueryAPI.ApiResponse<List<ModelMessage>>() {
@@ -383,20 +391,7 @@ public class MessageFragment extends Fragment {
                                 }
                             }
                         });
-
-                        //File imgFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), selectedImageUri));
-
-                        if (imgFile.exists()) {
-
-                            Bitmap myBitmap = getScaledBitmap(imgFile.getAbsolutePath(), 800, 800);
-
-                            //TODO: send bitmap
-
-                            Log.v("Image picked", selectedImageUri.toString());
-                        }
                     }
-
-
                 }
             }
         }

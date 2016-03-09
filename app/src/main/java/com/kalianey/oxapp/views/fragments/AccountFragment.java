@@ -11,19 +11,17 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -41,7 +39,6 @@ import com.kalianey.oxapp.menu.ResideMenu;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
-import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.views.activities.MainActivity;
 import com.kalianey.oxapp.views.activities.SignIn;
@@ -162,12 +159,12 @@ public class AccountFragment extends Fragment {
 
         mEditPassword.setText(currentPassword);
 
-//        mEditPassword.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mEditPassword.setText("");
-//            }
-//        });
+        mEditPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditPassword.setText("");
+            }
+        });
 
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -367,16 +364,27 @@ public class AccountFragment extends Fragment {
                         String realPath = getImagePath(selectedImageUri);
                         File imgFile = new File(realPath);
 
-                        query.updateAvatar(imgFile, new QueryAPI.ApiResponse<Boolean>() {
+                        query.updateAvatar(imgFile, new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
                             @Override
-                            public void onCompletion(Boolean result) {
+                            public void onCompletion(QueryAPI.ApiResult result) {
+                                 if (result.success) {
 
+                                     AppController.getInstance().getLoggedInUser().setAvatar_url((String) result.data);
+                                     user.setAvatar_url((String) result.data);
+                                     Picasso.with(getActivity())
+                                             .load(user.getAvatar_url())
+                                             .noFade()
+                                             .into(mAvatarView);
+                                 }
+                                else {
+                                     Toast.makeText(getActivity(), "An error occurred, please try again.", Toast.LENGTH_SHORT).show();
+                                 }
                             }
                         });
 
-                        //File imgFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), selectedImageUri));
+                                //File imgFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), selectedImageUri));
 
-                        //TODO: what is this for???
+                                //TODO: what is this for???
 //                        if (imgFile.exists()) {
 //
 //                            Bitmap myBitmap = getScaledBitmap(imgFile.getAbsolutePath(), 800, 800);
