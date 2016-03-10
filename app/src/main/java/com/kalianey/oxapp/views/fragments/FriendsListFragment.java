@@ -26,6 +26,7 @@ public class FriendsListFragment extends Fragment {
     private FriendListAdapter mAdapter;
     private TextView noFriends;
 
+
     public static FriendsListFragment getInstance(int position) {
 
         FriendsListFragment friendsListFragment = new FriendsListFragment();
@@ -41,9 +42,6 @@ public class FriendsListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        android.support.v7.app.ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
-
     }
 
     @Override
@@ -55,9 +53,17 @@ public class FriendsListFragment extends Fragment {
         return parentView;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.VISIBLE);
+        initView();
+    }
+
     @SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
-	private void initView() {
+	public void initView() {
 
         QueryAPI query = new QueryAPI();
 
@@ -68,13 +74,16 @@ public class FriendsListFragment extends Fragment {
             switch (pos) {
                 case 0:
                     // Friend List
+                    listView.setVisibility(View.VISIBLE);
                     parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.VISIBLE);
                     query.friendList(new QueryAPI.ApiResponse<List<ModelFriend>>() {
                         @Override
                         public void onCompletion(List<ModelFriend> result) {
                             parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
                             if (result != null && !result.isEmpty()) {
-                                mAdapter = new FriendListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
+                                if (mAdapter == null) {
+                                    mAdapter = new FriendListAdapter(getActivity(), R.layout.fragment_friend_list_item, result);
+                                }
                                 listView.setAdapter(mAdapter);
                                 mAdapter.notifyDataSetChanged();
                             } else {
@@ -96,8 +105,7 @@ public class FriendsListFragment extends Fragment {
                                 listView.setAdapter(adapter);
                                 adapter.notifyDataSetChanged();
 
-                            } else
-                            {
+                            } else {
                                 noFriends.setText("No friend request.");
                                 noFriends.setVisibility(View.VISIBLE);
                             }
@@ -109,10 +117,4 @@ public class FriendsListFragment extends Fragment {
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        parentView.findViewById(R.id.avloadingIndicatorView).setVisibility(View.VISIBLE);
-        initView();
-    }
 }

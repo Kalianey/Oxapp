@@ -217,6 +217,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             //Otherwise, we download it from the server
             else {
                 row.findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+                viewHolder.attachment.setVisibility(View.GONE);
                 final Bitmap mask = BitmapFactory.decodeResource(listContext.getResources(), viewHolder.msgBubbleBg);
 
                 final ViewHolder finalViewHolder = viewHolder;
@@ -227,8 +228,8 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
 
                         Bitmap result = Utility.drawMediaWithMask(listContext, bitmap, viewHolder.msgBubbleBg, w, h);
                         Drawable drawable = new BitmapDrawable(listContext.getResources(), result);
-                        viewHolder.attachment.setVisibility(View.VISIBLE);
                         viewHolder.loadingBar.setVisibility(View.GONE);
+                        viewHolder.attachment.setVisibility(View.VISIBLE);
                         viewHolder.attachment.setImageBitmap(result);
                         viewHolder.attachment.setScaleType(ImageView.ScaleType.FIT_XY);
                         notifyDataSetChanged();

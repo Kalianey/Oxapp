@@ -887,7 +887,7 @@ public class QueryAPI {
                             try {
                                 ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
                                 if (!message.getAttachment().equals("")){
-                                    Log.v("Message", message.getAttachment().toString());
+                                    Log.v("MessageList", message.getAttachment().toString());
                                     LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
                                     String downloadUrl = (String) attachment.get("downloadUrl");
                                     String attachmentId = (String) attachment.get("id");
@@ -935,7 +935,7 @@ public class QueryAPI {
                             try {
                                 ModelMessage message = new Gson().fromJson(jsonObject.toString(), ModelMessage.class);
                                 if (message.getAttachment() != null){
-                                    Log.v("Message", message.getAttachment().toString());
+                                    Log.v("MessageUnRead", message.getAttachment().toString());
                                     LinkedTreeMap<String, Object> attachment = (LinkedTreeMap<String, Object>) message.getAttachment();
                                     String downloadUrl = (String) attachment.get("downloadUrl");
                                     String attachmentId = (String) attachment.get("id");

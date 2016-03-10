@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -20,15 +19,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -68,9 +66,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ResideMenuItem itemFriends;
     private ResideMenuItem itemFav;
     private ResideMenuItem itemAccount;
+    private FriendActivityFragment mFriendActivityFragment;
 
     //Action Bar
-    android.support.v7.app.ActionBar mActionBar;
+    Toolbar mToolbar;
     private TextView mTitleTextView;
     private ImageView mLogo;
 
@@ -97,10 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
-
-        showActionBar();
 
         if(Build.VERSION.SDK_INT >= 21){
             getWindow().getDecorView().setSystemUiVisibility(
@@ -108,6 +104,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
         setContentView(R.layout.activity_main);
+
+        // Set a toolbar to replace the action bar.
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        setUpToolbar();
+
         setUpMenu();
         setPaddings();
 
@@ -203,94 +205,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void silentLogin() {
+    //Set up Toolbar
+    private void setUpToolbar(){
+        mTitleTextView = (TextView) findViewById(R.id.title_text);
+        mLogo = (ImageView) findViewById(R.id.logo);
 
-        //we check if there are some silent login info stored
-        if (session.getLoginType() != 0) {
-
-            String token = session.getToken();
-
-            switch(session.getLoginType()) {
-
-                //Fb SignIn
-                case 2:
-                    if (token != "") {
-                        query.fbConnect(token, new QueryAPI.ApiResponse<Boolean>() {
-                            @Override
-                            public void onCompletion(Boolean result) {
-                                if (result) {
-                                    Log.v("Silent FB Login: ", result.toString());
-                                    registerDeviceForNotification();
-                                    //Load first menu item by default
-                                    changeFragment(new PeopleFragment());
-                                } else {
-                                    loginFailed();
-                                }
-                            }
-                        });
-                    } else {
-                        loginFailed();
-                    }
-                    break;
-
-                //Google SignIn
-                case 3:
-                    if (token != "") {
-                        query.googleConnect(token, new QueryAPI.ApiResponse<Boolean>() {
-                            @Override
-                            public void onCompletion(Boolean result) {
-                                if (result) {
-                                    Log.v("Silent Google Login: ", result.toString());
-                                    registerDeviceForNotification();
-                                    //Load first menu item by default
-                                    changeFragment(new PeopleFragment());
-                                } else {
-                                    loginFailed();
-                                }
-                            }
-                        });
-                    }
-                    else {
-                        loginFailed();
-                    }
-                    break;
-
-                //Normal Sign In
-                default:
-                    if (session.getUsername() != "" && session.getPassword() != "") {
-                        query.login(session.getUsername(), session.getPassword(), new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
-                            @Override
-                            public void onCompletion(QueryAPI.ApiResult res) {
-
-                                if (res.success) {
-                                    Log.v("Silent Normal Login: ", res.success.toString());
-                                    registerDeviceForNotification();
-                                    //Load first menu item by default
-                                    changeFragment(new PeopleFragment());
-                                }
-                                else {
-                                    loginFailed();
-                                }
-                            }
-                        });
-                    }
-                    else {
-                        loginFailed();
-                    }
+        ImageButton menuButton = (ImageButton) findViewById(R.id.menu);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (resideMenu.isOpened()) {
+                    resideMenu.closeMenu();
+                } else {
+                    resideMenu.openMenu();
+                }
             }
+        });
 
-        }
-        //if no user info are stored, we redirect the user to the sign in page
-        else {
-            loginFailed();
-        }
+        ImageButton mapButton = (ImageButton) findViewById(R.id.map);
+        mapButton.setOnClickListener(new View.OnClickListener() {
 
-    }
-
-    private void loginFailed () {
-        Log.d("Silent logged In failed", " on MainActivity");
-        Intent intent = new Intent(getApplicationContext(), SignIn.class);
-        startActivity(intent);
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void setUpMenu() {
@@ -340,40 +280,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             changeFragment(new PeopleFragment());
             mTitleTextView.setVisibility(View.GONE);
             mLogo.setVisibility(View.VISIBLE);
-            mActionBar.show();
+            mToolbar.setVisibility(View.VISIBLE);
         }
         else if (view == itemConversations){
             changeFragment(new ConversationListFragment());
             mTitleTextView.setText("Messages");
             mTitleTextView.setVisibility(View.VISIBLE);
             mLogo.setVisibility(View.GONE);
-            mActionBar.show();
+            mToolbar.setVisibility(View.VISIBLE);
         }
         else if (view == itemProfile){
+            mToolbar.setVisibility(View.GONE);
             ProfileFragment profile = new ProfileFragment();
             profile.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(profile);
-            mActionBar.hide();
         }
         else if (view == itemFriends){
-            changeFragment(new FriendActivityFragment());
+            if (mFriendActivityFragment == null) {
+                mFriendActivityFragment = new FriendActivityFragment();
+            }
+            changeFragment(mFriendActivityFragment);
             mTitleTextView.setText("Friends");
             mTitleTextView.setVisibility(View.VISIBLE);
             mLogo.setVisibility(View.GONE);
-            mActionBar.show();
+            mToolbar.setVisibility(View.VISIBLE);
         }
         else if (view == itemFav){
             changeFragment(new FavoriteActivityFragment());
             mTitleTextView.setText("Favorites");
             mTitleTextView.setVisibility(View.VISIBLE);
             mLogo.setVisibility(View.GONE);
-            mActionBar.show();
+            mToolbar.setVisibility(View.VISIBLE);
         }
         else if (view == itemAccount){
             AccountFragment account = new AccountFragment();
             account.setUser(AppController.getInstance().getLoggedInUser());
             changeFragment(account);
-            mActionBar.hide();
+            mToolbar.setVisibility(View.GONE);
         }
 
         resideMenu.closeMenu();
@@ -505,54 +448,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return result;
     }
-
-
-    //Custom action bar
-
-    private void showActionBar() {
-        mActionBar = getSupportActionBar();
-        mActionBar.setDisplayShowHomeEnabled(false);
-        mActionBar.setDisplayShowTitleEnabled(false);
-        //mActionBar.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#ffffff"));
-        mActionBar.setBackgroundDrawable(colorDrawable);
-        LayoutInflater mInflater = LayoutInflater.from(this);
-
-        View mCustomView = mInflater.inflate(R.layout.custom_actionbar, null);
-        mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
-        mLogo = (ImageView) mCustomView.findViewById(R.id.logo);
-
-        ImageButton menuButton = (ImageButton) mCustomView
-                .findViewById(R.id.menu);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                if (resideMenu.isOpened()) {
-                    resideMenu.closeMenu();
-                } else {
-                    resideMenu.openMenu();
-                }
-            }
-        });
-
-        ImageButton mapButton = (ImageButton) mCustomView
-                .findViewById(R.id.map);
-        mapButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), MapsActivity.class);
-                startActivity(i);
-            }
-        });
-
-
-        mActionBar.setCustomView(mCustomView);
-        mActionBar.setDisplayShowCustomEnabled(true);
-
-    }
-
 
 
     /************************** GCM ********************************************************************************************/
@@ -736,7 +631,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mTitleTextView.setText("Messages");
                         mTitleTextView.setVisibility(View.VISIBLE);
                         mLogo.setVisibility(View.GONE);
-                        mActionBar.show();
+                        mToolbar.setVisibility(View.VISIBLE);
                     }
                 });
         snackbar.setActionTextColor(Color.LTGRAY);
@@ -748,6 +643,97 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textView.setTextColor(Color.WHITE);
         snackbar.show();
 
+    }
+
+    /**** LOGIN FUNCTION ****/
+    private void silentLogin() {
+
+        //we check if there are some silent login info stored
+        if (session.getLoginType() != 0) {
+
+            String token = session.getToken();
+
+            switch(session.getLoginType()) {
+
+                //Fb SignIn
+                case 2:
+                    if (token != "") {
+                        query.fbConnect(token, new QueryAPI.ApiResponse<Boolean>() {
+                            @Override
+                            public void onCompletion(Boolean result) {
+                                if (result) {
+                                    Log.v("Silent FB Login: ", result.toString());
+                                    registerDeviceForNotification();
+                                    //Load first menu item by default
+                                    changeFragment(new PeopleFragment());
+                                } else {
+                                    loginFailed();
+                                }
+                            }
+                        });
+                    } else {
+                        loginFailed();
+                    }
+                    break;
+
+                //Google SignIn
+                case 3:
+                    if (token != "") {
+                        query.googleConnect(token, new QueryAPI.ApiResponse<Boolean>() {
+                            @Override
+                            public void onCompletion(Boolean result) {
+                                if (result) {
+                                    Log.v("Silent Google Login: ", result.toString());
+                                    registerDeviceForNotification();
+                                    //Load first menu item by default
+                                    changeFragment(new PeopleFragment());
+                                } else {
+                                    loginFailed();
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        loginFailed();
+                    }
+                    break;
+
+                //Normal Sign In
+                default:
+                    if (session.getUsername() != "" && session.getPassword() != "") {
+                        query.login(session.getUsername(), session.getPassword(), new QueryAPI.ApiResponse<QueryAPI.ApiResult>() {
+                            @Override
+                            public void onCompletion(QueryAPI.ApiResult res) {
+
+                                if (res.success) {
+                                    Log.v("Silent Normal Login: ", res.success.toString());
+                                    registerDeviceForNotification();
+                                    //Load first menu item by default
+                                    changeFragment(new PeopleFragment());
+                                }
+                                else {
+                                    loginFailed();
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        loginFailed();
+                    }
+            }
+
+        }
+        //if no user info are stored, we redirect the user to the sign in page
+        else {
+            loginFailed();
+        }
+
+    }
+
+    private void loginFailed () {
+        Log.d("Silent logged In failed", " on MainActivity");
+        Intent intent = new Intent(getApplicationContext(), SignIn.class);
+        startActivity(intent);
     }
 
 
