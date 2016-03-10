@@ -19,10 +19,6 @@ public class Profile extends AppCompatActivity {
 
         setContentView(R.layout.activity_profile);
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
-
-
     }
 
 

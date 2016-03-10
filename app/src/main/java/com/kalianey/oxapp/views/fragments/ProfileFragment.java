@@ -21,6 +21,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -41,6 +42,7 @@ import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
+import com.kalianey.oxapp.utils.Utility;
 import com.kalianey.oxapp.views.activities.MainActivity;
 import com.kalianey.oxapp.views.activities.Message;
 import com.kalianey.oxapp.views.activities.ProfilePhotos;
@@ -52,6 +54,7 @@ import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.lucasr.twowayview.TwoWayView;
 
@@ -79,8 +82,8 @@ public class ProfileFragment extends Fragment {
     //UI Elements
     private View view;
     private UIParallaxScroll scrollView;
+    private RelativeLayout mCoverContainer;
     private RecyclerView gridView;
-    private NetworkImageView mCoverImageView;
     private UICircularImage mAvatarImageView;
     private RelativeLayout mLayoutContainer;
     private FrameLayout mNavigationTop;
@@ -261,6 +264,7 @@ public class ProfileFragment extends Fragment {
             //If user is the logged in user
             // we set the back button to slidemenu button
             mNavigationBackBtn.setBackgroundResource(R.drawable.titlebar_menu_selector);
+            mNavigationBackBtn.setPadding(0, 10, 0, 0);
             //Add a bit of margin to the menu button
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mNavigationBackBtn.getLayoutParams();
             params.topMargin = 50;
@@ -281,13 +285,13 @@ public class ProfileFragment extends Fragment {
 
     public void getUI() {
         //Set up UI elements
+        mCoverContainer = (RelativeLayout) view.findViewById(R.id.cover_container);
         gridView = (RecyclerView) view.findViewById(R.id.grid_view);
         gridView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
         friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
         friendsListView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
         scrollView = (UIParallaxScroll) view.findViewById(R.id.scroller);
         scrollView.setOnScrollChangedListener(mOnScrollChangedListener);
-        mCoverImageView = (NetworkImageView) view.findViewById(R.id.item_cover_image);
         mAvatarImageView = (UICircularImage) view.findViewById(R.id.image_view);
         // mTextView = (TextView) view.findViewById(R.id.contact);
         mNavigationTop = (FrameLayout) view.findViewById(R.id.layout_top);
@@ -465,18 +469,31 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        //Set up cover Image
-        mCoverImageView.setImageUrl(user.getCover_url(), imageLoader);
-        if (user.getCover_url() != null) {
-            mLayoutContainer.setBackground(mCoverImageView.getDrawable());
+        //Set up cover Image as background of Relative layout
+        Bitmap bm = BitmapFactory.decodeResource(getActivity().getApplicationContext().getResources(),
+                R.drawable.default_bg);
+        Bitmap bg = NativeStackBlur.process(bm, 100);
+        Drawable defaultBackground = new BitmapDrawable(getActivity().getResources(), bg);
+        mCoverContainer.setBackground(defaultBackground);
 
-        } else {
-            //If there is no cover image, we set a default one and blur it
-            Bitmap bm = BitmapFactory.decodeResource(getActivity().getApplicationContext().getResources(),
-                    R.drawable.default_bg);
-            Bitmap bg = NativeStackBlur.process(bm, 100);
-            Drawable defaulBackground = new BitmapDrawable(getResources(), bg);
-            mLayoutContainer.setBackground(defaulBackground);
+        //If user has a cover, we set it
+        if (user.getCover_url() != null) {
+
+            Target target = new Target() {
+                @Override
+                public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                        Drawable drawable = new BitmapDrawable(getActivity().getResources(), bitmap);
+                        mCoverContainer.setBackground(drawable);
+                    }
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {}
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {}
+                };
+            Picasso.with(getActivity().getApplicationContext())
+                    .load(user.getCover_url())
+                    .into(target);
+
         }
 
     }

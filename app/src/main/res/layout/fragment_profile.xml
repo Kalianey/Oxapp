@@ -10,20 +10,6 @@
     android:background="@drawable/detail_background"
     tools:context="com.kalianey.oxapp.views.fragments.ProfileFragment">
 
-        <com.android.volley.toolbox.NetworkImageView
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:id="@+id/item_cover_image"
-            android:layout_below="@+id/sumary"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentEnd="false"
-            android:contentDescription="@string/coverImage"
-            android:layout_alignEnd="@id/statistics"
-            android:minHeight="220dp"
-            android:minWidth="300dp"
-            android:scaleType="fitXY" />
-
         <com.kalianey.oxapp.utils.UIParallaxScroll
         android:id="@+id/scroller"
         android:layout_width="match_parent"
@@ -31,9 +17,31 @@
         android:fillViewport="true"
         app:headerView="@+id/layout_top">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.4"
+                android:id="@+id/cover_container">
+
+            <com.kalianey.oxapp.utils.UICircularImage
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/image_view"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="5dp"
+                app:line_color="@android:color/white"
+                app:line_color_press="@color/theme_color"
+                app:line_width="1dp"
+                app:padding="0dp" />
 
             <TextView
                 android:id="@+id/title"
@@ -108,13 +116,17 @@
 
             </LinearLayout>
 
+            </RelativeLayout>
+
+
             <LinearLayout
                 android:id="@+id/informations_container"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
+                android:layout_weight="0.6"
                 android:orientation="vertical"
                 android:background="@android:color/white"
-                android:layout_below="@+id/statistics"
+                android:layout_below="@+id/cover_container"
                 android:gravity="center"
                 android:padding="10dp">
 
@@ -234,21 +246,9 @@
 
             </LinearLayout>
 
-            <com.kalianey.oxapp.utils.UICircularImage
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/image_view"
-                android:layout_width="125dp"
-                android:layout_height="125dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="5dp"
-                app:line_color="@android:color/white"
-                app:line_color_press="@color/theme_color"
-                app:line_width="1dp"
-                app:padding="0dp" />
 
-        </RelativeLayout>
+
+        </LinearLayout>
 
     </com.kalianey.oxapp.utils.UIParallaxScroll>
 
