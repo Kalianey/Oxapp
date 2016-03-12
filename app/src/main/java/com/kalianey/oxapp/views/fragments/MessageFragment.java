@@ -14,10 +14,13 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +30,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +38,7 @@ import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
+import com.kalianey.oxapp.utils.EndlessRecyclerOnScrollListener;
 import com.kalianey.oxapp.utils.EndlessScrollListener;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
@@ -54,9 +57,10 @@ public class MessageFragment extends Fragment {
 
     private QueryAPI query = new QueryAPI();
     private SessionManager session;
-    private ListView listView;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
     private MessageListAdapter adapter;
-    private List<ModelMessage> messages = new ArrayList<>();
+    private ArrayList<ModelMessage> messages = new ArrayList<>();
     private ModelConversation conversation;
 
     //UI
@@ -70,7 +74,7 @@ public class MessageFragment extends Fragment {
 
     private Uri outputFileUri;
 
-    private EndlessScrollListener scrollListener;
+    private EndlessRecyclerOnScrollListener scrollListener;
 
     //NOTIFICATIONS
     private BroadcastReceiver gcmReceiver;
@@ -92,18 +96,38 @@ public class MessageFragment extends Fragment {
         query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
             @Override
             public void onCompletion(List<ModelMessage> result) {
-                messages = result;
+                messages = new ArrayList<ModelMessage>(result);
                 ModelUser opponent = new ModelUser();
 
                 QueryAPI.getInstance().user(conversation.getOpponentId(), new QueryAPI.ApiResponse<ModelUser>() {
                     @Override
                     public void onCompletion(ModelUser user) {
                         view.findViewById(R.id.avloadingIndicatorView).setVisibility(View.GONE);
-                        adapter = new MessageListAdapter(getActivity(), R.layout.message_item_sent, messages);
+
+                        linearLayoutManager = new LinearLayoutManager(getActivity());
+                        recyclerView.setLayoutManager(linearLayoutManager);
+                        adapter = new MessageListAdapter(getActivity(), messages);
                         adapter.setSenderUser(user);
-                        listView.setAdapter(adapter);
-                        //adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
                         Log.d("AdapterChanged mess: ", messages.toString());
+                        linearLayoutManager.scrollToPosition(messages.size() - 1);
+
+                        scrollListener = new EndlessRecyclerOnScrollListener(linearLayoutManager){
+                            @Override
+                            public void onLoadMore(int page) {
+                                loadMore(page);
+                            }
+
+//                          @Override
+//                          public void onLoadMore(int page, int totalItemsCount) {
+//                              // Triggered only when new data needs to be appended to the list
+//                              loadMore(page);
+//                          }
+
+                        };
+                        scrollListener.setScrollDirection(EndlessRecyclerOnScrollListener.SCROLL_DIRECTION_UP);
+                        //Load more on scroll top
+                        recyclerView.addOnScrollListener(scrollListener);
                     }
                 });
 
@@ -127,20 +151,16 @@ public class MessageFragment extends Fragment {
             public void onCompletion(List<ModelMessage> result) {
                 Collections.reverse(result);
                 int index = result.size();  //listView.getFirstVisiblePosition();
-                if (index == 0)
-                {
-                    scrollListener = null;
+                if (index == 0) {
+                    //scrollListener = null;
+                    recyclerView.clearOnScrollListeners();
                     return;
                 }
 
-                Toast.makeText(getActivity(), "Scrolled to top", Toast.LENGTH_SHORT).show();
-                View v = listView.getChildAt(0);
-                int top = (v == null) ? 0 : (v.getTop() - listView.getPaddingTop());
-
+               Toast.makeText(getActivity(), "" + "Loading...", Toast.LENGTH_SHORT).show();
                 messages.addAll(0, result);
                 adapter.notifyDataSetChanged();
-
-                listView.setSelectionFromTop(index, top);
+                linearLayoutManager.scrollToPosition(index);
                 scrollListener.finishedLoading();
             }
         });
@@ -175,13 +195,12 @@ public class MessageFragment extends Fragment {
         mNavigationTitle = (TextView) view.findViewById(R.id.titleBar);
         mNavigationBackBtn = (Button) view.findViewById(R.id.title_bar_left_menu);
 
-        listView = (ListView) view.findViewById(R.id.message_list);
+        recyclerView = (RecyclerView) view.findViewById(R.id.message_list);
         text = (EditText) view.findViewById(R.id.txt);
         sendButton = (ImageButton) view.findViewById(R.id.btnSend);
         cameraButton = (ImageButton) view.findViewById(R.id.camera);
 
-
-        mNavigationBackBtn.setOnClickListener(new View.OnClickListener(){
+        mNavigationBackBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
@@ -203,6 +222,7 @@ public class MessageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String messageToSend = text.getText().toString();
+                text.setText("");
 
                 if (!messageToSend.equals("") && messageToSend != null) {
 
@@ -211,8 +231,8 @@ public class MessageFragment extends Fragment {
                         public void onCompletion(ModelMessage message) {
 
                             messages.add(message);
-                            adapter.notifyDataSetChanged();
-                            text.setText("");
+                            adapter.notifyItemChanged(messages.size() - 1);
+                            linearLayoutManager.scrollToPosition(messages.size() - 1);
 
                         }
                     });
@@ -221,16 +241,39 @@ public class MessageFragment extends Fragment {
             }
         });
 
-        scrollListener = new EndlessScrollListener(){
+        text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                loadMore(page);
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Do something after 500ms
+                            //linearLayoutManager.smoothScrollToPosition(recyclerView, recyclerView.getScrollState(), messages.size() - 1);
+                            recyclerView.smoothScrollToPosition(messages.size() - 1);
+                        }
+                    }, 100);
+                }
             }
-        };
-        scrollListener.setScrollDirection(EndlessScrollListener.SCROLL_DIRECTION_UP);
-        //Load more on scroll top
-        listView.setOnScrollListener(scrollListener);
+        });
+
+        text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 500ms
+                        //linearLayoutManager.smoothScrollToPosition(recyclerView, recyclerView.getScrollState(), messages.size() - 1);
+                        recyclerView.smoothScrollToPosition(messages.size() - 1);
+                    }
+                }, 100);
+
+            }
+        });
+
 
     }
 
@@ -262,8 +305,7 @@ public class MessageFragment extends Fragment {
                             query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
                                 @Override
                                 public void onCompletion(List<ModelMessage> result) {
-                                    messages = new ArrayList<ModelMessage>();
-                                    messages = result;
+                                    messages = new ArrayList<ModelMessage>(result);
                                     adapter.notifyDataSetChanged();
                                 }
                             });
@@ -383,6 +425,8 @@ public class MessageFragment extends Fragment {
                                         mess.setIsMediaMessage(true); //TODO : set attachment url in backend
                                         mess.setImage(imgFile);
                                         messages.add(mess);
+                                        adapter.notifyItemChanged(messages.size() - 1);
+                                        linearLayoutManager.scrollToPosition(messages.size() - 1 );
                                     }
                                     adapter.notifyDataSetChanged();
 

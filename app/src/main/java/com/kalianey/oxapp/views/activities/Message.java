@@ -17,8 +17,6 @@ public class Message extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
         Utility.setupUITouchListener(findViewById(R.id.fragment), Message.this);
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
     }
 
 

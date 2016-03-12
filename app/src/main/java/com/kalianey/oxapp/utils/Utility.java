@@ -296,4 +296,14 @@ public class Utility {
 
     }
 
+    public static int convertDiptoPix(int dip){
+        float scale = AppController.getContext().getResources().getDisplayMetrics().density;
+        return (int) (dip * scale + 0.5f);
+    }
+
+    public static int convertPixtoDip(int pixel){
+        float scale = AppController.getContext().getResources().getDisplayMetrics().density;
+        return (int)((pixel - 0.5f)/scale);
+    }
+
 }

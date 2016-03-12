@@ -20,8 +20,7 @@ public class ProfilePhotos extends AppCompatActivity {
 
         setContentView(R.layout.activity_profile_photos);
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+        //TODO: hide toolbar?
 
         View decorView = getWindow().getDecorView();
         // Hide the status bar.

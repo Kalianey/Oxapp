@@ -1,5 +1,7 @@
 package com.kalianey.oxapp.models;
 
+import android.graphics.Bitmap;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
@@ -35,6 +37,8 @@ public class ModelMessage implements Serializable {
     Object attachment; // JSQMediaItem?
 
     File image;
+
+    Bitmap imageCache;
 
     public Object getAttachment() {
         return attachment;
@@ -327,6 +331,15 @@ public class ModelMessage implements Serializable {
     public void setStatus(int status)
     {
         this.status = status;
+    }
+
+
+    public Bitmap getImageCache() {
+        return imageCache;
+    }
+
+    public void setImageCache(Bitmap imageCache) {
+        this.imageCache = imageCache;
     }
 
 

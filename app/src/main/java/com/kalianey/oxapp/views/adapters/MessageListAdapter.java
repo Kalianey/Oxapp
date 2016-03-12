@@ -1,12 +1,14 @@
 package com.kalianey.oxapp.views.adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,28 +37,30 @@ import java.util.List;
 /**
  * Created by kalianey on 13/08/2015.
  */
-public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
+
+public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.ViewHolder> {
+
     private final int CELL_RCV = 0;
     private final int CELL_SENT = 1;
 
-    private int w = 500;
-    private int h = 380;
+    private int w = Utility.convertDiptoPix(200);
+    private int h = Utility.convertDiptoPix(150);
 
     private LayoutInflater inflater;
-    private List<ModelMessage> messages; //data
-    private Activity listContext;
-    private int listRowLayoutId;
+    private Activity context;
+    private ArrayList<ModelMessage> messages = new ArrayList<ModelMessage>(); //data
+
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     private ModelUser loggedInUser = AppController.getInstance().getLoggedInUser();
     private ModelUser senderUser;
     private Integer countMessage = 0;
-    private ViewHolder viewHolder;
 
-    public MessageListAdapter(Activity context, int resource, List<ModelMessage> objs) {
-        super(context, resource, objs);
-        messages = objs;
-        listContext = context;
-        listRowLayoutId = resource;
+
+    public MessageListAdapter(Activity context, ArrayList<ModelMessage> objs) {
+        super();
+        this.messages = objs;
+        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.context = context;
     }
 
     public ModelUser getSenderUser() {
@@ -67,103 +71,68 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         this.senderUser = senderUser;
     }
 
-
-    @Override
-    public int getCount()
-    {
-        return messages.size();
+    public void add(int position, ModelMessage item) {
+        messages.add(position, item);
+        notifyItemInserted(position);
     }
 
-    @Override
-    public ModelMessage getItem(int position)
-    {
-        return super.getItem(position);
-    }
+//    public void remove(ModelMessage item) {
+//        int position = messages.indexOf(item);
+//        messages.remove(position);
+//        notifyItemRemoved(position);
+//    }
 
     @Override
-    public int getPosition(ModelMessage item) {
-        return super.getPosition(item);
-    }
+    public MessageListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-    @Override
-    public long getItemId(int position)
-    {
-        return super.getItemId(position);
+        inflater = LayoutInflater.from(parent.getContext());
+        View v;
+        if (viewType == CELL_SENT) {
+            v = inflater.inflate(R.layout.message_item_sent, parent, false);
+        } else {
+            v = inflater.inflate(R.layout.message_item_rcv, parent, false);
+        }
+        ViewHolder vh = new MessageListAdapter.ViewHolder(v);
+        if (viewType == CELL_SENT) {
+            vh.msgBubbleBg = R.drawable.bubble_out;
+        }
+        else {
+            vh.msgBubbleBg = R.drawable.bubble_in;
+        }
+
+        String avatarUrl = (viewType == CELL_SENT) ? loggedInUser.getAvatar_url() : senderUser.getAvatar_url();
+        //Avatar
+        Picasso.with(context)
+                .load(avatarUrl)
+                .noFade()
+                .into(vh.avatarImageView);
+
+        return vh;
     }
 
     @Override
     public int getItemViewType(int position) {
-        // Define a way to determine which layout to use, here it's just evens and odds.
 
+        // Define a way to determine which layout to use, here it's just evens and odds.
         String senderId = messages.get(position).getSenderId();
         String userId = loggedInUser.getUserId();
 
-        int type = senderId.equals(userId)? CELL_SENT:CELL_RCV;
+        int type = senderId.equals(userId)? CELL_SENT : CELL_RCV;
 
         return type;
     }
 
     @Override
-    public int getViewTypeCount() {
-        return 2; // Count of different layouts
-    }
+    public void onBindViewHolder(final MessageListAdapter.ViewHolder viewHolder, int position) {
 
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
-
-        View row = convertView;
-        viewHolder = null;
+        /** ViewHolder is set, so we can initialize the data **/
         final int pos = position;
-
         int cellType = this.getItemViewType(position);
-        String avatarUrl = (cellType == CELL_SENT) ? loggedInUser.getAvatar_url() : senderUser.getAvatar_url();
 
-        //Row holds our layout
-        if (row == null) {
-
-            viewHolder = new ViewHolder();
-            inflater = LayoutInflater.from(listContext);
-
-            if (cellType == CELL_SENT) {
-                row = inflater.inflate(R.layout.message_item_sent, parent, false);
-            }
-            else {
-                row = inflater.inflate(R.layout.message_item_rcv, parent, false);
-            }
-
-            //Get references to our views
-            viewHolder.loadingBar = (RelativeLayout) row.findViewById(R.id.loadingPanel);
-            viewHolder.avatarImageView = (UICircularImage) row.findViewById(R.id.avatarImageView);
-            viewHolder.attachment = (ImageView) row.findViewById(R.id.attachment);
-            viewHolder.text = (TextView) row.findViewById(R.id.text);
-            viewHolder.date = (TextView) row.findViewById(R.id.date);
-            viewHolder.recipientRead = (ImageView) row.findViewById(R.id.recipientRead);
-
-            row.setTag(viewHolder);
-        }
-        else {
-            viewHolder = (ViewHolder) row.getTag();
-        }
 
         viewHolder.position = pos;
         viewHolder.message = messages.get(pos);
 
-        if (cellType == CELL_SENT) {
-            viewHolder.msgBubbleBg = R.drawable.bubble_out;
-        }
-        else {
-            viewHolder.msgBubbleBg = R.drawable.bubble_in;
-        }
-
-        /** ViewHolder is set, so we can initialize the data **/
-
-        //Avatar
-        Picasso.with(listContext)
-                .load(avatarUrl)
-                .noFade()
-                .into(viewHolder.avatarImageView);
 
         //Date
         countMessage ++;
@@ -206,7 +175,7 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
 
                 if(viewHolder.message.getImage().exists()){
                     Bitmap bitmap = BitmapFactory.decodeFile(viewHolder.message.getImage().getAbsolutePath());
-                    Bitmap result = Utility.drawMediaWithMask(listContext, bitmap, viewHolder.msgBubbleBg, w, h);
+                    Bitmap result = Utility.drawMediaWithMask(context, bitmap, viewHolder.msgBubbleBg, w, h);
                     viewHolder.attachment.setImageBitmap(result);
                     viewHolder.attachment.setScaleType(ImageView.ScaleType.FIT_XY);
                     viewHolder.loadingBar.setVisibility(View.GONE);
@@ -216,26 +185,31 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
             }
             //Otherwise, we download it from the server
             else {
-                row.findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+                viewHolder.loadingBar.setVisibility(View.VISIBLE);
                 viewHolder.attachment.setVisibility(View.GONE);
-                final Bitmap mask = BitmapFactory.decodeResource(listContext.getResources(), viewHolder.msgBubbleBg);
+                final Bitmap mask = BitmapFactory.decodeResource(context.getResources(), viewHolder.msgBubbleBg);
 
                 final ViewHolder finalViewHolder = viewHolder;
 
                 viewHolder.target = new Target() {
                     @Override
                     public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                        Bitmap result;
+                        //the first time we call, from is set because passing through picasso, we draw the mask and set it in imageCache
+                        if ( from != null ) {
+                            result = Utility.drawMediaWithMask(context, bitmap, finalViewHolder.msgBubbleBg, w, h);
+                            finalViewHolder.message.setImageCache(result);
+                        }else {
+                            result = finalViewHolder.message.getImageCache();
+                        }
 
-                        Bitmap result = Utility.drawMediaWithMask(listContext, bitmap, viewHolder.msgBubbleBg, w, h);
-                        Drawable drawable = new BitmapDrawable(listContext.getResources(), result);
-                        viewHolder.loadingBar.setVisibility(View.GONE);
-                        viewHolder.attachment.setVisibility(View.VISIBLE);
-                        viewHolder.attachment.setImageBitmap(result);
-                        viewHolder.attachment.setScaleType(ImageView.ScaleType.FIT_XY);
-                        notifyDataSetChanged();
+                        finalViewHolder.loadingBar.setVisibility(View.GONE);
+                        finalViewHolder.attachment.setVisibility(View.VISIBLE);
+                        finalViewHolder.attachment.setImageBitmap(result);
+                        finalViewHolder.attachment.setScaleType(ImageView.ScaleType.FIT_XY);
 
                         //OnClick, open the image in full screen
-                        viewHolder.attachment.setOnClickListener(new View.OnClickListener() {
+                        finalViewHolder.attachment.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 //Create the array to hold our photo
@@ -245,12 +219,12 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                                 attachment.setUrl(messages.get(pos).getDownloadUrl());
                                 photos.add(0, attachment);
                                 //Create the intent
-                                Intent intent = new Intent(listContext, ProfilePhotos.class);
+                                Intent intent = new Intent(context, ProfilePhotos.class);
                                 Bundle mBundle = new Bundle();
                                 mBundle.putSerializable("photoList", photos);
                                 mBundle.putInt("photoIndex", 0);
                                 intent.putExtras(mBundle);
-                                listContext.startActivity(intent);
+                                context.startActivity(intent);
                             }
                         });
                     }
@@ -266,17 +240,33 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
                     }
                 };
 
-                Picasso.with(listContext)
-                        .load(viewHolder.message.getDownloadUrl())
-                        .into(viewHolder.target);
+                Bitmap imageCache = viewHolder.message.getImageCache();
+                if(imageCache == null) {
+                    Picasso.with(context)
+                            .load(viewHolder.message.getDownloadUrl())
+                            .into(viewHolder.target);
+                }
+                else
+                {
+                    viewHolder.target.onBitmapLoaded(imageCache, null);
+                }
             }
         }
 
-        return  row;
+
+    }
+
+    @Override
+    public int getItemCount() {
+        if (messages != null) {
+            return messages.size();
+        } else {
+            return 0;
+        }
     }
 
 
-    public class ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         ModelMessage message;
         RelativeLayout loadingBar;
@@ -289,7 +279,16 @@ public class MessageListAdapter extends ArrayAdapter<ModelMessage> {
         int position=-1;
         Target target;
 
-    }
+        public ViewHolder(View v) {
+            super(v);
+            this.loadingBar = (RelativeLayout) v.findViewById(R.id.loadingPanel);
+            this.avatarImageView = (UICircularImage) v.findViewById(R.id.avatarImageView);
+            this.attachment = (ImageView) v.findViewById(R.id.attachment);
+            this.text = (TextView) v.findViewById(R.id.text);
+            this.date = (TextView) v.findViewById(R.id.date);
+            this.recipientRead = (ImageView) v.findViewById(R.id.recipientRead);
+        }
 
+    }
 
 }

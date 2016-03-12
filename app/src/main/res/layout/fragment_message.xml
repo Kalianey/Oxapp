@@ -56,28 +56,28 @@
         android:focusableInTouchMode ="true"
         android:id="@+id/listViewContainer">
 
-    <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/avloadingIndicatorView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:indicator="LineScalePulseOut"
-        app:indicator_color="#E75764"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerInParent="true" />
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/avloadingIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:indicator="LineScalePulseOut"
+            app:indicator_color="#E75764"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerInParent="true" />
 
-    <ListView
-        android:id="@+id/message_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@color/white"
-        android:dividerHeight="@dimen/pad_5dp"
-        android:fastScrollEnabled="true"
-        android:stackFromBottom="true"
-        android:transcriptMode="normal"
-        android:paddingBottom="@dimen/pad_10dp"
-        android:paddingTop="@dimen/pad_10dp">
-    </ListView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/message_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/white"
+            android:dividerHeight="@dimen/pad_5dp"
+            android:fastScrollEnabled="true"
+            android:stackFromBottom="true"
+            android:transcriptMode="normal"
+            android:paddingBottom="@dimen/pad_10dp"
+            android:paddingTop="@dimen/pad_10dp">
+        </android.support.v7.widget.RecyclerView>
 
     </RelativeLayout>
 
@@ -114,7 +114,8 @@
             android:background="@drawable/bg_rounded_corner_filled_white"
             android:paddingLeft="5dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="5dp"
+            android:focusable="true">
         </EditText>
 
         <ImageButton
