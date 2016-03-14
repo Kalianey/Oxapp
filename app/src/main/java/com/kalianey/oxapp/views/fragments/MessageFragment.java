@@ -39,11 +39,12 @@ import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelMessage;
 import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.EndlessRecyclerOnScrollListener;
-import com.kalianey.oxapp.utils.EndlessScrollListener;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.SessionManager;
 import com.kalianey.oxapp.utils.Utility;
 import com.kalianey.oxapp.views.adapters.MessageListAdapter;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class MessageFragment extends Fragment {
     private ImageButton sendButton;
     private ImageButton cameraButton;
     private EditText text;
+    private TextView noMsg;
 
     private Uri outputFileUri;
 
@@ -96,6 +98,10 @@ public class MessageFragment extends Fragment {
         query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
             @Override
             public void onCompletion(List<ModelMessage> result) {
+                if(result.size() == 0){
+                    noMsg.setVisibility(View.VISIBLE);
+                }
+
                 messages = new ArrayList<ModelMessage>(result);
                 ModelUser opponent = new ModelUser();
 
@@ -110,20 +116,15 @@ public class MessageFragment extends Fragment {
                         adapter.setSenderUser(user);
                         recyclerView.setAdapter(adapter);
                         Log.d("AdapterChanged mess: ", messages.toString());
-                        linearLayoutManager.scrollToPosition(messages.size() - 1);
+                        if ( messages.size() > 0) {
+                            linearLayoutManager.scrollToPosition(messages.size() - 1);
+                        }
 
                         scrollListener = new EndlessRecyclerOnScrollListener(linearLayoutManager){
                             @Override
                             public void onLoadMore(int page) {
                                 loadMore(page);
                             }
-
-//                          @Override
-//                          public void onLoadMore(int page, int totalItemsCount) {
-//                              // Triggered only when new data needs to be appended to the list
-//                              loadMore(page);
-//                          }
-
                         };
                         scrollListener.setScrollDirection(EndlessRecyclerOnScrollListener.SCROLL_DIRECTION_UP);
                         //Load more on scroll top
@@ -157,7 +158,7 @@ public class MessageFragment extends Fragment {
                     return;
                 }
 
-               Toast.makeText(getActivity(), "" + "Loading...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "" + "Loading...", Toast.LENGTH_SHORT).show();
                 messages.addAll(0, result);
                 adapter.notifyDataSetChanged();
                 linearLayoutManager.scrollToPosition(index);
@@ -199,6 +200,7 @@ public class MessageFragment extends Fragment {
         text = (EditText) view.findViewById(R.id.txt);
         sendButton = (ImageButton) view.findViewById(R.id.btnSend);
         cameraButton = (ImageButton) view.findViewById(R.id.camera);
+        noMsg = (TextView) view.findViewById(R.id.noMsg);
 
         mNavigationBackBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -230,9 +232,14 @@ public class MessageFragment extends Fragment {
                         @Override
                         public void onCompletion(ModelMessage message) {
 
+                            //if the msg size was 0, so there were no msg in the conversation, the noMsg label is visible.
+                            //Before displaying the new msg, we set the noMsg label to gone.
+                            if (messages.size() == 0) {
+                                noMsg.setVisibility(View.GONE);
+                            }
                             messages.add(message);
                             adapter.notifyItemChanged(messages.size() - 1);
-                            linearLayoutManager.scrollToPosition(messages.size() - 1);
+                            recyclerView.smoothScrollToPosition(messages.size() - 1);
 
                         }
                     });
@@ -249,9 +256,9 @@ public class MessageFragment extends Fragment {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            // Do something after 500ms
-                            //linearLayoutManager.smoothScrollToPosition(recyclerView, recyclerView.getScrollState(), messages.size() - 1);
-                            recyclerView.smoothScrollToPosition(messages.size() - 1);
+                            if ( messages.size() > 0) {
+                                recyclerView.smoothScrollToPosition(messages.size() - 1);
+                            }
                         }
                     }, 100);
                 }
@@ -265,9 +272,9 @@ public class MessageFragment extends Fragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // Do something after 500ms
-                        //linearLayoutManager.smoothScrollToPosition(recyclerView, recyclerView.getScrollState(), messages.size() - 1);
-                        recyclerView.smoothScrollToPosition(messages.size() - 1);
+                        if ( messages.size() > 0) {
+                            recyclerView.smoothScrollToPosition(messages.size() - 1);
+                        }
                     }
                 }, 100);
 
@@ -300,15 +307,22 @@ public class MessageFragment extends Fragment {
                             // display a notification at the top of the screen
                             Utility.displayNewMsgNotification(getActivity().getApplicationContext(), getActivity(), MessageFragment.class, bundle, mNavigationTop);
                         } else {
-                            //we get the latest messageList and notify the adapter to display the received msg
-                            //TODO: check if it would be better to append the new msg without querying the server?
-                            query.messageList(conversation.getId(), new QueryAPI.ApiResponse<List<ModelMessage>>() {
+
+                            String lastMsg = messages.get(messages.size() - 1).getId().toString();
+
+                            query.messageUnread(conversation.getId(), lastMsg, new QueryAPI.ApiResponse<List<ModelMessage>>() {
                                 @Override
                                 public void onCompletion(List<ModelMessage> result) {
-                                    messages = new ArrayList<ModelMessage>(result);
-                                    adapter.notifyDataSetChanged();
+                                    if (result.size() > 0) {
+                                        for (int i=0; i<result.size(); i++) {
+                                           messages.add(messages.size(), result.get(i));
+                                           adapter.notifyItemInserted(messages.size());
+                                        }
+                                        recyclerView.smoothScrollToPosition(messages.size() - 1);
+                                    }
                                 }
                             });
+
                         }
                     }
                 }
@@ -426,7 +440,7 @@ public class MessageFragment extends Fragment {
                                         mess.setImage(imgFile);
                                         messages.add(mess);
                                         adapter.notifyItemChanged(messages.size() - 1);
-                                        linearLayoutManager.scrollToPosition(messages.size() - 1 );
+                                        recyclerView.smoothScrollToPosition(messages.size() - 1);
                                     }
                                     adapter.notifyDataSetChanged();
 

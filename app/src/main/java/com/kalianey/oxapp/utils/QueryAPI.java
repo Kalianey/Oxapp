@@ -1,16 +1,23 @@
 package com.kalianey.oxapp.utils;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.kalianey.oxapp.R;
 import com.kalianey.oxapp.models.ModelAttachment;
 import com.kalianey.oxapp.models.ModelConversation;
 import com.kalianey.oxapp.models.ModelFavorite;
@@ -143,6 +150,7 @@ public class QueryAPI {
                 ApiResult res = new ApiResult();
                 res.success = false;
                 completion.onCompletion(res);
+                displayVolleyResponseError(error);
             }
         }
         );
@@ -261,6 +269,7 @@ public class QueryAPI {
                     public void onErrorResponse(VolleyError error)
                     {
                         Log.v("error post:", error.toString());
+                        displayVolleyResponseError(error);
                     }
                 })
 
@@ -291,6 +300,7 @@ public class QueryAPI {
                         Log.d("Multipart Request Url: ", reqUrl);
                         Log.d("Multipart ERROR", "error => " + error.toString());
                         completion.onCompletion(error.toString());
+                        displayVolleyResponseError(error);
                     }
                 },
             new Response.Listener<String>()
@@ -1242,6 +1252,7 @@ public class QueryAPI {
                 public void onErrorResponse(VolleyError error) {
                     ApiResult res = new ApiResult();
                     completion.onCompletion("");
+                    displayVolleyResponseError(error);
                 }
             }
         );
@@ -1372,6 +1383,9 @@ public class QueryAPI {
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
                         Log.d("Login ERROR","error => "+error.toString());
+                        res.success = false;
+                        completion.onCompletion(res);
+                        displayVolleyResponseError(error);
                     }
                 }
         ) {
@@ -1425,6 +1439,7 @@ public class QueryAPI {
                         // TODO Auto-generated method stub
                         Log.d("Login ERROR","error => "+error.toString());
                         completion.onCompletion(false);
+                        displayVolleyResponseError(error);
                     }
                 }
         ) {
@@ -1506,6 +1521,29 @@ public class QueryAPI {
     }
 
 
+    private void displayVolleyResponseError(VolleyError error) {
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            Toast.makeText(AppController.getContext(),
+                    AppController.getContext().getString(R.string.error_network_timeout),
+                    Toast.LENGTH_LONG).show();
+        } else if (error instanceof AuthFailureError) {
+            Toast.makeText(AppController.getContext(),
+                    AppController.getContext().getString(R.string.error_auth_failure),
+                    Toast.LENGTH_LONG).show();
+        } else if (error instanceof ServerError) {
+            Toast.makeText(AppController.getContext(),
+                    AppController.getContext().getString(R.string.error_server),
+                    Toast.LENGTH_LONG).show();
+        } else if (error instanceof NetworkError) {
+            Toast.makeText(AppController.getContext(),
+                    AppController.getContext().getString(R.string.error_network),
+                    Toast.LENGTH_LONG).show();
+        } else if (error instanceof ParseError) {
+            Toast.makeText(AppController.getContext(),
+                    AppController.getContext().getString(R.string.error_parse),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 
 
 }

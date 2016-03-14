@@ -116,5 +116,11 @@
     <string name="seen">seen</string>
     <string name="noFavorite">No favorite yet.</string>
     <string name="noConversation">No conversation yet.</string>
+    <string name="noMsg">No message yet</string>
+    <string name="error_network_timeout">Network Timeout</string>
+    <string name="error_auth_failure">Authorisation failure</string>
+    <string name="error_server">Server error</string>
+    <string name="error_parse">Parse error</string>
+    <string name="error_network">Network error</string>
 
 </resources>
