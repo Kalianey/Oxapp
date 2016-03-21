@@ -10,7 +10,7 @@
     android:background="@drawable/detail_background"
     tools:context="com.kalianey.oxapp.views.fragments.ProfileFragment">
 
-        <com.kalianey.oxapp.utils.UIParallaxScroll
+        <com.kalianey.oxapp.utils.UIParallaxNestedScroll
         android:id="@+id/scroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,92 +29,92 @@
                 android:layout_weight="0.4"
                 android:id="@+id/cover_container">
 
-            <com.kalianey.oxapp.utils.UICircularImage
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/image_view"
-                android:layout_width="125dp"
-                android:layout_height="125dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="5dp"
-                app:line_color="@android:color/white"
-                app:line_color_press="@color/theme_color"
-                app:line_width="1dp"
-                app:padding="0dp" />
+                <com.kalianey.oxapp.utils.UICircularImage
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/image_view"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginBottom="5dp"
+                    app:line_color="@android:color/white"
+                    app:line_color_press="@color/theme_color"
+                    app:line_width="1dp"
+                    app:padding="0dp" />
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:paddingLeft="16dp"
-                android:paddingTop="10dp"
-                android:paddingRight="16dp"
-                android:text="@string/detail_title_placeholder"
-                android:textSize="@dimen/textsize_xlarge"
-                android:layout_below="@+id/image_view"
-                android:textColor="@android:color/white"/>
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="center"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="16dp"
+                    android:text="@string/detail_title_placeholder"
+                    android:textSize="@dimen/textsize_xlarge"
+                    android:layout_below="@+id/image_view"
+                    android:textColor="@android:color/white"/>
 
-            <TextView
-                android:id="@+id/sumary"
-                android:layout_below="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:paddingBottom="16dp"
-                android:text="@string/sumary_placeholder"
-                android:textColor="@color/white_transparent"
-                android:textSize="@dimen/textsize_medium_small" />
-
-            <LinearLayout
-                android:id="@+id/statistics"
-                android:layout_below="@+id/sumary"
-                android:background="@color/gray_transparent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                <TextView
+                    android:id="@+id/sumary"
+                    android:layout_below="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="center"
+                    android:paddingBottom="16dp"
+                    android:text="@string/sumary_placeholder"
+                    android:textColor="@color/white_transparent"
+                    android:textSize="@dimen/textsize_medium_small" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/border_right" >
-
-                    <ImageButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/imageButtonFriend"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/user"
-                        android:background="@android:color/transparent"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:layout_weight="1"
+                    android:id="@+id/statistics"
+                    android:layout_below="@+id/sumary"
                     android:background="@color/gray_transparent"
-                    android:orientation="vertical" >
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
 
-                    <ImageButton
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/imageButtonFavorite"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/star"
-                        android:background="@android:color/transparent"/>
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/border_right" >
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/imageButtonFriend"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/user"
+                            android:background="@android:color/transparent"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:layout_weight="1"
+                        android:background="@color/gray_transparent"
+                        android:orientation="vertical" >
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/imageButtonFavorite"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/star"
+                            android:background="@android:color/transparent"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
-
-            </LinearLayout>
 
             </RelativeLayout>
 
@@ -250,7 +250,7 @@
 
         </LinearLayout>
 
-    </com.kalianey.oxapp.utils.UIParallaxScroll>
+    </com.kalianey.oxapp.utils.UIParallaxNestedScroll>
 
     <!-- "ActionBar"  -->
 

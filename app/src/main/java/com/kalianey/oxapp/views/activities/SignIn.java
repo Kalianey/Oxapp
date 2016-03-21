@@ -17,8 +17,6 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         Utility.setupUITouchListener(findViewById(R.id.fragment), SignIn.this);
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
     }
 
 

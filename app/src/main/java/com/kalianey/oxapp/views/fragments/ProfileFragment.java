@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -40,6 +41,7 @@ import com.kalianey.oxapp.models.ModelUser;
 import com.kalianey.oxapp.utils.AppController;
 import com.kalianey.oxapp.utils.QueryAPI;
 import com.kalianey.oxapp.utils.UICircularImage;
+import com.kalianey.oxapp.utils.UIParallaxNestedScroll;
 import com.kalianey.oxapp.utils.UIParallaxScroll;
 import com.kalianey.oxapp.utils.UITabs;
 import com.kalianey.oxapp.utils.Utility;
@@ -81,7 +83,7 @@ public class ProfileFragment extends Fragment {
 
     //UI Elements
     private View view;
-    private UIParallaxScroll scrollView;
+    private UIParallaxNestedScroll scrollView;
     private RelativeLayout mCoverContainer;
     private RecyclerView gridView;
     private UICircularImage mAvatarImageView;
@@ -290,7 +292,7 @@ public class ProfileFragment extends Fragment {
         gridView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
         friendsListView = (TwoWayView) view.findViewById(R.id.friends_list);
         friendsListView.setFocusable(false); //prevent the scrollview to scroll to bottom onCreate
-        scrollView = (UIParallaxScroll) view.findViewById(R.id.scroller);
+        scrollView = (UIParallaxNestedScroll) view.findViewById(R.id.scroller);
         scrollView.setOnScrollChangedListener(mOnScrollChangedListener);
         mAvatarImageView = (UICircularImage) view.findViewById(R.id.image_view);
         // mTextView = (TextView) view.findViewById(R.id.contact);
@@ -603,8 +605,8 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    private UIParallaxScroll.OnScrollChangedListener mOnScrollChangedListener = new UIParallaxScroll.OnScrollChangedListener() {
-        public void onScrollChanged(ScrollView who, int l, int t, int oldl, int oldt) {
+    private UIParallaxNestedScroll.OnScrollChangedListener mOnScrollChangedListener = new UIParallaxNestedScroll.OnScrollChangedListener() {
+        public void onScrollChanged(NestedScrollView who, int l, int t, int oldl, int oldt) {
             //Difference between the heights, important to not add margin or remove mNavigationTitle.
             final float headerHeight = ViewHelper.getY(mTitleView) - (mNavigationTop.getHeight() - mTitleView.getHeight());
             final float ratio = (float) Math.min(Math.max(t, 0), headerHeight) / headerHeight;
