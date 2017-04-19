@@ -1,9 +1,12 @@
-## Spirit Quotes
+## OXAPP
 
-<a href="http://spiritquotes.kalianey.com/" target="_blank">Spirit Quotes</a> is an objective-c app providing a curated list of spiritual quotes, available on the <a href="https://itunes.apple.com/fr/app/spirit-quotes/id1097134826?mt=8" target="_blank">Apple Store</a>.
+<a href="http://spiritquotes.kalianey.com/" target="_blank">OXAPP</a> is a messenger Android app for the open source social community software <a href="https://www.oxwall.com/" target="_blank">Oxwall</a>. 
 
-<p align="center">
-  <img src="http://spiritquotes.kalianey.com/img/capture.png" width="100%"/>
-</p>
+## Installation
 
+This app was built for a personal project which has been abandonned since then. The app is almost finished, but could use some debugging and improvements. You should be able to run it with its <a href ="https://github.com/Kalianey/owapi" target="_blank">companion backend plugin</a>. Once you have set it up in your Oxwall backend, just change the API base url, title of the app, and the launching screen in Android Studio. Due to a lack of time I cannot provide support of any kind.
+
+## Contributors
+
+The app is functional but the messenger is not working so well, so feel free to improve if you find it useful.
 
