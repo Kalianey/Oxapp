@@ -1,6 +1,6 @@
 ## OXAPP
 
-<a href="http://spiritquotes.kalianey.com/" target="_blank">OXAPP</a> is a messenger Android app for the open source social community software <a href="https://www.oxwall.com/" target="_blank">Oxwall</a>. 
+OXAPP is a messenger Android app for the open source social community software <a href="https://www.oxwall.com/" target="_blank">Oxwall</a>. 
 
 ## Installation
 
